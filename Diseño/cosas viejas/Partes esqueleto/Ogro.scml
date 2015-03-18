@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="r1">
+    <folder id="0">
+        <file id="0" name="mano_derecha.png" width="47" height="48" pivot_x="0.808511" pivot_y="0.4375"/>
+        <file id="1" name="cabeza.png" width="56" height="66" pivot_x="0.517857" pivot_y="0.318182"/>
+        <file id="2" name="mano_izquierda.png" width="51" height="51" pivot_x="0.686275" pivot_y="0.784314"/>
+        <file id="3" name="pie_derecho.png" width="48" height="41" pivot_x="0.708333" pivot_y="0.780488"/>
+        <file id="4" name="pie_izquierdo.png" width="58" height="43" pivot_x="0.741379" pivot_y="0.790698"/>
+        <file id="5" name="torso.png" width="98" height="144" pivot_x="0.55102" pivot_y="0.305556"/>
+    </folder>
+    <entity id="0" name="Ogro">
+        <animation id="0" name="Parado" length="1000" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="1" key="0" z_index="0"/>
+                    <object_ref id="1" timeline="5" key="0" z_index="1"/>
+                    <object_ref id="2" timeline="0" key="0" z_index="2"/>
+                    <object_ref id="3" timeline="2" key="0" z_index="3"/>
+                    <object_ref id="4" timeline="3" key="0" z_index="4"/>
+                    <object_ref id="5" timeline="4" key="0" z_index="5"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="torso">
+                <key id="0" spin="0">
+                    <object folder="0" file="5" x="9.395973" y="-23.489933"/>
+                </key>
+            </timeline>
+            <timeline id="1" name="pie_derecho">
+                <key id="0" spin="0">
+                    <object folder="0" file="3" x="-18.791946" y="-54.362416"/>
+                </key>
+            </timeline>
+            <timeline id="2" name="pie_izquierdo">
+                <key id="0" spin="0">
+                    <object folder="0" file="4" x="25.503356" y="-57.718121"/>
+                </key>
+            </timeline>
+            <timeline id="3" name="mano_izquierda">
+                <key id="0" spin="0">
+                    <object folder="0" file="2" x="49.66443" y="-8.053691" angle="333.434949" scale_x="1"/>
+                </key>
+            </timeline>
+            <timeline id="4" name="cabeza">
+                <key id="0" spin="0">
+                    <object folder="0" file="1" x="-2.013423" y="59.731544"/>
+                </key>
+            </timeline>
+            <timeline id="5" name="mano_derecha">
+                <key id="0" spin="0">
+                    <object folder="0" file="0" x="-27.516779" y="-10.067114" angle="353.088773" scale_y="1"/>
+                </key>
+            </timeline>
+        </animation>
+    </entity>
+</spriter_data>

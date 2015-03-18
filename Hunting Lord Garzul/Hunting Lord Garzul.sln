@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hunting Lord GarzulContent", "Hunting Lord Garzul\Hunting Lord GarzulContent\Hunting Lord GarzulContent.contentproj", "{05D19B6E-47B4-471E-80A8-9D70895C8F02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Windows Hunting Lord Garzul", "Hunting Lord Garzul\Hunting Lord Garzul\Windows Hunting Lord Garzul.csproj", "{347DEB9D-6CEE-4AD5-B117-1C5E6133A054}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Debug|Xbox 360 = Debug|Xbox 360
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+		Release|Xbox 360 = Release|Xbox 360
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{05D19B6E-47B4-471E-80A8-9D70895C8F02}.Debug|Mixed Platforms.ActiveCfg = Debug|Xbox 360
+		{05D19B6E-47B4-471E-80A8-9D70895C8F02}.Debug|Mixed Platforms.Deploy.0 = Debug|Xbox 360
+		{05D19B6E-47B4-471E-80A8-9D70895C8F02}.Debug|x86.ActiveCfg = Debug|Xbox 360
+		{05D19B6E-47B4-471E-80A8-9D70895C8F02}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{05D19B6E-47B4-471E-80A8-9D70895C8F02}.Release|Mixed Platforms.ActiveCfg = Release|Xbox 360
+		{05D19B6E-47B4-471E-80A8-9D70895C8F02}.Release|x86.ActiveCfg = Release|Xbox 360
+		{05D19B6E-47B4-471E-80A8-9D70895C8F02}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
+		{347DEB9D-6CEE-4AD5-B117-1C5E6133A054}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{347DEB9D-6CEE-4AD5-B117-1C5E6133A054}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{347DEB9D-6CEE-4AD5-B117-1C5E6133A054}.Debug|x86.ActiveCfg = Debug|x86
+		{347DEB9D-6CEE-4AD5-B117-1C5E6133A054}.Debug|x86.Build.0 = Debug|x86
+		{347DEB9D-6CEE-4AD5-B117-1C5E6133A054}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{347DEB9D-6CEE-4AD5-B117-1C5E6133A054}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{347DEB9D-6CEE-4AD5-B117-1C5E6133A054}.Release|Mixed Platforms.Build.0 = Release|x86
+		{347DEB9D-6CEE-4AD5-B117-1C5E6133A054}.Release|x86.ActiveCfg = Release|x86
+		{347DEB9D-6CEE-4AD5-B117-1C5E6133A054}.Release|x86.Build.0 = Release|x86
+		{347DEB9D-6CEE-4AD5-B117-1C5E6133A054}.Release|Xbox 360.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

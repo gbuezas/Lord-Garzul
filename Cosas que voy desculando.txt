@@ -1,0 +1,16 @@
+DRAW STUFF
+
+(*) Se puede poner el begin y end spritebatch dentro de los objetos mismos asi cada uno tiene su efecto en particular, esto es en el draw de cada uno obviamente.
+Porque si ponemos el begin end en general no podemos hacer efectos de blending color etc ya que abarcaria a todos juntos.
+Los mismos se tienen que dibujar afuera del begin<-->end principal
+
+(*) Acordate que cada dibujo usa su propio rectangulo, sino sobreescribe el anterior y solo aparece 1 dibujo, es igual que cada una usa su propia textura.
+
+-----------------------------
+-----------------------------
+
+LOAD CONTENT STUFF
+
+(*) Se carga una vez al principio y listo, asi que tendria que cargar todos los dibujos de las animaciones y despues ir usando los pedazos y listo.
+
+(*) Las imagenes que puede cargar XNA como maximo pueden ser de 4096
