@@ -13,42 +13,48 @@ namespace Hunting_Lord_Garzul
         # region VARIABLES
 
         // Accion que se realiza
-        private Variables_Generales.Acciones Accion_Actual;
-        public Variables_Generales.Acciones accion_actual
+        private Variables_Generales.Acciones AccionActual;
+        public Variables_Generales.Acciones accionActual
         {
-            get { return Accion_Actual; }
-            set { Accion_Actual = value; }
+            get { return AccionActual; }
+            set { AccionActual = value; }
         }
+       
         // Accion realizada anteriormente
-        private Variables_Generales.Acciones Accion_Anterior;
-        public Variables_Generales.Acciones accion_anterior
+        private Variables_Generales.Acciones AccionAnterior;
+        public Variables_Generales.Acciones accionAnterior
         {
-            get { return Accion_Anterior; }
-            set { Accion_Anterior = value; }
+            get { return AccionAnterior; }
+            set { AccionAnterior = value; }
         }
         
         // Mirada del personaje
         protected Objetos.Variables_Generales.Mirada Direccion;
 
         // Tipo de cada pieza de armadura
-        protected int helm_type;
-        protected int greaves_type;
-        protected int gauntlets_type;
-        protected int breastplate_type;
-        protected int tasset_type;
-        protected int shield_type;
-        protected int sword_type;
-        
+        // 1.shield
+        // 2.gauntletback
+        // 3.greaveback
+        // 4.helm
+        // 5.breastplate
+        // 6.tasset
+        // 7.greavetop
+        // 8.sword
+        // 9.gauntlettop
+        protected Pieces_Sets pieces_armor = new Pieces_Sets();
+        protected List<Piece_Set> pieces_armor_new = new List<Piece_Set>();
+
         // Animacion de cada pieza de armadura
-        //protected Animacion shield_anim;
-        protected Animacion gauntlet_back_anim;
-        protected Animacion greave_back_anim;
-        protected Animacion helm_anim;
-        protected Animacion breastplate_anim;
-        protected Animacion tasset_anim;
-        protected Animacion greave_top_anim;
-        //protected Animacion sword_anim;
-        protected Animacion gauntlet_top_anim;
+        // 1.shield
+        // 2.gauntletback
+        // 3.greaveback
+        // 4.helm
+        // 5.breastplate
+        // 6.tasset
+        // 7.greavetop
+        // 8.sword
+        // 9.gauntlettop
+        protected Animacion[] pieces_anim = new Animacion[9];
         
         // Posicion del jugador relativa a la parte superior izquierda de la pantalla.
         // Esta posicion marca donde se encuentra el jugador en la pantalla y no en el mapa donde se esta moviendo,
@@ -61,9 +67,6 @@ namespace Hunting_Lord_Garzul
 
         // Si esta activa esta instancia o no
         protected bool Active;
-        
-        // Puntos de vida
-        protected int Health;
         
         // Ancho de un cuadro del sprite
         //protected int AnchoPersonaje = 320;
@@ -96,8 +99,7 @@ namespace Hunting_Lord_Garzul
         protected float mensaje2;
         protected Variables_Generales.Mirada mensaje3;
         protected Variables_Generales.Acciones mensaje4;
-        //protected float mensaje5;
-
+        
         // Donde se va a alojar el mensaje de chequeo de status
         Vector2 mensaje;
         
@@ -115,9 +117,6 @@ namespace Hunting_Lord_Garzul
             // Activar jugador
             Active = true;
             
-            // Vida del jugador
-            Health = 100;
-            
             // Establecer velocidad
             VelocidadPersonaje = 3.0f;
             
@@ -125,17 +124,62 @@ namespace Hunting_Lord_Garzul
             Direccion = Objetos.Variables_Generales.Mirada.DERECHA;
             
             // Establece el estado
-            accion_actual = Variables_Generales.Acciones.STAND;
-            accion_anterior = accion_actual;
-
-            // Control del personaje
-            //halt = false;
+            accionActual = Variables_Generales.Acciones.STAND;
+            accionAnterior = accionActual;
 
             // Tiempo default del frame
             Tiempo_Frame = 50;
 
+            // Inicializo partes de armadura actual
+            pieces_armor.Initialize();
+            
+            // Inicializo las piezas de animacion
+            for (int i = 0; i < Variables_Generales.Piezas.Length; i++ )
+            {
+                pieces_anim[i] = new Animacion();
+                pieces_anim[i].Initialize(Variables_Generales.Piezas[i]);
+            }
+
+            // Coloco un recambio de armadura, que en el juego orginal esto tiene que pasar al obtener armaduras nuevas
+            // por lo tanto se haria chequeando el inventario.
+            Piece_Set recambio = new Piece_Set();
+            recambio.Initialize("shield", "set1");
+            pieces_armor_new.Add(recambio);
+
+            recambio = new Piece_Set();
+            recambio.Initialize("gauntletback", "set2");
+            pieces_armor_new.Add(recambio);
+
+            recambio = new Piece_Set();
+            recambio.Initialize("greaveback", "set2");
+            pieces_armor_new.Add(recambio);
+
+            recambio = new Piece_Set();
+            recambio.Initialize("helm", "set1");
+            pieces_armor_new.Add(recambio);
+
+            recambio = new Piece_Set();
+            recambio.Initialize("breastplate", "set1");
+            pieces_armor_new.Add(recambio);
+
+            recambio = new Piece_Set();
+            recambio.Initialize("tasset", "set1");
+            pieces_armor_new.Add(recambio);
+
+            recambio = new Piece_Set();
+            recambio.Initialize("greavetop", "set2");
+            pieces_armor_new.Add(recambio);
+
+            recambio = new Piece_Set();
+            recambio.Initialize("sword", "set1");
+            pieces_armor_new.Add(recambio);
+
+            recambio = new Piece_Set();
+            recambio.Initialize("gauntlettop", "set2");
+            pieces_armor_new.Add(recambio);
+            
             // Piezas de la armadura al comenzar
-            UpdateArmor("set-1", "set-1", "set-1", "set-1", "set-1", "set-1", "set-1", accion_actual);
+            UpdateArmor(pieces_armor_new);
 
             // Asigno control por default al jugador
             controles[(int)Variables_Generales.Controles.ARRIBA] = Keys.W;
@@ -149,46 +193,20 @@ namespace Hunting_Lord_Garzul
         // Actualizar animacion
         public override void Update(GameTime gameTime)
         {
-            //shield_anim.Position = Position;
-            //shield_anim.Update(gameTime);
-
-            gauntlet_back_anim.Position = Position;
-            gauntlet_back_anim.Update(gameTime);
-
-            greave_back_anim.Position = Position;
-            greave_back_anim.Update(gameTime);
-
-            helm_anim.Position = Position;
-            helm_anim.Update(gameTime);
-
-            breastplate_anim.Position = Position;
-            breastplate_anim.Update(gameTime);
-
-            tasset_anim.Position = Position;
-            tasset_anim.Update(gameTime);
-
-            greave_top_anim.Position = Position;
-            greave_top_anim.Update(gameTime);
-
-            //sword_anim.Position = Position;
-            //sword_anim.Update(gameTime);
-
-            gauntlet_top_anim.Position = Position;
-            gauntlet_top_anim.Update(gameTime);
+            foreach(Animacion piezaAnimada in pieces_anim)
+            {
+                piezaAnimada.position = Position;
+                piezaAnimada.Update(gameTime);
+            }
         }
 
         // Dibujar Jugador
-        // Algo estaa pasando que me dibuja mal el orden de las cosas
-        // Chequear porque no esta dibjando la cintura como corresponde.
         public override void Draw(SpriteBatch spriteBatch)
         {
-            gauntlet_back_anim.Draw(spriteBatch, Direccion);
-            greave_back_anim.Draw(spriteBatch, Direccion);
-            helm_anim.Draw(spriteBatch, Direccion);
-            breastplate_anim.Draw(spriteBatch, Direccion);
-            tasset_anim.Draw(spriteBatch, Direccion);
-            greave_top_anim.Draw(spriteBatch, Direccion);
-            gauntlet_top_anim.Draw(spriteBatch, Direccion);
+            foreach (Animacion piezaAnimada in pieces_anim)
+            {
+                piezaAnimada.Draw(spriteBatch, Direccion);
+            }
             
             // Si no separo este proceso de dibujo desconcha las posiciones de las capas del jugador
             //spriteBatch.DrawString(Variables_Generales.CheckStatusVar_2,
@@ -256,10 +274,10 @@ namespace Hunting_Lord_Garzul
             //    //PausarAnimacion(false);
             //}
 
-            mensaje1 = gauntlet_top_anim.CurrentFrame;
-            mensaje2 = gauntlet_top_anim.FrameCount;
+            mensaje1 = pieces_anim[0].CurrentFrame;
+            mensaje2 = pieces_anim[0].FrameCount;
             mensaje3 = Direccion;
-            mensaje4 = accion_actual;
+            mensaje4 = accionActual;
 
             #endregion
 
@@ -304,32 +322,35 @@ namespace Hunting_Lord_Garzul
 
             Variables_Generales.currentKeyboardState = Keyboard.GetState();
 
+            // Si no se toca nada quedara por default que esta parado
+            accionActual = Variables_Generales.Acciones.STAND;
+
+            // Si se toca alguna flecha de movimiento se aplicaran a la velocidad del personaje
+            #region MOVIMIENTO
             if (Variables_Generales.currentKeyboardState.IsKeyDown(controles[(int)Variables_Generales.Controles.IZQUIERDA]))
             {
                 Position.X -= VelocidadPersonaje;
                 Direccion = Variables_Generales.Mirada.IZQUIERDA;
-                accion_actual = Variables_Generales.Acciones.WALK;
+                accionActual = Variables_Generales.Acciones.WALK;
             }
             else if (Variables_Generales.currentKeyboardState.IsKeyDown(controles[(int)Variables_Generales.Controles.DERECHA]))
             {
                 Position.X += VelocidadPersonaje;
                 Direccion = Variables_Generales.Mirada.DERECHA;
-                accion_actual = Variables_Generales.Acciones.WALK;
+                accionActual = Variables_Generales.Acciones.WALK;
             }
-            else if (Variables_Generales.currentKeyboardState.IsKeyDown(controles[(int)Variables_Generales.Controles.ARRIBA]))
+
+            if (Variables_Generales.currentKeyboardState.IsKeyDown(controles[(int)Variables_Generales.Controles.ARRIBA]))
             {
                 Position.Y -= VelocidadPersonaje;
-                accion_actual = Variables_Generales.Acciones.WALK;
+                accionActual = Variables_Generales.Acciones.WALK;
             }
             else if (Variables_Generales.currentKeyboardState.IsKeyDown(controles[(int)Variables_Generales.Controles.ABAJO]))
             {
                 Position.Y += VelocidadPersonaje;
-                accion_actual = Variables_Generales.Acciones.WALK;
+                accionActual = Variables_Generales.Acciones.WALK;
             }
-            else
-            {
-                accion_actual = Variables_Generales.Acciones.STAND;
-            }
+            #endregion
 
             #endregion
 
@@ -339,196 +360,62 @@ namespace Hunting_Lord_Garzul
             //Position.Y = MathHelper.Clamp(Position.Y, AltoNivel * 0.50f, AltoNivel - AltoPersonaje / 2);
             Position.Y = MathHelper.Clamp(Position.Y, 3*AltoNivel/5, AltoNivel);
             
-            // Acomoda la cantidad de frames y la fila del sprite de acuerdo a la accion ejecuntandose
-            #region Acomoda la cantidad de frames de la animacion correspondiente y la fila
+            // No es necesario mas acomodar la fila ya que todos vienen con fila 0
+            // Solo se acomoda la cantidad de frames por animacion y que animacion va en cada pieza segun la accion ejecutandose.
+            #region ANIMACION POR PIEZA
 
-            switch (accion_actual)
+            foreach (Animacion piezaAnimacion in pieces_anim)
             {
-                case Variables_Generales.Acciones.STAND:
+                foreach (Texturas textura in Variables_Generales.TexturasPaladin)
+                {
+                    if (textura.piece == piezaAnimacion.nombrePieza &&
+                        textura.set == pieces_armor.Get_Set(textura.piece) &&
+                        textura.action == accionActual.ToString().ToLower())
                     {
-                        foreach (Texturas textura_actual in Variables_Generales.TexturasPaladin)
-                        {
-                            if (textura_actual.nombre_textura == "set-1_stand_gauntlet-top")
-                            {
-                                gauntlet_top_anim.spriteStrip = textura_actual.textura;
-                            }
-                            if (textura_actual.nombre_textura == "set-1_stand_gauntlet-back")
-                            {
-                                gauntlet_back_anim.spriteStrip = textura_actual.textura;
-                            }
-                            if (textura_actual.nombre_textura == "set-1_stand_greave-top")
-                            {
-                                greave_top_anim.spriteStrip = textura_actual.textura;
-                            }
-                            if (textura_actual.nombre_textura == "set-1_stand_greave-back")
-                            {
-                                greave_back_anim.spriteStrip = textura_actual.textura;
-                            }
-                            if (textura_actual.nombre_textura == "set-1_stand_tasset")
-                            {
-                                tasset_anim.spriteStrip = textura_actual.textura;
-                            }
-                            if (textura_actual.nombre_textura == "set-1_stand_breastplate")
-                            {
-                                breastplate_anim.spriteStrip = textura_actual.textura;
-                            }
-                            if (textura_actual.nombre_textura == "set-1_stand_helm")
-                            {
-                                helm_anim.spriteStrip = textura_actual.textura;
-                            }
-                        }
-                        
-                        PausarAnimacion(false);
-                        break;
+                        piezaAnimacion.texturaCargada = textura;
                     }
-
-                case Variables_Generales.Acciones.WALK:
-                    {
-                        foreach (Texturas textura_actual in Variables_Generales.TexturasPaladin)
-                        {
-                            if (textura_actual.nombre_textura == "set-1_walk_gauntlet-top")
-                            {
-                                gauntlet_top_anim.spriteStrip = textura_actual.textura;
-                            }
-                            if (textura_actual.nombre_textura == "set-1_walk_gauntlet-back")
-                            {
-                                gauntlet_back_anim.spriteStrip = textura_actual.textura;
-                            }
-                            if (textura_actual.nombre_textura == "set-1_walk_greave-top")
-                            {
-                                greave_top_anim.spriteStrip = textura_actual.textura;
-                            }
-                            if (textura_actual.nombre_textura == "set-1_walk_greave-back")
-                            {
-                                greave_back_anim.spriteStrip = textura_actual.textura;
-                            }
-                            if (textura_actual.nombre_textura == "set-1_walk_tasset")
-                            {
-                                tasset_anim.spriteStrip = textura_actual.textura;
-                            }
-                            if (textura_actual.nombre_textura == "set-1_walk_breastplate")
-                            {
-                                breastplate_anim.spriteStrip = textura_actual.textura;
-                            }
-                            if (textura_actual.nombre_textura == "set-1_walk_helm")
-                            {
-                                helm_anim.spriteStrip = textura_actual.textura;
-                            }
-                        }
-
-                        PausarAnimacion(false);
-                        break;
-                    }
-
-                case Variables_Generales.Acciones.HIT_1:
-                    {
-                        break;
-                    }
-
-                default:break;
+                }
             }
-            
-            // Vuelve a 0 el frame de la animacion si cambio de accion
-            if (accion_anterior != accion_actual)
-            {
-                greave_back_anim.CurrentFrame = 0;
-                greave_top_anim.CurrentFrame = 0;
-                helm_anim.CurrentFrame = 0;
-                breastplate_anim.CurrentFrame = 0;
-                gauntlet_back_anim.CurrentFrame = 0;
-                gauntlet_top_anim.CurrentFrame = 0;
-                tasset_anim.CurrentFrame = 0;
-                //sword_anim.CurrentFrame = 0;
-                //shield_anim.CurrentFrame = 0;
 
-                accion_anterior = accion_actual;
+            // Vuelve a 0 el frame de la animacion si cambio de accion
+            if (accionAnterior != accionActual)
+            {
+                foreach (Animacion animacion in pieces_anim)
+                {
+                    animacion.CurrentFrame = 0;
+                }
+                
+                accionAnterior = accionActual;
             }
 
             #endregion
         }
 
         /// <summary>
-        /// Actualiza las piezas del personaje. Se le pasa el nombre de cada pieza que va a estar alojada en el objeto de la misma
-        /// y despues se busca ese nombre de la lista de texturas y se actualiza
+        /// Cargo los set de armadura que corresponden a cada pieza del cuerpo.
         /// </summary>
-        /// <param name="helm">Establece el casco del jugador.</param>
-        /// <param name="gauntlets">Establece los brazos del jugador.</param>
-        /// <param name="breastplate">Establece el torso del jugador.</param>
-        /// <param name="greaves">Establece las piernas y pies del jugador.</param>
-        /// <param name="shield">Establece el escudo del jugador.</param>
-        /// <param name="sword">Establece el arma del jugador.</param>
-        /// <param name="tasset">Establece la cadera del jugador.</param>
-        /// <param name="accion_actual">Establece la accion del jugador y sus frames</param>
-        public void UpdateArmor(String helm, String gauntlets, String breastplate, String greaves, String shield, String sword, String tasset, Variables_Generales.Acciones accion_actual)
+        /// <param name="set_pieces">Set de shield, gauntlets, greaves, helm, breastplate, tasset, sword respectivamente</param> 
+        public override void UpdateArmor(List<Piece_Set> set_pieces)
         {
-            // Restablezco las variables
-            gauntlets_type = Variables_Generales.Tipo_Armadura.IndexOf(gauntlets);
-            helm_type = Variables_Generales.Tipo_Armadura.IndexOf(helm);
-            greaves_type = Variables_Generales.Tipo_Armadura.IndexOf(greaves);
-            breastplate_type = Variables_Generales.Tipo_Armadura.IndexOf(breastplate);
-            shield_type = Variables_Generales.Tipo_Armadura.IndexOf(shield);
-            sword_type = Variables_Generales.Tipo_Armadura.IndexOf(sword);
-            tasset_type = Variables_Generales.Tipo_Armadura.IndexOf(tasset);
-            
-            // Restlabezco las animaciones
-            foreach (Texturas textura in Objetos.Variables_Generales.TexturasPaladin)
+            // shield, gauntlets, greaves, helm, breastplate, tasset, sword
+            foreach (Piece_Set set_piece in set_pieces)
             {
-                if (textura.pieza == "gauntlet-back" && 
-                    textura.accion == accion_actual.ToString().ToLower() &&
-                    textura.armadura == (Variables_Generales.Tipo_Armadura[gauntlets_type]))
-                {
-                    gauntlet_back_anim = new Animacion();
-                    gauntlet_back_anim.Initialize(textura.textura, Position, AnchoPersonaje, AltoPersonaje, (int)accion_actual, Tiempo_Frame, Color.White, true);
-                }
+                pieces_armor.Set_Set(set_piece);
+            }
 
-                if (textura.pieza == "greave-back" &&
-                    textura.accion == accion_actual.ToString().ToLower() &&
-                    textura.armadura == Variables_Generales.Tipo_Armadura[greaves_type])
+            foreach(Animacion piezaAnimacion in pieces_anim)
+            {
+                foreach (Texturas textura in Variables_Generales.TexturasPaladin)
                 {
-                    greave_back_anim = new Animacion();
-                    greave_back_anim.Initialize(textura.textura, Position, AnchoPersonaje, AltoPersonaje, (int)accion_actual, Tiempo_Frame, Color.White, true);
-                }
-                
-                if (textura.pieza == "helm" &&
-                   textura.accion == accion_actual.ToString().ToLower() && 
-                   textura.armadura == Variables_Generales.Tipo_Armadura[helm_type])
-                {
-                    helm_anim = new Animacion();
-                    helm_anim.Initialize(textura.textura, Position, AnchoPersonaje, AltoPersonaje, (int)accion_actual, Tiempo_Frame, Color.White, true);
-                }
-                
-                if (textura.pieza == "breastplate" &&
-                    textura.accion == accion_actual.ToString().ToLower() && 
-                    textura.armadura == Variables_Generales.Tipo_Armadura[breastplate_type])
-                {
-                    breastplate_anim = new Animacion();
-                    breastplate_anim.Initialize(textura.textura, Position, AnchoPersonaje, AltoPersonaje, (int)accion_actual, Tiempo_Frame, Color.White, true);
-                }
-
-                if (textura.pieza == "tasset" &&
-                    textura.accion == accion_actual.ToString().ToLower() && 
-                    textura.armadura == Variables_Generales.Tipo_Armadura[tasset_type])
-                {
-                    tasset_anim = new Animacion();
-                    tasset_anim.Initialize(textura.textura, Position, AnchoPersonaje, AltoPersonaje, (int)accion_actual, Tiempo_Frame, Color.White, true);
-                }
-
-                if (textura.pieza == "greave-top" &&
-                    textura.accion == accion_actual.ToString().ToLower() &&
-                    textura.armadura == Variables_Generales.Tipo_Armadura[greaves_type])
-                {
-                    greave_top_anim = new Animacion();
-                    greave_top_anim.Initialize(textura.textura, Position, AnchoPersonaje, AltoPersonaje, (int)accion_actual, Tiempo_Frame, Color.White, true);
-                }
-
-                if (textura.pieza == "gauntlet-top" &&
-                    textura.accion == accion_actual.ToString().ToLower() &&
-                    textura.armadura == (Variables_Generales.Tipo_Armadura[gauntlets_type]))
-                {
-                    gauntlet_top_anim = new Animacion();
-                    gauntlet_top_anim.Initialize(textura.textura, Position, AnchoPersonaje, AltoPersonaje, (int)accion_actual, Tiempo_Frame, Color.White, true);
+                    if (textura.piece == piezaAnimacion.nombrePieza && 
+                        textura.set == pieces_armor.Get_Set(textura.piece) && 
+                        textura.action == accionActual.ToString().ToLower())
+                    {
+                        piezaAnimacion.CargarTextura(textura, Position, AnchoPersonaje, AltoPersonaje, Tiempo_Frame, Color.White, true);
+                    }
                 }
             }
+
         }
 
         /// <summary>
@@ -537,13 +424,10 @@ namespace Hunting_Lord_Garzul
         /// <param name="Tiempo">El tiempo que va a durar el frame en pantalla de las distintas animaciones del personaje</param>
         void TiempoFrameEjecucion(int Tiempo)
         {
-            gauntlet_back_anim.frameTime = Tiempo;
-            greave_back_anim.frameTime = Tiempo;
-            helm_anim.frameTime = Tiempo;
-            breastplate_anim.frameTime = Tiempo;
-            tasset_anim.frameTime = Tiempo;
-            greave_top_anim.frameTime = Tiempo;
-            gauntlet_top_anim.frameTime = Tiempo;
+            foreach (Animacion piezaAnimada in pieces_anim)
+            {
+                piezaAnimada.frameTime = Tiempo;
+            }
         }
 
         /// <summary>
@@ -552,13 +436,10 @@ namespace Hunting_Lord_Garzul
         /// <param name="desactivar">pone o quita la pausa segun este parametro</param>
         void PausarAnimacion(bool desactivar)
         {
-            gauntlet_back_anim.pausa = desactivar;
-            greave_back_anim.pausa = desactivar;
-            helm_anim.pausa = desactivar;
-            breastplate_anim.pausa = desactivar;
-            tasset_anim.pausa = desactivar;
-            greave_top_anim.pausa = desactivar;
-            gauntlet_top_anim.pausa = desactivar;
+            foreach (Animacion piezaAnimada in pieces_anim)
+            {
+                piezaAnimada.pausa = desactivar;
+            }
         }
 
     }

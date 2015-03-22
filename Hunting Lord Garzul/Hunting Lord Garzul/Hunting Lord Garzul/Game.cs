@@ -113,13 +113,7 @@ namespace Hunting_Lord_Garzul
                                     Variables_Generales.TexturasPaladin.Add(textura);
                                     break;
                                 }
-
-                            case "Barbaro":
-                                {
-                                    Variables_Generales.TexturasBarbaro.Add(textura);
-                                    break;
-                                }
-
+                            
                             default:
                                 {
                                     break;
@@ -127,9 +121,9 @@ namespace Hunting_Lord_Garzul
 
                         }
  
-                        if (!Variables_Generales.Tipo_Armadura.Contains(Nombre.Split('_')[0]))
+                        if (!Variables_Generales.Armaduras.Contains(Nombre.Split('_')[0]))
                         {
-                            Variables_Generales.Tipo_Armadura.Add(Nombre.Split('_')[0]);
+                            Variables_Generales.Armaduras.Add(Nombre.Split('_')[0]);
                         }
                     }
                 }

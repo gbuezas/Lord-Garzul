@@ -8,6 +8,8 @@ namespace Hunting_Lord_Garzul.Objetos
 {
     public class Texturas
     {
+        #region VARIABLES
+
         // La textura a utilizar
         private Texture2D Textura;
         public Texture2D textura
@@ -15,7 +17,7 @@ namespace Hunting_Lord_Garzul.Objetos
             get { return Textura; }
             set { Textura = value; }
         }
-
+        
         // Nombre completo de la textura
         private String Nombre_textura;
         public String nombre_textura
@@ -24,37 +26,59 @@ namespace Hunting_Lord_Garzul.Objetos
             set { Nombre_textura = value; }
         }
         
-        // Armadura a la que pertenece esta pieza
-        private String Armadura;
-        public String armadura
+        // Set de armadura a la que pertenece esta pieza
+        private String Set;
+        public String set
         {
-            get { return Armadura; }
+            get { return Set; }
         }
-
-        // Accion que realiza esta pieza
-        private String Accion;
-        public String accion
-        {
-            get { return Accion; }
-        }
-
+        
         // Pieza que representa la textura
-        private String Pieza;
-        public String pieza
+        private String Piece;
+        public String piece
         {
-            get { return Pieza; }
+            get { return Piece; }
         }
+        
+        // Accion que realiza esta pieza
+        private String Action;
+        public String action
+        {
+            get { return Action; }
+        }
+        
+        // Frames de la animacion
+        private String Frame;
+        public String frame
+        {
+            get { return Frame; }
+            set { Frame = value; }
+        }
+        
+        #endregion
 
-        // Constructor del objeto
+        #region METODOS
+
+        /// <summary>
+        /// Cargamos los sprites a utilizar y los datos necesarios para poder utilizarlos.
+        /// Mas tarde se van a contrastar con los datosdel jugador para utilizarlos correctamente.
+        /// Ejemplo: set1_gauntlettop_walk_10.png
+        /// </summary>
+        /// <param name="textura">Los sprites que se van a utilizar</param>
+        /// <param name="nombre">El nombre del archivo con sus datos pertinentes</param>
         public Texturas(Texture2D textura, String nombre)
         {
             Textura = textura;
             Nombre_textura = nombre;
-
+            
             string[] separador = nombre.Split('_');
-            Armadura = separador[0];
-            Accion = separador[1];
-            Pieza = separador[2];
+            
+            Set = separador[0];
+            Piece = separador[1];
+            Action = separador[2];
+            Frame = separador[3];
         }
+
+        #endregion
     }
 }

@@ -14,9 +14,9 @@ namespace Hunting_Lord_Garzul.Objetos
         #region MAPA Y PARALLAX
 
         // Mapa de tiles de las capas
-        static string[] Mapa_Piso = new string[] { "Avnc_1_a", "Avnc_1_a", "Avnc_1_a", "Avnc_1_a", "Avnc_1_a", "Avnc_1_a", "Avnc_1_a", "Avnc_1_a", "Avnc_1_a", "Avnc_1_a", "Avnc_1_a", "Avnc_1_a", "Avnc_1_a", "Avnc_1_a", "Avnc_1_a", "Avnc_1_a" };
-        static string[] Mapa_Arboles = new string[] { "Avnc_1_b", "Avnc_1_b", "Avnc_1_b", "Avnc_1_b", "Avnc_1_b", "Avnc_1_b", "Avnc_1_b", "Avnc_1_b", "Avnc_1_b", "Avnc_1_b", "Avnc_1_b", "Avnc_1_b", "Avnc_1_b", "Avnc_1_b", "Avnc_1_b", "Avnc_1_b" };
-        static string[] Mapa_Nubes = new string[] { "Avnc_2_e", "Avnc_2_f", "Avnc_2_g", "Avnc_5_e", "Avnc_6_e", "Avnc_7_e", "Avnc_8_e", "Avnc_9_e", "Avnc_9_e", "Avnc_9_e", "Avnc_9_e", "Avnc_9_e", "Avnc_9_e", "Avnc_9_e", "Avnc_9_e", "Avnc_9_e", };
+        static string[] Mapa_Piso = new string[] { "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1" };
+        static string[] Mapa_Arboles = new string[] { "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1" };
+        static string[] Mapa_Nubes = new string[] { "cloud1", "cloud2", "cloud3", "cloud4", "cloud5", "cloud6", "cloud7", "cloud8", "cloud9", "cloud10", "cloud11", "cloud1", "cloud2", "cloud3", "cloud4", "cloud5", };
 
         // Velocidades del parallax de cada capa
         Parallax Piso = new Parallax(Mapa_Piso, 1f, 1f);
@@ -40,13 +40,6 @@ namespace Hunting_Lord_Garzul.Objetos
         /// </summary>
         public override void Initialize()
         {
-            // Asigno la clase al jugador
-            //Variables_Generales.players[0] = new Jugador_Paladin();
-            //Variables_Generales.players[1] = new Jugador_Barbaro();
-
-            //Tengo que buscar una manera de hacer que el jugador 2 tenga una coordenada distinta al 1
-            // siendo el mismo objeto
-
             // Agrego las diferentes capas de parallax
             Variables_Generales.Capas.Add(Nubes);
             Variables_Generales.Capas.Add(Arboles);
@@ -78,7 +71,7 @@ namespace Hunting_Lord_Garzul.Objetos
             Variables_Generales.players[1].controles[(int)Variables_Generales.Controles.ABAJO] = Keys.Down;
             Variables_Generales.players[1].controles[(int)Variables_Generales.Controles.IZQUIERDA] = Keys.Left;
             Variables_Generales.players[1].controles[(int)Variables_Generales.Controles.DERECHA] = Keys.Right;
-
+            
             // Ajusto los limites de la camara para que no pueda mostrar mas de este rectangulo
             Camara.Limits = new Rectangle(0, 0, Variables_Generales.AnchoViewport / 4 * Mapa_Nubes.Length, Var_AltoNivel);
             
@@ -125,10 +118,9 @@ namespace Hunting_Lord_Garzul.Objetos
 
                 foreach (string seccion in capa.capa_parallax)
                 {
-                    
                     foreach (Texturas avance in Variables_Generales.TexturasAvance)
                     {
-                        if (seccion == avance.nombre_textura)
+                        if (seccion == avance.piece)
                         {
                             sourceRect[rectangulo] = new Rectangle(posicion, 0,
                                 Variables_Generales.AnchoViewport / 4,

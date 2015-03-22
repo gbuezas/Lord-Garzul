@@ -37,7 +37,7 @@ namespace Hunting_Lord_Garzul.Objetos
         public enum Mirada { DERECHA, IZQUIERDA };
         
         // Las distintas acciones que puede hacer con sus respectivos frames y los controles
-        public enum Acciones { WALK = 12, STAND = 10, HIT_1 = 8, HIT_2 = 8, HIT_3 = 8, DEAD = 8 }
+        public enum Acciones { WALK, STAND, HIT_1, HIT_2, HIT_3, DEAD }
         public enum Controles { ARRIBA = 0, ABAJO, IZQUIERDA, DERECHA, BOTON_1, BOTON_2 }
         
         // Los distintos estados del juego
@@ -45,15 +45,15 @@ namespace Hunting_Lord_Garzul.Objetos
 
         // Los distintos heroes
         public static string[] Heroes = new string[6] { "Paladin", "Paladina", "Barbaro", "Barbara", "Arquero", "Arquera" };
-        
+        public static string[] Piezas = new string[] { "shield", "gauntletback", "greaveback" ,"helm", "breastplate", "tasset", "greavetop", "sword", "gauntlettop" };
+        public static List<string> Armaduras = new List<string>();
+
         // Los distintos estilos de escenarios
         public static string[] Escenarios = new string[] { "Avance", "Versus", "Titulo" };
 
-        // Las distintas armaduras o skins que puede llevar
-        public static List<String> Tipo_Armadura = new List<String>();
+        // Las distintas armaduras o skins que puede llevar y las piezas de animacion
         public static List<Texturas> TexturasPaladin = new List<Texturas>();
-        public static List<Texturas> TexturasBarbaro = new List<Texturas>();
-
+        
         // Los distintos niveles de avance
         public static List<Texturas> TexturasAvance = new List<Texturas>();
 

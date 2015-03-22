@@ -68,7 +68,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstractos\Estados\Estado_Seleccion.cs" />
-    <Compile Include="Abstractos\Heroes\Jugador_Barbaro.cs" />
     <Compile Include="Abstractos\Slot_Selector\Slot_Selector.cs" />
     <Compile Include="Objetos\Animacion.cs" />
     <Compile Include="Abstractos\Estados\Estados.cs" />
@@ -78,6 +77,8 @@
     <Compile Include="Abstractos\Heroes\Jugadores.cs" />
     <Compile Include="Objetos\Camara.cs" />
     <Compile Include="Objetos\Parallax.cs" />
+    <Compile Include="Objetos\Pieces_Sets.cs" />
+    <Compile Include="Objetos\Piece_Set.cs" />
     <Compile Include="Objetos\Texturas.cs" />
     <Compile Include="Generales\Variables_Generales.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

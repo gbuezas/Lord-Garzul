@@ -2,12 +2,15 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 using Hunting_Lord_Garzul.Objetos;
 
 namespace Hunting_Lord_Garzul
 {
     public abstract class Jugadores
     {
+        #region VARIABLES
+
         // Esta bandera es para que no se vuelva a dibujar varias veces el mismo objeto,
         // en caso de que el eje Y del mismo se repita con otro objeto
         private Boolean Dibujado = false;
@@ -37,6 +40,10 @@ namespace Hunting_Lord_Garzul
             set { Controles = value; }
         }
 
+        #endregion
+
+        #region METODOS
+
         // Inicializar al jugador
         public abstract void Initialize(Vector2 posicion);
         
@@ -49,5 +56,9 @@ namespace Hunting_Lord_Garzul
         // Actualizar cosas del jugador
         public abstract void UpdatePlayer(GameTime gameTime, int Jugador, Rectangle LimitesJugador, int AltoNivel, int AnchoNivel);
 
+        // Actualizar armadura
+        public abstract void UpdateArmor(List<Piece_Set> set_pieces);
+
+        #endregion
     }
 }

@@ -8,11 +8,13 @@ namespace Hunting_Lord_Garzul
 {
     class Animacion
     {
-
         #region VARIABLES
 
-        // La imagen con los sprites
-        public Texture2D spriteStrip;
+        // La textura con los sprites dentro
+        public Texturas texturaCargada;
+
+        // Nombre de la pieza a animar
+        public string nombrePieza;
 
         // El tiempo que actualizamos el cuadro por ultima vez
         int elapsedTime;
@@ -50,56 +52,60 @@ namespace Hunting_Lord_Garzul
         Rectangle destinationRect = new Rectangle();
         
         // Ancho de un cuadro dado
-        public int FrameWidth;
+        public int frameWidth;
         
         // Alto de un cuadro dado
-        public int FrameHeight;
+        public int frameHeight;
         
         // El estado de la animacion
-        public bool Active;
+        public bool active;
         
         // Activa o desactiva el loopeo
-        public bool Looping;
+        public bool looping;
         
         // Posicion de un cuadro determinado
-        public Vector2 Position;
+        public Vector2 position;
 
         // Escala de Heroes con respecto al alto de la pantalla
-        public float EscalaHeroes = Variables_Generales.AltoViewport/4;
-        // Escala de objetos animados
-        // public float EscalaObjetosAnimados = Variables_Generales.AltoViewport/5;
-
+        public float escalaAnimacion = Variables_Generales.AltoViewport/4;
+        
         #endregion
 
-        public void Initialize(Texture2D texture, Vector2 position,int frameWidth, int frameHeight,int frameCount,int frametime, Color color, bool looping)
+        #region METODOS
+
+        public void Initialize(string nombre)
+        {
+            nombrePieza = nombre;
+        }
+
+        public void CargarTextura(Texturas texture, Vector2 position,int frameWidth, int frameHeight,int frametime, Color color, bool looping)
         {
             // Mantiene una copia local de los valores obtenidos
             this.color = color;
-            this.FrameWidth = frameWidth;
-            this.FrameHeight = frameHeight;
-            this.frameCount = frameCount;
+            this.frameWidth = frameWidth;
+            this.frameHeight = frameHeight;
+            this.frameCount = int.Parse(texture.frame);
             this.oldframeCount = frameCount;
             this.frameTime = frametime;
-            
-            Looping = looping;
-            Position = position;
-            spriteStrip = texture;
+            this.looping = looping;
+            this.position = position;
+            this.texturaCargada = texture;
 
             // Pone el tiempo en 0
-            elapsedTime = 0;
-            currentFrame = 0;
+            this.elapsedTime = 0;
+            this.currentFrame = 0;
 
             // Cancela la pausa
-            pausa = false;
+            this.pausa = false;
 
             // Pone la animacion en activa por defecto
-            Active = true;
+            this.active = true;
         }
 
         public void Update(GameTime gameTime)
         {
             // No actualizar la animacion si no esta activa
-            if (Active == false)
+            if (active == false)
                 return;
 
             // Actualizar el tiempo transcurrido
@@ -118,8 +124,8 @@ namespace Hunting_Lord_Garzul
                     currentFrame = 0;
                     oldframeCount = frameCount;
                     // Si no hay loopeo desactivo la animacion
-                    if (Looping == false)
-                        Active = false;
+                    if (looping == false)
+                        active = false;
                 }
 
                 // Pongo el tiempo transcurrido en 0
@@ -127,40 +133,40 @@ namespace Hunting_Lord_Garzul
             }
 
             // Agarro el cuadro correcto en la linea de strip multiplicando el indice del cuadro actual por el ancho del frame
-            sourceRect = new Rectangle(currentFrame * FrameWidth, 0, FrameWidth, FrameHeight);
+            sourceRect = new Rectangle(currentFrame * frameWidth, 0, frameWidth, frameHeight);
 
             // Escalo con respecto a la altura que deseo comparando el personaje con la pantalla.
             // Este valor esta en variables generales para simplificar su cambio (EscalaHeroes).
-            float AspectRatio = (float)FrameHeight / FrameWidth;
-            int Height = (int)((EscalaHeroes) + 0.5f);
+            float AspectRatio = (float)frameHeight / frameWidth;
+            int Height = (int)((escalaAnimacion) + 0.5f);
             int Width = (int)((Height / AspectRatio) + 0.5f);
 
             // Seteo el rectangulo donde va a ir con las dimensiones ajustadas.
-            destinationRect = new Rectangle((int)Position.X - (int)(Width) / 2,
-            (int)Position.Y - (int)(Height) / 2,
+            destinationRect = new Rectangle((int)position.X - (int)(Width) / 2,
+            (int)position.Y - (int)(Height) / 2,
             (int)(Width),
             (int)(Height));
 
         }
 
-        // Dibuja la animacion del strip
         public void Draw(SpriteBatch spriteBatch, Objetos.Variables_Generales.Mirada direccion)
         {
             // Solo dibujar la animacion si esta activa
-            if (Active)
+            if (active)
             {
                 if (direccion == Objetos.Variables_Generales.Mirada.IZQUIERDA)
                 {
-                    spriteBatch.Draw(spriteStrip, destinationRect, sourceRect, color,
+                    spriteBatch.Draw(texturaCargada.textura, destinationRect, sourceRect, color,
                         0, Vector2.Zero, SpriteEffects.FlipHorizontally, 0);
                 }
                 else
                 {
-                    spriteBatch.Draw(spriteStrip, destinationRect, sourceRect, color);
+                    spriteBatch.Draw(texturaCargada.textura, destinationRect, sourceRect, color);
                 }
                 
             }
         }
 
+        #endregion
     }
 }
