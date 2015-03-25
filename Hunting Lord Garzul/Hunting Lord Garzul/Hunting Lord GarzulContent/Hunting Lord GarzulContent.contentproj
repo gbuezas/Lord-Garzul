@@ -114,6 +114,83 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Avance\stage1_cloud10_normal_1.png">
+      <Name>stage1_cloud10_normal_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Avance\stage1_cloud11_normal_1.png">
+      <Name>stage1_cloud11_normal_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Avance\stage1_cloud1_normal_1.png">
+      <Name>stage1_cloud1_normal_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Avance\stage1_cloud2_normal_1.png">
+      <Name>stage1_cloud2_normal_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Avance\stage1_cloud3_normal_1.png">
+      <Name>stage1_cloud3_normal_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Avance\stage1_cloud4_normal_1.png">
+      <Name>stage1_cloud4_normal_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Avance\stage1_cloud5_normal_1.png">
+      <Name>stage1_cloud5_normal_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Avance\stage1_cloud6_normal_1.png">
+      <Name>stage1_cloud6_normal_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Avance\stage1_cloud7_normal_1.png">
+      <Name>stage1_cloud7_normal_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Avance\stage1_cloud8_normal_1.png">
+      <Name>stage1_cloud8_normal_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Avance\stage1_cloud9_normal_1.png">
+      <Name>stage1_cloud9_normal_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Avance\stage1_mountain1_normal_1.png">
+      <Name>stage1_mountain1_normal_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Avance\stage1_mountain2_normal_1.png">
+      <Name>stage1_mountain2_normal_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Avance\stage1_soil1_normal_1.png">
+      <Name>stage1_soil1_normal_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Avance\stage1_wood1_normal_1.png">
+      <Name>stage1_wood1_normal_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Paladin\set1_breastplate_stand_10.png">
       <Name>set1_breastplate_stand_10</Name>
       <Importer>TextureImporter</Importer>
@@ -171,6 +248,26 @@
     </Compile>
     <Compile Include="Paladin\set1_helm_walk_12.png">
       <Name>set1_helm_walk_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_shield_stand_10.png">
+      <Name>set1_shield_stand_10</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_shield_walk_12.png">
+      <Name>set1_shield_walk_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_sword_stand_10.png">
+      <Name>set1_sword_stand_10</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_sword_walk_12.png">
+      <Name>set1_sword_walk_12</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -244,38 +341,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Paladin\set2_tasset_stand_10.png">
-      <Name>set2_tasset_stand_10</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Paladin\set2_tasset_walk_12.png">
-      <Name>set2_tasset_walk_12</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Paladin\set1_shield_stand_10.png">
-      <Name>set1_shield_stand_10</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Paladin\set1_shield_walk_12.png">
-      <Name>set1_shield_walk_12</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Paladin\set1_sword_stand_10.png">
-      <Name>set1_sword_stand_10</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Paladin\set1_sword_walk_12.png">
-      <Name>set1_sword_walk_12</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Paladin\set2_shield_stand_10.png">
       <Name>set2_shield_stand_10</Name>
       <Importer>TextureImporter</Importer>
@@ -296,80 +361,13 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Avance\stage1_cloud10_normal_1.png">
-      <Name>stage1_cloud10_normal_1</Name>
+    <Compile Include="Paladin\set2_tasset_stand_10.png">
+      <Name>set2_tasset_stand_10</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Avance\stage1_cloud11_normal_1.png">
-      <Name>stage1_cloud11_normal_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Avance\stage1_cloud1_normal_1.png">
-      <Name>stage1_cloud1_normal_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Avance\stage1_cloud2_normal_1.png">
-      <Name>stage1_cloud2_normal_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Avance\stage1_cloud3_normal_1.png">
-      <Name>stage1_cloud3_normal_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Avance\stage1_cloud4_normal_1.png">
-      <Name>stage1_cloud4_normal_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Avance\stage1_cloud5_normal_1.png">
-      <Name>stage1_cloud5_normal_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Avance\stage1_cloud6_normal_1.png">
-      <Name>stage1_cloud6_normal_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Avance\stage1_cloud7_normal_1.png">
-      <Name>stage1_cloud7_normal_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Avance\stage1_cloud8_normal_1.png">
-      <Name>stage1_cloud8_normal_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Avance\stage1_cloud9_normal_1.png">
-      <Name>stage1_cloud9_normal_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Avance\stage1_mountain1_normal_1.png">
-      <Name>stage1_mountain1_normal_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Avance\stage1_mountain2_normal_1.png">
-      <Name>stage1_mountain2_normal_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Avance\stage1_soil1_normal_1.png">
-      <Name>stage1_soil1_normal_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Avance\stage1_wood1_normal_1.png">
-      <Name>stage1_wood1_normal_1</Name>
+    <Compile Include="Paladin\set2_tasset_walk_12.png">
+      <Name>set2_tasset_walk_12</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

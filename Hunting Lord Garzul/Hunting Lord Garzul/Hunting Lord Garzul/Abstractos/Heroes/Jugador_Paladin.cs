@@ -32,15 +32,7 @@ namespace Hunting_Lord_Garzul
         protected Objetos.Variables_Generales.Mirada Direccion;
 
         // Tipo de cada pieza de armadura
-        // 1.shield
-        // 2.gauntletback
-        // 3.greaveback
-        // 4.helm
-        // 5.breastplate
-        // 6.tasset
-        // 7.greavetop
-        // 8.sword
-        // 9.gauntlettop
+        // shield, gauntletback, greaveback, helm, breastplate, tasset, greavetop, sword, gauntlettop.
         protected Pieces_Sets pieces_armor = new Pieces_Sets();
         protected List<Piece_Set> pieces_armor_new = new List<Piece_Set>();
 
@@ -69,8 +61,8 @@ namespace Hunting_Lord_Garzul
         protected bool Active;
         
         // Ancho de un cuadro del sprite
-        //protected int AnchoPersonaje = 320;
-        protected int AnchoPersonaje = 200;
+        protected int AnchoPersonaje = 320;
+        //protected int AnchoPersonaje = 200;
         // Alto de un cuadro del sprite
         //protected int AltoPersonaje = 320;
         protected int AltoPersonaje = 600;
@@ -104,6 +96,8 @@ namespace Hunting_Lord_Garzul
         Vector2 mensaje;
         
         #endregion
+
+        #region METODOS
 
         // Inicializar al jugador
         public override void Initialize(Vector2 posicion)
@@ -147,11 +141,11 @@ namespace Hunting_Lord_Garzul
             pieces_armor_new.Add(recambio);
 
             recambio = new Piece_Set();
-            recambio.Initialize("gauntletback", "set2");
+            recambio.Initialize("gauntletback", "set1");
             pieces_armor_new.Add(recambio);
 
             recambio = new Piece_Set();
-            recambio.Initialize("greaveback", "set2");
+            recambio.Initialize("greaveback", "set1");
             pieces_armor_new.Add(recambio);
 
             recambio = new Piece_Set();
@@ -167,7 +161,7 @@ namespace Hunting_Lord_Garzul
             pieces_armor_new.Add(recambio);
 
             recambio = new Piece_Set();
-            recambio.Initialize("greavetop", "set2");
+            recambio.Initialize("greavetop", "set1");
             pieces_armor_new.Add(recambio);
 
             recambio = new Piece_Set();
@@ -175,7 +169,7 @@ namespace Hunting_Lord_Garzul
             pieces_armor_new.Add(recambio);
 
             recambio = new Piece_Set();
-            recambio.Initialize("gauntlettop", "set2");
+            recambio.Initialize("gauntlettop", "set1");
             pieces_armor_new.Add(recambio);
             
             // Piezas de la armadura al comenzar
@@ -442,5 +436,6 @@ namespace Hunting_Lord_Garzul
             }
         }
 
+        #endregion
     }
 }
