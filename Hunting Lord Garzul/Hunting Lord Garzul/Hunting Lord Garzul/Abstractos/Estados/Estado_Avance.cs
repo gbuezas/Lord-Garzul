@@ -10,6 +10,7 @@ namespace Hunting_Lord_Garzul.Objetos
 {
     class Estado_Avance : Estados
     {
+        #region VARIABLES
 
         #region MAPA Y PARALLAX
 
@@ -33,6 +34,10 @@ namespace Hunting_Lord_Garzul.Objetos
         
         // Creo la variable de la camara en estatica
         static Camera Camara;
+
+        #endregion
+
+        #region METODOS
 
         /// <summary>
         /// Cargo los jugadores segun su clase seleccionada.
@@ -63,19 +68,22 @@ namespace Hunting_Lord_Garzul.Objetos
             // Actualiza jugador
             for (int numero_jugador = 0; numero_jugador < 2; numero_jugador++ )
             {
-                Variables_Generales.players[numero_jugador].UpdatePlayer(gameTime, numero_jugador, Camara.LimitesPantalla, Var_AltoNivel, 
-                                                            Variables_Generales.AnchoViewport / 4 * Mapa_Nubes.Length);
+                Variables_Generales.players[numero_jugador].
+                    UpdatePlayer(gameTime, numero_jugador, Camara.LimitesPantalla, Var_AltoNivel, Variables_Generales.AnchoViewport / 4 * Mapa_Nubes.Length);
             }
 
+            // Ajusto los limites de la camara para que no pueda mostrar mas de este rectangulo
+            Camara.Limits = new Rectangle(0, 0, Variables_Generales.AnchoViewport / 4 * Mapa_Nubes.Length, Var_AltoNivel);
+            
+            // Tomo tiempo transcurrido.
+            //float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            // Para poder controlar al otro personaje por separado
+            // Si lo saco de aca no me toma los cambios del control
             Variables_Generales.players[1].controles[(int)Variables_Generales.Controles.ARRIBA] = Keys.Up;
             Variables_Generales.players[1].controles[(int)Variables_Generales.Controles.ABAJO] = Keys.Down;
             Variables_Generales.players[1].controles[(int)Variables_Generales.Controles.IZQUIERDA] = Keys.Left;
             Variables_Generales.players[1].controles[(int)Variables_Generales.Controles.DERECHA] = Keys.Right;
-            
-            // Ajusto los limites de la camara para que no pueda mostrar mas de este rectangulo
-            Camara.Limits = new Rectangle(0, 0, Variables_Generales.AnchoViewport / 4 * Mapa_Nubes.Length, Var_AltoNivel);
-            
-            float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // Hacer un foreach para todos, despues solo los buenos,
             // los malos no, asi pueden salir y no me desconcha toda la camara y el zoom
@@ -86,10 +94,6 @@ namespace Hunting_Lord_Garzul.Objetos
 
             Variables_Generales.mensaje1 = Variables_Generales.AltoViewport;
             Variables_Generales.mensaje2 = Variables_Generales.AnchoViewport;
-            //Variables_Generales.mensaje6 = Variables_Generales.players[1] + " / " + Variables_Generales.players[1];
-            
-            //UpdateState(gameTime);
-
         }
 
         /// <summary>
@@ -169,5 +173,7 @@ namespace Hunting_Lord_Garzul.Objetos
         {
 
         }
+
+        #endregion
     }
 }

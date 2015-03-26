@@ -103,25 +103,14 @@ namespace Hunting_Lord_Garzul
         public override void Initialize(Vector2 posicion)
         {
             
-            // Posicion al comenzar
+            // Establezco variables por default para comenzar
             Position = posicion;
-
             mensaje = Position;
-            
-            // Activar jugador
             Active = true;
-            
-            // Establecer velocidad
             VelocidadPersonaje = 3.0f;
-            
-            // Establece la mirada
             Direccion = Objetos.Variables_Generales.Mirada.DERECHA;
-            
-            // Establece el estado
             accionActual = Variables_Generales.Acciones.STAND;
             accionAnterior = accionActual;
-
-            // Tiempo default del frame
             Tiempo_Frame = 50;
 
             // Inicializo partes de armadura actual
@@ -134,44 +123,46 @@ namespace Hunting_Lord_Garzul
                 pieces_anim[i].Initialize(Variables_Generales.Piezas[i]);
             }
 
+            #region cambiar armadura (solo para probar, borrar mas tarde)
             // Coloco un recambio de armadura, que en el juego orginal esto tiene que pasar al obtener armaduras nuevas
             // por lo tanto se haria chequeando el inventario.
-            Piece_Set recambio = new Piece_Set();
-            recambio.Initialize("shield", "set1");
-            pieces_armor_new.Add(recambio);
+            //Piece_Set recambio = new Piece_Set();
+            //recambio.Initialize("shield", "set1");
+            //pieces_armor_new.Add(recambio);
 
-            recambio = new Piece_Set();
-            recambio.Initialize("gauntletback", "set1");
-            pieces_armor_new.Add(recambio);
+            //recambio = new Piece_Set();
+            //recambio.Initialize("gauntletback", "set1");
+            //pieces_armor_new.Add(recambio);
 
-            recambio = new Piece_Set();
-            recambio.Initialize("greaveback", "set1");
-            pieces_armor_new.Add(recambio);
+            //recambio = new Piece_Set();
+            //recambio.Initialize("greaveback", "set1");
+            //pieces_armor_new.Add(recambio);
 
-            recambio = new Piece_Set();
-            recambio.Initialize("helm", "set1");
-            pieces_armor_new.Add(recambio);
+            //recambio = new Piece_Set();
+            //recambio.Initialize("helm", "set1");
+            //pieces_armor_new.Add(recambio);
 
-            recambio = new Piece_Set();
-            recambio.Initialize("breastplate", "set1");
-            pieces_armor_new.Add(recambio);
+            //recambio = new Piece_Set();
+            //recambio.Initialize("breastplate", "set1");
+            //pieces_armor_new.Add(recambio);
 
-            recambio = new Piece_Set();
-            recambio.Initialize("tasset", "set1");
-            pieces_armor_new.Add(recambio);
+            //recambio = new Piece_Set();
+            //recambio.Initialize("tasset", "set1");
+            //pieces_armor_new.Add(recambio);
 
-            recambio = new Piece_Set();
-            recambio.Initialize("greavetop", "set1");
-            pieces_armor_new.Add(recambio);
+            //recambio = new Piece_Set();
+            //recambio.Initialize("greavetop", "set1");
+            //pieces_armor_new.Add(recambio);
 
-            recambio = new Piece_Set();
-            recambio.Initialize("sword", "set1");
-            pieces_armor_new.Add(recambio);
+            //recambio = new Piece_Set();
+            //recambio.Initialize("sword", "set1");
+            //pieces_armor_new.Add(recambio);
 
-            recambio = new Piece_Set();
-            recambio.Initialize("gauntlettop", "set1");
-            pieces_armor_new.Add(recambio);
-            
+            //recambio = new Piece_Set();
+            //recambio.Initialize("gauntlettop", "set1");
+            //pieces_armor_new.Add(recambio);
+            #endregion
+
             // Piezas de la armadura al comenzar
             UpdateArmor(pieces_armor_new);
 
@@ -191,6 +182,9 @@ namespace Hunting_Lord_Garzul
             {
                 piezaAnimada.position = Position;
                 piezaAnimada.Update(gameTime);
+                
+                // Para los stats de cada personaje (borrar mas tarde)
+                mensaje = Position;
             }
         }
 
@@ -203,13 +197,12 @@ namespace Hunting_Lord_Garzul
             }
             
             // Si no separo este proceso de dibujo desconcha las posiciones de las capas del jugador
-            //spriteBatch.DrawString(Variables_Generales.CheckStatusVar_2,
-            //"Frame Actual = " + mensaje1.ToString() + System.Environment.NewLine +
-            //"Fila Actual = " + mensaje2.ToString() + System.Environment.NewLine +
-            //"Direccion Actual = " + mensaje3.ToString() + System.Environment.NewLine +
-            //"Accion Actual = " + mensaje4.ToString() + System.Environment.NewLine +
-            //"Zoom = " + Variables_Generales.mensaje5.ToString(),
-            //mensaje, Color.DarkRed);
+            spriteBatch.DrawString(Variables_Generales.CheckStatusVar_2,
+            "Frame Actual = " + mensaje1.ToString() + System.Environment.NewLine +
+            "Frame Total = " + mensaje2.ToString() + System.Environment.NewLine +
+            "Direccion Actual = " + mensaje3.ToString() + System.Environment.NewLine +
+            "Accion Actual = " + mensaje4.ToString() + System.Environment.NewLine,
+            mensaje, Color.DarkRed);
 
         }
 
@@ -249,7 +242,6 @@ namespace Hunting_Lord_Garzul
             #endregion
 
             #region Obtener boton X
-
             //if (Variables_Generales.currentGamePadState[Jugador].Buttons.X == ButtonState.Pressed 
             //    && Variables_Generales.previousGamePadState[Jugador].Buttons.X == ButtonState.Released)
             //{
@@ -267,12 +259,6 @@ namespace Hunting_Lord_Garzul
             //    Player_Halt = false;
             //    //PausarAnimacion(false);
             //}
-
-            mensaje1 = pieces_anim[0].CurrentFrame;
-            mensaje2 = pieces_anim[0].FrameCount;
-            mensaje3 = Direccion;
-            mensaje4 = accionActual;
-
             #endregion
 
             # region movimiento joystick
@@ -366,7 +352,8 @@ namespace Hunting_Lord_Garzul
                         textura.set == pieces_armor.Get_Set(textura.piece) &&
                         textura.action == accionActual.ToString().ToLower())
                     {
-                        piezaAnimacion.texturaCargada = textura;
+                        //piezaAnimacion.texturaCargada = textura;
+                        piezaAnimacion.CargarTextura(textura);
                     }
                 }
             }
@@ -383,6 +370,12 @@ namespace Hunting_Lord_Garzul
             }
 
             #endregion
+
+            // Status del personaje
+            mensaje1 = pieces_anim[0].CurrentFrame;
+            mensaje2 = pieces_anim[0].FrameCount;
+            mensaje3 = Direccion;
+            mensaje4 = accionActual;
         }
 
         /// <summary>

@@ -78,6 +78,26 @@ namespace Hunting_Lord_Garzul
             nombrePieza = nombre;
         }
 
+        /// <summary>
+        /// Carga de textura al cambiar de animacion, es la que se usa durante el juego repetidas veces.
+        /// </summary>
+        /// <param name="texture"></param>
+        public void CargarTextura(Texturas texture)
+        {
+            this.texturaCargada = texture;
+            this.frameCount = int.Parse(texture.frame);
+        }
+
+        /// <summary>
+        /// Cargo la textura por primera vez, o cuando cambio el set de alguna pieza.
+        /// </summary>
+        /// <param name="texture"></param>
+        /// <param name="position"></param>
+        /// <param name="frameWidth"></param>
+        /// <param name="frameHeight"></param>
+        /// <param name="frametime"></param>
+        /// <param name="color"></param>
+        /// <param name="looping"></param>
         public void CargarTextura(Texturas texture, Vector2 position,int frameWidth, int frameHeight,int frametime, Color color, bool looping)
         {
             // Mantiene una copia local de los valores obtenidos
