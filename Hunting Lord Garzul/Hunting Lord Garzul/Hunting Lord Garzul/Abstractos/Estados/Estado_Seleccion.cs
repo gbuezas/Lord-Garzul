@@ -14,8 +14,8 @@ namespace Hunting_Lord_Garzul.Objetos
         Rectangle sourceRect;
         Rectangle[] Fichas = new Rectangle[4];
 
-        int Var_AltoNivel = Variables_Generales.AltoViewport;
-        int Var_AnchoNivel = Variables_Generales.AnchoViewport;
+        int Var_AltoNivel = Globales.AltoViewport;
+        int Var_AnchoNivel = Globales.AnchoViewport;
         
         public override void Initialize()
         {
@@ -30,8 +30,8 @@ namespace Hunting_Lord_Garzul.Objetos
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
         {
             // Agarro el cuadro correcto
-            sourceRect = new Rectangle(0, 0, Variables_Generales.AnchoViewport, 
-                Variables_Generales.AltoViewport);
+            sourceRect = new Rectangle(0, 0, Globales.AnchoViewport, 
+                Globales.AltoViewport);
 
             Fichas[0] = new Rectangle(0, 0, 200, 150);
             Fichas[1] = new Rectangle(200, 0, 200, 150);
@@ -48,7 +48,7 @@ namespace Hunting_Lord_Garzul.Objetos
         public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
-            spriteBatch.Draw(Variables_Generales.Pantalla_Seleccion, sourceRect, Color.White);
+            spriteBatch.Draw(Globales.Pantalla_Seleccion, sourceRect, Color.White);
             //spriteBatch.Draw(Variables_Generales.Selector, new Vector2(0,0), Fichas[0], Color.White);
             //spriteBatch.Draw(Variables_Generales.Selector, new Vector2(200,0), Fichas[1], Color.White);
             //spriteBatch.Draw(Variables_Generales.Selector, new Vector2(400,0), Fichas[2], Color.White);
@@ -65,7 +65,7 @@ namespace Hunting_Lord_Garzul.Objetos
 
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
-                Variables_Generales.Estado_Actual.Estado_ejecutandose = Variables_Generales.EstadosJuego.AVANCE;
+                Globales.Estado_Actual.Estado_ejecutandose = Globales.EstadosJuego.AVANCE;
             }
         }
     }

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Hunting_Lord_Garzul.Objetos
 {
-    public class Variables_Generales
+    public class Globales
     {
         // Fuente de los mensajes de chequeo
         public static SpriteFont CheckStatusVar;
@@ -37,8 +37,8 @@ namespace Hunting_Lord_Garzul.Objetos
         public enum Mirada { DERECHA, IZQUIERDA };
         
         // Las distintas acciones que puede hacer con sus respectivos frames y los controles
-        public enum Acciones { WALK, STAND, HIT_1, HIT_2, HIT_3, DEAD }
-        public enum Controles { ARRIBA = 0, ABAJO, IZQUIERDA, DERECHA, BOTON_1, BOTON_2 }
+        public enum Actions { WALK, STAND, HIT1, HIT2, HIT3, DEAD }
+        public enum Controls { ARRIBA, ABAJO, IZQUIERDA, DERECHA, BOTON_1, BOTON_2 }
         
         // Los distintos estados del juego
         public enum EstadosJuego { INTRO, TITULO, SELECCION, MAPA, VS, AVANCE, PAUSA, GAMEOVER, FINAL }

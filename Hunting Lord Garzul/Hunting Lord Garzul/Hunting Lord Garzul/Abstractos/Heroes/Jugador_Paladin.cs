@@ -13,23 +13,23 @@ namespace Hunting_Lord_Garzul
         # region VARIABLES
 
         // Accion que se realiza
-        private Variables_Generales.Acciones AccionActual;
-        public Variables_Generales.Acciones accionActual
+        private Globales.Actions AccionActual;
+        public Globales.Actions accionActual
         {
             get { return AccionActual; }
             set { AccionActual = value; }
         }
        
         // Accion realizada anteriormente
-        private Variables_Generales.Acciones AccionAnterior;
-        public Variables_Generales.Acciones accionAnterior
+        private Globales.Actions AccionAnterior;
+        public Globales.Actions accionAnterior
         {
             get { return AccionAnterior; }
             set { AccionAnterior = value; }
         }
         
         // Mirada del personaje
-        protected Objetos.Variables_Generales.Mirada Direccion;
+        protected Objetos.Globales.Mirada Direccion;
 
         // Tipo de cada pieza de armadura
         // shield, gauntletback, greaveback, helm, breastplate, tasset, greavetop, sword, gauntlettop.
@@ -70,11 +70,6 @@ namespace Hunting_Lord_Garzul
         // Velocidad de movimiento del jugador
         protected float VelocidadPersonaje;
         
-        // Controladores de tiempo de botones y acciones
-        //protected TimeSpan A_Button_Halt;
-        //protected TimeSpan X_Button_Halt;
-        //protected TimeSpan Tiempo_Golpe_1;
-
         // Establece tiempo de frame inicial cuando llama al UpdateArmor
         // El UpdateArmor no ocurre en el loop se pide explicitamente
         protected int Tiempo_Frame;
@@ -89,8 +84,8 @@ namespace Hunting_Lord_Garzul
         // Mensajes de datos
         protected float mensaje1;
         protected float mensaje2;
-        protected Variables_Generales.Mirada mensaje3;
-        protected Variables_Generales.Acciones mensaje4;
+        protected Globales.Mirada mensaje3;
+        protected Globales.Actions mensaje4;
         
         // Donde se va a alojar el mensaje de chequeo de status
         Vector2 mensaje;
@@ -108,8 +103,8 @@ namespace Hunting_Lord_Garzul
             mensaje = Position;
             Active = true;
             VelocidadPersonaje = 3.0f;
-            Direccion = Objetos.Variables_Generales.Mirada.DERECHA;
-            accionActual = Variables_Generales.Acciones.STAND;
+            Direccion = Objetos.Globales.Mirada.DERECHA;
+            accionActual = Globales.Actions.STAND;
             accionAnterior = accionActual;
             Tiempo_Frame = 50;
 
@@ -117,10 +112,10 @@ namespace Hunting_Lord_Garzul
             pieces_armor.Initialize();
             
             // Inicializo las piezas de animacion
-            for (int i = 0; i < Variables_Generales.Piezas.Length; i++ )
+            for (int i = 0; i < Globales.Piezas.Length; i++ )
             {
                 pieces_anim[i] = new Animacion();
-                pieces_anim[i].Initialize(Variables_Generales.Piezas[i]);
+                pieces_anim[i].Initialize(Globales.Piezas[i]);
             }
 
             #region cambiar armadura (solo para probar, borrar mas tarde)
@@ -167,12 +162,12 @@ namespace Hunting_Lord_Garzul
             UpdateArmor(pieces_armor_new);
 
             // Asigno control por default al jugador
-            controles[(int)Variables_Generales.Controles.ARRIBA] = Keys.W;
-            controles[(int)Variables_Generales.Controles.ABAJO] = Keys.S;
-            controles[(int)Variables_Generales.Controles.IZQUIERDA] = Keys.A;
-            controles[(int)Variables_Generales.Controles.DERECHA] = Keys.D;
-            controles[(int)Variables_Generales.Controles.BOTON_1] = Keys.T;
-            controles[(int)Variables_Generales.Controles.BOTON_2] = Keys.Y;      
+            controles[(int)Globales.Controls.ARRIBA] = Keys.W;
+            controles[(int)Globales.Controls.ABAJO] = Keys.S;
+            controles[(int)Globales.Controls.IZQUIERDA] = Keys.A;
+            controles[(int)Globales.Controls.DERECHA] = Keys.D;
+            controles[(int)Globales.Controls.BOTON_1] = Keys.T;
+            controles[(int)Globales.Controls.BOTON_2] = Keys.Y;      
         }
 
         // Actualizar animacion
@@ -197,7 +192,7 @@ namespace Hunting_Lord_Garzul
             }
             
             // Si no separo este proceso de dibujo desconcha las posiciones de las capas del jugador
-            spriteBatch.DrawString(Variables_Generales.CheckStatusVar_2,
+            spriteBatch.DrawString(Globales.CheckStatusVar_2,
             "Frame Actual = " + mensaje1.ToString() + System.Environment.NewLine +
             "Frame Total = " + mensaje2.ToString() + System.Environment.NewLine +
             "Direccion Actual = " + mensaje3.ToString() + System.Environment.NewLine +
@@ -297,43 +292,12 @@ namespace Hunting_Lord_Garzul
             //}
             #endregion
 
-            // Logica del movimiento, muy importante
-            #region Obtener teclado
+            // Obtengo teclas presionadas
+            Globales.currentKeyboardState = Keyboard.GetState();
 
-            Variables_Generales.currentKeyboardState = Keyboard.GetState();
-
-            // Si no se toca nada quedara por default que esta parado
-            accionActual = Variables_Generales.Acciones.STAND;
-
-            // Si se toca alguna flecha de movimiento se aplicaran a la velocidad del personaje
-            #region MOVIMIENTO
-            if (Variables_Generales.currentKeyboardState.IsKeyDown(controles[(int)Variables_Generales.Controles.IZQUIERDA]))
-            {
-                Position.X -= VelocidadPersonaje;
-                Direccion = Variables_Generales.Mirada.IZQUIERDA;
-                accionActual = Variables_Generales.Acciones.WALK;
-            }
-            else if (Variables_Generales.currentKeyboardState.IsKeyDown(controles[(int)Variables_Generales.Controles.DERECHA]))
-            {
-                Position.X += VelocidadPersonaje;
-                Direccion = Variables_Generales.Mirada.DERECHA;
-                accionActual = Variables_Generales.Acciones.WALK;
-            }
-
-            if (Variables_Generales.currentKeyboardState.IsKeyDown(controles[(int)Variables_Generales.Controles.ARRIBA]))
-            {
-                Position.Y -= VelocidadPersonaje;
-                accionActual = Variables_Generales.Acciones.WALK;
-            }
-            else if (Variables_Generales.currentKeyboardState.IsKeyDown(controles[(int)Variables_Generales.Controles.ABAJO]))
-            {
-                Position.Y += VelocidadPersonaje;
-                accionActual = Variables_Generales.Acciones.WALK;
-            }
-            #endregion
-
-            #endregion
-
+            // Logica de las acciones
+            ActionLogic();
+                        
             // Hacer que el jugador no salga de la pantalla. 
             // Tomamos el rectangulo que genera la camara para acomodar al jugador.
             Position.X = MathHelper.Clamp(Position.X, LimitesPantalla.Left + AnchoPersonaje / 2, LimitesPantalla.Width - AnchoPersonaje / 2);
@@ -346,13 +310,14 @@ namespace Hunting_Lord_Garzul
 
             foreach (Animacion piezaAnimacion in pieces_anim)
             {
-                foreach (Texturas textura in Variables_Generales.TexturasPaladin)
+                foreach (Texturas textura in Globales.TexturasPaladin)
                 {
+                    string aver = pieces_armor.Get_Set(textura.piece);
+                    
                     if (textura.piece == piezaAnimacion.nombrePieza &&
                         textura.set == pieces_armor.Get_Set(textura.piece) &&
                         textura.action == accionActual.ToString().ToLower())
                     {
-                        //piezaAnimacion.texturaCargada = textura;
                         piezaAnimacion.CargarTextura(textura);
                     }
                 }
@@ -378,6 +343,64 @@ namespace Hunting_Lord_Garzul
             mensaje4 = accionActual;
         }
 
+        private void ActionLogic()
+        {
+            if (accionActual != Globales.Actions.HIT1 &&
+                accionActual != Globales.Actions.HIT2 &&
+                accionActual != Globales.Actions.HIT3)
+            {
+                
+                #region MOVIMIENTO
+
+                // Si no se toca nada quedara por default que esta parado
+                accionActual = Globales.Actions.STAND;
+
+                // Si se presiona alguna tecla de movimiento
+                if (Globales.currentKeyboardState.IsKeyDown(controles[(int)Globales.Controls.IZQUIERDA]))
+                {
+                    Position.X -= VelocidadPersonaje;
+                    Direccion = Globales.Mirada.IZQUIERDA;
+                    accionActual = Globales.Actions.WALK;
+                }
+                else if (Globales.currentKeyboardState.IsKeyDown(controles[(int)Globales.Controls.DERECHA]))
+                {
+                    Position.X += VelocidadPersonaje;
+                    Direccion = Globales.Mirada.DERECHA;
+                    accionActual = Globales.Actions.WALK;
+                }
+
+                if (Globales.currentKeyboardState.IsKeyDown(controles[(int)Globales.Controls.ARRIBA]))
+                {
+                    Position.Y -= VelocidadPersonaje;
+                    accionActual = Globales.Actions.WALK;
+                }
+                else if (Globales.currentKeyboardState.IsKeyDown(controles[(int)Globales.Controls.ABAJO]))
+                {
+                    Position.Y += VelocidadPersonaje;
+                    accionActual = Globales.Actions.WALK;
+                }
+
+                #endregion
+
+                // Si presiono golpear cancela todas las demas acciones hasta que esta termine su ciclo
+                // Tambien genera un rango de los 3 diferentes tipos de golpes (algo netamente visual sin impacto en el juego)
+                if (Globales.currentKeyboardState.IsKeyDown(controles[(int)Globales.Controls.BOTON_1]))
+                {
+                    Random azar = new Random();
+                    //accionActual = (Globales.Actions)azar.Next((int)Globales.Actions.HIT1, (int)Globales.Actions.HIT3);
+                    accionActual = (Globales.Actions)azar.Next(2, 5);
+                }
+            }
+            else
+            {
+                // Si esta pegando tiene que terminar su animacion y despues desbloquear otra vez la gama de movimientos
+                if (this.pieces_anim[0].CurrentFrame == this.pieces_anim[0].FrameCount - 1)
+                {
+                    accionActual = Globales.Actions.STAND;
+                }
+            }
+        }
+
         /// <summary>
         /// Cargo los set de armadura que corresponden a cada pieza del cuerpo.
         /// </summary>
@@ -392,7 +415,7 @@ namespace Hunting_Lord_Garzul
 
             foreach(Animacion piezaAnimacion in pieces_anim)
             {
-                foreach (Texturas textura in Variables_Generales.TexturasPaladin)
+                foreach (Texturas textura in Globales.TexturasPaladin)
                 {
                     if (textura.piece == piezaAnimacion.nombrePieza && 
                         textura.set == pieces_armor.Get_Set(textura.piece) && 
@@ -430,5 +453,6 @@ namespace Hunting_Lord_Garzul
         }
 
         #endregion
+
     }
 }

@@ -372,6 +372,145 @@
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Paladin\set1_breastplate_hit2_12.png">
+      <Name>set1_breastplate_hit2_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_breastplate_hit3_12.png">
+      <Name>set1_breastplate_hit3_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_gauntletback_hit2_12.png">
+      <Name>set1_gauntletback_hit2_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_gauntletback_hit3_12.png">
+      <Name>set1_gauntletback_hit3_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_gauntlettop_hit2_12.png">
+      <Name>set1_gauntlettop_hit2_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_gauntlettop_hit3_12.png">
+      <Name>set1_gauntlettop_hit3_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_greaveback_hit2_12.png">
+      <Name>set1_greaveback_hit2_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_greaveback_hit3_12.png">
+      <Name>set1_greaveback_hit3_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_greavetop_hit2_12.png">
+      <Name>set1_greavetop_hit2_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_greavetop_hit3_12.png">
+      <Name>set1_greavetop_hit3_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_helm_hit2_12.png">
+      <Name>set1_helm_hit2_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_helm_hit3_12.png">
+      <Name>set1_helm_hit3_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_shield_hit2_12.png">
+      <Name>set1_shield_hit2_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_shield_hit3_12.png">
+      <Name>set1_shield_hit3_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_sword_hit2_12.png">
+      <Name>set1_sword_hit2_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_sword_hit3_12.png">
+      <Name>set1_sword_hit3_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_tasset_hit2_12.png">
+      <Name>set1_tasset_hit2_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_tasset_hit3_12.png">
+      <Name>set1_tasset_hit3_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Paladin\set1_breastplate_hit1_12.png">
+      <Name>set1_breastplate_hit1_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_gauntletback_hit1_12.png">
+      <Name>set1_gauntletback_hit1_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_gauntlettop_hit1_12.png">
+      <Name>set1_gauntlettop_hit1_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_greaveback_hit1_12.png">
+      <Name>set1_greaveback_hit1_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_greavetop_hit1_12.png">
+      <Name>set1_greavetop_hit1_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_helm_hit1_12.png">
+      <Name>set1_helm_hit1_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_shield_hit1_12.png">
+      <Name>set1_shield_hit1_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_sword_hit1_12.png">
+      <Name>set1_sword_hit1_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Paladin\set1_tasset_hit1_12.png">
+      <Name>set1_tasset_hit1_12</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

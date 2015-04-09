@@ -127,7 +127,7 @@ namespace Hunting_Lord_Garzul.Objetos
                 float minZoomX = (float)_viewport.Width / _limits.Value.Width;
                 float minZoomY = (float)_viewport.Height / _limits.Value.Height;
                 _zoom = MathHelper.Clamp(_zoom, MathHelper.Max(minZoomX, minZoomY), 1.3f);
-                Variables_Generales.mensaje5 = _zoom;
+                Globales.mensaje5 = _zoom;
             }
         }
 

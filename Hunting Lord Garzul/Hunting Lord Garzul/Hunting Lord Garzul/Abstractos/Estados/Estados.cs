@@ -9,8 +9,8 @@ namespace Hunting_Lord_Garzul.Objetos
 {
     public abstract class Estados
     {
-        private Variables_Generales.EstadosJuego Estado_Ejecutandose;
-        public Variables_Generales.EstadosJuego Estado_ejecutandose
+        private Globales.EstadosJuego Estado_Ejecutandose;
+        public Globales.EstadosJuego Estado_ejecutandose
         {
             get { return Estado_Ejecutandose; }
             set { Estado_Ejecutandose = value; }
@@ -37,7 +37,7 @@ namespace Hunting_Lord_Garzul.Objetos
             // Genero una lista para todas las coordenadas de los personajes y las agrego
             List<float> Lista_Coordenadas = new List<float>();
 
-            foreach (Jugadores Jugador in Variables_Generales.players)
+            foreach (Jugadores Jugador in Globales.players)
             {
                 Lista_Coordenadas.Add(Jugador.Posicion().Y);
                 
@@ -53,7 +53,7 @@ namespace Hunting_Lord_Garzul.Objetos
             // despues con el segundo y asi sucesivamente
             foreach (float Coordenada in Lista_Coordenadas)
             {
-                foreach (Jugadores Jugador in Variables_Generales.players)
+                foreach (Jugadores Jugador in Globales.players)
                 {
                     if (Jugador.dibujado == false && Jugador.Posicion().Y == Coordenada)
                     {
@@ -70,7 +70,7 @@ namespace Hunting_Lord_Garzul.Objetos
         public void Input_Management()
         {
             // Guarda los estados anteriores del joystick y del teclado
-            Variables_Generales.previousKeyboardState = Variables_Generales.currentKeyboardState;
+            Globales.previousKeyboardState = Globales.currentKeyboardState;
             
             //for (int i = 0; i < 4;i++ )
             //{

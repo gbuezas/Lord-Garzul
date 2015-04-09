@@ -67,7 +67,7 @@ namespace Hunting_Lord_Garzul
         public Vector2 position;
 
         // Escala de Heroes con respecto al alto de la pantalla
-        public float escalaAnimacion = Variables_Generales.AltoViewport/4;
+        public float escalaAnimacion = Globales.AltoViewport/4;
         
         #endregion
 
@@ -169,12 +169,12 @@ namespace Hunting_Lord_Garzul
 
         }
 
-        public void Draw(SpriteBatch spriteBatch, Objetos.Variables_Generales.Mirada direccion)
+        public void Draw(SpriteBatch spriteBatch, Objetos.Globales.Mirada direccion)
         {
             // Solo dibujar la animacion si esta activa
             if (active)
             {
-                if (direccion == Objetos.Variables_Generales.Mirada.IZQUIERDA)
+                if (direccion == Objetos.Globales.Mirada.IZQUIERDA)
                 {
                     spriteBatch.Draw(texturaCargada.textura, destinationRect, sourceRect, color,
                         0, Vector2.Zero, SpriteEffects.FlipHorizontally, 0);

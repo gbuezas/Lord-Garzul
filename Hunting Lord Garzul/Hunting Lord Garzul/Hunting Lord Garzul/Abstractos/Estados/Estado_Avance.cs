@@ -30,7 +30,7 @@ namespace Hunting_Lord_Garzul.Objetos
         Rectangle[] sourceRect = new Rectangle[Mapa_Nubes.Length];
 
         // Alto del nivel
-        int Var_AltoNivel = Variables_Generales.AltoViewport;
+        int Var_AltoNivel = Globales.AltoViewport;
         
         // Creo la variable de la camara en estatica
         static Camera Camara;
@@ -46,9 +46,9 @@ namespace Hunting_Lord_Garzul.Objetos
         public override void Initialize()
         {
             // Agrego las diferentes capas de parallax
-            Variables_Generales.Capas.Add(Nubes);
-            Variables_Generales.Capas.Add(Arboles);
-            Variables_Generales.Capas.Add(Piso);
+            Globales.Capas.Add(Nubes);
+            Globales.Capas.Add(Arboles);
+            Globales.Capas.Add(Piso);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Hunting_Lord_Garzul.Objetos
         public override void Load(Viewport _viewport)
         {
             // Seteo el viewport correspondiente a la camara
-            Camara = new Camera(_viewport, Var_AltoNivel, Variables_Generales.AnchoViewport / 4 * Mapa_Nubes.Length);
+            Camara = new Camera(_viewport, Var_AltoNivel, Globales.AnchoViewport / 4 * Mapa_Nubes.Length);
         }
 
         public override void Update(GameTime gameTime)
@@ -68,32 +68,32 @@ namespace Hunting_Lord_Garzul.Objetos
             // Actualiza jugador
             for (int numero_jugador = 0; numero_jugador < 2; numero_jugador++ )
             {
-                Variables_Generales.players[numero_jugador].
-                    UpdatePlayer(gameTime, numero_jugador, Camara.LimitesPantalla, Var_AltoNivel, Variables_Generales.AnchoViewport / 4 * Mapa_Nubes.Length);
+                Globales.players[numero_jugador].
+                    UpdatePlayer(gameTime, numero_jugador, Camara.LimitesPantalla, Var_AltoNivel, Globales.AnchoViewport / 4 * Mapa_Nubes.Length);
             }
 
             // Ajusto los limites de la camara para que no pueda mostrar mas de este rectangulo
-            Camara.Limits = new Rectangle(0, 0, Variables_Generales.AnchoViewport / 4 * Mapa_Nubes.Length, Var_AltoNivel);
+            Camara.Limits = new Rectangle(0, 0, Globales.AnchoViewport / 4 * Mapa_Nubes.Length, Var_AltoNivel);
             
             // Tomo tiempo transcurrido.
             //float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // Para poder controlar al otro personaje por separado
             // Si lo saco de aca no me toma los cambios del control
-            Variables_Generales.players[1].controles[(int)Variables_Generales.Controles.ARRIBA] = Keys.Up;
-            Variables_Generales.players[1].controles[(int)Variables_Generales.Controles.ABAJO] = Keys.Down;
-            Variables_Generales.players[1].controles[(int)Variables_Generales.Controles.IZQUIERDA] = Keys.Left;
-            Variables_Generales.players[1].controles[(int)Variables_Generales.Controles.DERECHA] = Keys.Right;
+            Globales.players[1].controles[(int)Globales.Controls.ARRIBA] = Keys.Up;
+            Globales.players[1].controles[(int)Globales.Controls.ABAJO] = Keys.Down;
+            Globales.players[1].controles[(int)Globales.Controls.IZQUIERDA] = Keys.Left;
+            Globales.players[1].controles[(int)Globales.Controls.DERECHA] = Keys.Right;
 
             // Hacer un foreach para todos, despues solo los buenos,
             // los malos no, asi pueden salir y no me desconcha toda la camara y el zoom
             Camara.ViewTargets.Clear();
-            Camara.ViewTargets.Add(Variables_Generales.players[0].Posicion());
-            Camara.ViewTargets.Add(Variables_Generales.players[1].Posicion());
+            Camara.ViewTargets.Add(Globales.players[0].Posicion());
+            Camara.ViewTargets.Add(Globales.players[1].Posicion());
             Camara.CentrarCamara();
 
-            Variables_Generales.mensaje1 = Variables_Generales.AltoViewport;
-            Variables_Generales.mensaje2 = Variables_Generales.AnchoViewport;
+            Globales.mensaje1 = Globales.AltoViewport;
+            Globales.mensaje2 = Globales.AnchoViewport;
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Hunting_Lord_Garzul.Objetos
             // La posicion donde va el siguiente rectangulo
             int posicion;
             
-            foreach (Parallax capa in Variables_Generales.Capas)
+            foreach (Parallax capa in Globales.Capas)
             {
                 
                 Camara.parallax = new Vector2(capa.parallax_x, capa.parallax_y);
@@ -122,21 +122,21 @@ namespace Hunting_Lord_Garzul.Objetos
 
                 foreach (string seccion in capa.capa_parallax)
                 {
-                    foreach (Texturas avance in Variables_Generales.TexturasAvance)
+                    foreach (Texturas avance in Globales.TexturasAvance)
                     {
                         if (seccion == avance.piece)
                         {
                             sourceRect[rectangulo] = new Rectangle(posicion, 0,
-                                Variables_Generales.AnchoViewport / 4,
-                                Variables_Generales.AltoViewport);
+                                Globales.AnchoViewport / 4,
+                                Globales.AltoViewport);
 
                             // Recalculo el rectangulo para que se adapte a la velocidad correspondiente de la capa
                             capa.RectanguloParallax = sourceRect[rectangulo];
                             capa.RectanguloParallax.X += (int)(Camara.LimitesPantalla.X * capa.parallax_x + 0.5f);
 
                             // Mensajes de chequeo
-                            Variables_Generales.mensaje3 = Camara.LimitesPantalla.X;
-                            Variables_Generales.mensaje4 = Camara.LimitesPantalla.Width;
+                            Globales.mensaje3 = Camara.LimitesPantalla.X;
+                            Globales.mensaje4 = Camara.LimitesPantalla.Width;
 
                             // Si no esta dentro de la camara no lo dibujo
                             if (Camara.EnCamara(capa.RectanguloParallax))
@@ -144,7 +144,7 @@ namespace Hunting_Lord_Garzul.Objetos
                                 spriteBatch.Draw(avance.textura, sourceRect[rectangulo], Color.White);
                             }
 
-                            posicion += Variables_Generales.AnchoViewport / 4;
+                            posicion += Globales.AnchoViewport / 4;
                         }
 
                     }

@@ -33,7 +33,7 @@ namespace Hunting_Lord_Garzul
         public abstract Vector2 Posicion();
 
         // Controles del jugador
-        Keys[] Controles = new Keys[Enum.GetNames(typeof(Variables_Generales.Controles)).Length];
+        Keys[] Controles = new Keys[Enum.GetNames(typeof(Globales.Controls)).Length];
         public Keys[] controles
         {
             get { return Controles; }
