@@ -186,6 +186,9 @@ namespace Hunting_Lord_Garzul
             
             #endregion
 
+            // Cargo punto blanco
+            Globales.Punto_Blanco = Content.Load<Texture2D>("Seleccion/puntoblanco");
+
             // Cargo titulos y pantallas de presentacion
             Globales.Pantalla_Titulo = Content.Load<Texture2D>("Titulo/TitleScreen");
             

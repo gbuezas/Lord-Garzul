@@ -43,7 +43,7 @@ namespace Hunting_Lord_Garzul
         }
         
         // El color del cuadro que estamos mostrando
-        Color color;
+        public Color color;
         
         // El area de la linea de sprite que queremos mostrar
         Rectangle sourceRect = new Rectangle();
@@ -122,6 +122,20 @@ namespace Hunting_Lord_Garzul
             this.active = true;
         }
 
+        /// <summary>
+        /// Rectangulo donde se encuentra esta pieza de animacion en la pantalla
+        /// </summary>
+        /// <returns></returns>
+        public Rectangle ObtenerPosicion()
+        {
+            return destinationRect;
+        }
+
+        public void CambiarColor(Color tinte)
+        {
+            this.color = tinte;
+        }
+
         public void Update(GameTime gameTime)
         {
             // No actualizar la animacion si no esta activa
@@ -185,6 +199,53 @@ namespace Hunting_Lord_Garzul
                 }
                 
             }
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Objetos.Globales.Mirada direccion, Color tinte)
+        {
+            // Solo dibujar la animacion si esta activa
+            if (active)
+            {
+                if (direccion == Objetos.Globales.Mirada.IZQUIERDA)
+                {
+                    spriteBatch.Draw(texturaCargada.textura, destinationRect, sourceRect, tinte,
+                        0, Vector2.Zero, SpriteEffects.FlipHorizontally, 0);
+                }
+                else
+                {
+                    spriteBatch.Draw(texturaCargada.textura, destinationRect, sourceRect, tinte);
+                }
+
+            }
+        }
+
+        public bool DetectPerPixColl(Rectangle rect2, Color[] data2)
+        {
+            Color[] textureData = new Color[this.frameWidth * this.frameHeight];
+            //this.texturaCargada.textura.GetData(textureData);
+            this.texturaCargada.textura.GetData(textureData, frameCount * frameWidth, 1);
+            
+            int top = Math.Max(this.destinationRect.Top, rect2.Top);
+            int bottom = Math.Min(this.destinationRect.Bottom, rect2.Bottom);
+            int left = Math.Max(this.destinationRect.Left, rect2.Left);
+            int right = Math.Min(this.destinationRect.Right, rect2.Right);
+            
+            for (int y = top; y < bottom; y++)
+            {
+                for (int x = left; x < right; x++)
+                {
+                    Color colour1 = textureData[(x - this.destinationRect.Left) + (y - this.destinationRect.Top) * this.destinationRect.Width];
+                    Color colour2 = data2[(x - rect2.Left) + (y - rect2.Top) * rect2.Width];
+
+                    // Si los pixeles tienen el valor alfa distintos de 0 entonces tienen color
+                    if (colour1.A != 0 && colour2.A != 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         #endregion

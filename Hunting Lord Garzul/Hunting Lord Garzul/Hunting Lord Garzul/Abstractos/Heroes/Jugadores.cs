@@ -20,24 +20,22 @@ namespace Hunting_Lord_Garzul
             set { Dibujado = value; }
         }
         
-        // Rectangulo donde se pone al jugador, esto es para poder modificar su tamaño,
-        // esta no es la altura del dibujo que se toma
-        private Rectangle RectanguloJugador;
-        public Rectangle RecJugador
-        {
-          get { return RectanguloJugador; }
-          set { RectanguloJugador = value; }
-        }
-
-        // Posicion del jugador relativa a la parte superior izquierda de la pantalla
-        public abstract Vector2 Posicion();
-
         // Controles del jugador
-        Keys[] Controles = new Keys[Enum.GetNames(typeof(Globales.Controls)).Length];
+        private Keys[] Controles = new Keys[Enum.GetNames(typeof(Globales.Controls)).Length];
         public Keys[] controles
         {
             get { return Controles; }
             set { Controles = value; }
+        }
+
+        // Piezas de animacion para chequear colision. 
+        // Esta es una copia de las animaciones que va a usar el hijo de esta clase, en donde se decide que texturas va a utilizar
+        // En esta instancia la clase no sabe que textras se van a utilizar.
+        private Animacion[] Animaciones = null;
+        internal Animacion[] animaciones
+        {
+            get { return Animaciones; }
+            set { Animaciones = value; }
         }
 
         #endregion
@@ -58,6 +56,9 @@ namespace Hunting_Lord_Garzul
 
         // Actualizar armadura
         public abstract void UpdateArmor(List<Piece_Set> set_pieces);
+
+        // Posicion del jugador relativa a la parte superior izquierda de la pantalla
+        public abstract Vector2 Posicion();
 
         #endregion
     }

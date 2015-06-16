@@ -46,7 +46,9 @@ namespace Hunting_Lord_Garzul.Objetos
         // Los distintos heroes
         public static string[] Heroes = new string[6] { "Paladin", "Paladina", "Barbaro", "Barbara", "Arquero", "Arquera" };
         // El orden de los items influye directamente en el orden en el que se dibujan las piezas.
-        public static string[] Piezas = new string[] { "shield", "gauntletback", "greaveback", "breastplate", "helm", "tasset", "greavetop", "sword", "gauntlettop" };
+        // Cada clase tiene su set de items (paladin, barbaro, etc)
+        public static string[] PiezasPaladin = new string[] { "shield", "gauntletback", "greaveback", "breastplate", "helm", "tasset", "greavetop", "sword", "gauntlettop" };
+        public static string[] PiezasBarbaro = new string[] { "gauntletback", "greaveback", "breastplate", "helm", "tasset", "greavetop", "sword", "gauntlettop" };
         public static List<string> Armaduras = new List<string>();
 
         // Los distintos estilos de escenarios
@@ -70,5 +72,7 @@ namespace Hunting_Lord_Garzul.Objetos
         public static Texture2D Pantalla_Seleccion;
         public static Texture2D Selector;
         
+        // Punto blanco
+        public static Texture2D Punto_Blanco;
     }
 }
