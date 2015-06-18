@@ -91,6 +91,10 @@ namespace Hunting_Lord_Garzul
         protected float mensaje2;
         protected Globales.Mirada mensaje3;
         protected Globales.Actions mensaje4;
+        protected float mensaje5;
+        protected float mensaje6;
+        protected float mensaje7;
+        protected float mensaje8;
         
         // Donde se va a alojar el mensaje de chequeo de status
         Vector2 mensaje;
@@ -199,11 +203,16 @@ namespace Hunting_Lord_Garzul
             }
             
             // Si no separo este proceso de dibujo desconcha las posiciones de las capas del jugador
+            // +++ Me parece que esto se soluciono cuando cambie el parametro de dibujo en el draw general +++
             spriteBatch.DrawString(Globales.CheckStatusVar_2,
             "Frame Actual = " + mensaje1.ToString() + System.Environment.NewLine +
             "Frame Total = " + mensaje2.ToString() + System.Environment.NewLine +
             "Direccion Actual = " + mensaje3.ToString() + System.Environment.NewLine +
-            "Accion Actual = " + mensaje4.ToString() + System.Environment.NewLine,
+            "Accion Actual = " + mensaje4.ToString() + System.Environment.NewLine +
+            "Alto = " + mensaje5.ToString() + System.Environment.NewLine +
+            "Ancho = " + mensaje6.ToString() + System.Environment.NewLine +
+            "X = " + mensaje7.ToString() + System.Environment.NewLine +
+            "Y = " + mensaje8.ToString() + System.Environment.NewLine,
             mensaje, Color.DarkRed);
 
             // cambiar
@@ -240,48 +249,95 @@ namespace Hunting_Lord_Garzul
                 // Chequea jugador por jugador a ver con quien toca, si le toca chequear con el mismo se saltea.
                 if(player != this)
                 {
-                    Rectangle temp = player.animaciones[7].ObtenerPosicion();
-                    Rectangle temp2 = this.Pieces_Anim[7].ObtenerPosicion();
+                    
 
-                    Color[] textureData = new Color[320 * this.Pieces_Anim[7].FrameCount];
+                    //Texture2D mitextura = this.Pieces_Anim[7].texturaCargada.textura;
+
+                    //Color[] datos = new Color[320 * 320];
+                    //Texture2D TexturaChequear = this.Pieces_Anim[7].texturaCargada.textura;
+
+                    //Color[] pixelColours = new Color[mitextura.Width*mitextura.Height];
+                    //mitextura.GetData<Color>(pixelColours);
+
+                    //TexturaChequear.
+
+                    // public Texture2D GrayScale(Texture2D source)
+                    //{
+                    //Texture2D target = new Texture2D(mitextura.GraphicsDevice, mitextura.Width, mitextura.Height);
+
+                    //byte[] data = new byte[mitextura.Width * mitextura.Height * 4]; // el 4 son ARGB (alpha, red, green, blue)
+
+                    //mitextura.GetData<byte>(data);
+
+                    //for (int i = 0; i < data.Length; i += 4)
+                    //{
+                    //    data[i + 2] = data[i + 1] = data[i] = (byte)(255);
+                    //}
+
+                    //int S = 0;
+                    //foreach(var D in data)
+                    //{
+                    //    if(D != 0)
+                    //    {
+                    //        S++;
+                    //    }
+                    //}
+
+                    //target.SetData<byte>(data);
+ 
+                    //return target;
+                    //}
+
+                    //Color[] textureData = new Color[320 * this.Pieces_Anim[7].FrameCount];
+                    //Color[] textureData = new Color[320 * 320];
                     //this.texturaCargada.textura.GetData(textureData);
                     //player.animaciones[7].texturaCargada.textura.GetData(textureData, player.animaciones[7].FrameCount * player.animaciones[7].frameWidth, 1);
                     //player.animaciones[7].texturaCargada.textura.GetData(0,player.animaciones[7].texturaCargada.textura.text,textureData,player.animaciones[7].CurrentFrame,player.animaciones[7].FrameCount);
-                    int medida = this.Pieces_Anim[7].FrameCount * this.Pieces_Anim[7].frameWidth - this.Pieces_Anim[7].frameWidth;
-                    this.Pieces_Anim[7].texturaCargada.textura.GetData(textureData, medida, 1);
+                    //int medida = this.Pieces_Anim[7].FrameCount * this.Pieces_Anim[7].frameWidth - this.Pieces_Anim[7].frameWidth;
+                    //this.Pieces_Anim[7].texturaCargada.textura.GetData(textureData, 0, this.Pieces_Anim[7].CurrentFrame);
 
                     //Color[] textureData2 = new Color[this.Pieces_Anim[7].frameWidth * this.Pieces_Anim[7].frameHeight];
-                    Color[] textureData2 = new Color[320 * 320];
-                    this.Pieces_Anim[7].texturaCargada.textura.GetData(textureData2,this.Pieces_Anim[7].FrameCount * this.Pieces_Anim[7].frameWidth, 1);
+                    //Color[] textureData2 = new Color[320 * 320];
+                    //this.Pieces_Anim[7].texturaCargada.textura.GetData(textureData2,this.Pieces_Anim[7].FrameCount * this.Pieces_Anim[7].frameWidth, 1);
 
-                        if (temp2.Intersects(temp))
+                    Rectangle temp = player.animaciones[7].ObtenerPosicion();
+                    Rectangle temp2 = this.Pieces_Anim[7].ObtenerPosicion();
+
+                    // reajusto el ancho de los temp al del frame y no al de la textura
+                    temp.Width = this.Pieces_Anim[7].ObtenerPosicion().Width / this.Pieces_Anim[7].FrameCount;
+                    temp2.Width = player.animaciones[7].ObtenerPosicion().Width / player.animaciones[7].FrameCount;
+
+                    Color[] textureData = new Color[temp.Width * temp.Height];
+                    Color[] textureData2 = new Color[temp2.Width * temp2.Height];
+
+                    if (temp2.Intersects(temp))
+                    {
+                        int top = Math.Max(temp.Top, temp2.Top);
+                        int bottom = Math.Min(temp.Bottom, temp2.Bottom);
+                        int left = Math.Max(temp.Left, temp2.Left);
+                        int right = Math.Min(temp.Right, temp2.Right);
+
+                        for (int y = top; y < bottom; y++)
                         {
-                            int top = Math.Max(temp.Top, temp2.Top);
-                            int bottom = Math.Min(temp.Bottom, temp2.Bottom);
-                            int left = Math.Max(temp.Left, temp2.Left);
-                            int right = Math.Min(temp.Right, temp2.Right);
-
-                            for (int y = top; y < bottom; y++)
+                            for (int x = left; x < right; x++)
                             {
-                                for (int x = left; x < right; x++)
-                                {
-                                    Color colour1 = textureData[(x - temp.Left) + (y - temp.Top) * temp.Width];
-                                    Color colour2 = textureData2[(x - temp2.Left) + (y - temp2.Top) * temp2.Width];
+                                Color colour1 = textureData[(x - temp.Left) + (y - temp.Top) * temp.Width];
+                                Color colour2 = textureData2[(x - temp2.Left) + (y - temp2.Top) * temp2.Width];
 
-                                    // Si los pixeles tienen el valor alfa distintos de 0 entonces tienen color
-                                    if (colour1.A != 0 && colour2.A != 0)
-                                    {
-                                        this.pieces_anim[7].CambiarColor(Color.Red);
-                                    }
+                                // Si los pixeles tienen el valor alfa distintos de 0 entonces tienen color
+                                if (colour1.A != 0 && colour2.A != 0)
+                                {
+                                    this.pieces_anim[7].CambiarColor(Color.Red);
                                 }
                             }
+                        }
 
-                            //this.pieces_anim[7].CambiarColor(Color.Red);
-                        }
-                        else
-                        {
-                            this.pieces_anim[7].CambiarColor(Color.White);
-                        }
+                        //this.pieces_anim[7].CambiarColor(Color.Red);
+                    }
+                    else
+                    {
+                        this.pieces_anim[7].CambiarColor(Color.Green);
+                    }
                 }
             }
 
@@ -330,6 +386,10 @@ namespace Hunting_Lord_Garzul
             mensaje2 = Pieces_Anim[0].FrameCount;
             mensaje3 = Direccion;
             mensaje4 = accionActual;
+            mensaje5 = this.Pieces_Anim[7].ObtenerPosicion().Height;
+            mensaje6 = this.Pieces_Anim[7].ObtenerPosicion().Width / this.Pieces_Anim[7].FrameCount;
+            mensaje7 = this.Pieces_Anim[7].ObtenerPosicion().X;
+            mensaje8 = this.Pieces_Anim[7].ObtenerPosicion().Y;
         }
 
         /// <summary>
