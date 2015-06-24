@@ -215,8 +215,9 @@ namespace Hunting_Lord_Garzul
             "Y = " + mensaje8.ToString() + System.Environment.NewLine,
             mensaje, Color.DarkRed);
 
-            // cambiar
-            DrawRectangle(this.pieces_anim[7].ObtenerPosicion(), Globales.Punto_Blanco, spriteBatch);
+            // rectangulos de colision para chequear (borrar)
+            //DrawRectangle(this.pieces_anim[7].ObtenerPosicion(), Globales.Punto_Blanco, spriteBatch);
+            DrawRectangle(Globales.Rectangulo_Colision, Globales.Punto_Blanco, spriteBatch);
         }
 
         /// <summary>
@@ -249,63 +250,14 @@ namespace Hunting_Lord_Garzul
                 // Chequea jugador por jugador a ver con quien toca, si le toca chequear con el mismo se saltea.
                 if(player != this)
                 {
-                    
-
-                    //Texture2D mitextura = this.Pieces_Anim[7].texturaCargada.textura;
-
-                    //Color[] datos = new Color[320 * 320];
-                    //Texture2D TexturaChequear = this.Pieces_Anim[7].texturaCargada.textura;
-
-                    //Color[] pixelColours = new Color[mitextura.Width*mitextura.Height];
-                    //mitextura.GetData<Color>(pixelColours);
-
-                    //TexturaChequear.
-
-                    // public Texture2D GrayScale(Texture2D source)
-                    //{
-                    //Texture2D target = new Texture2D(mitextura.GraphicsDevice, mitextura.Width, mitextura.Height);
-
-                    //byte[] data = new byte[mitextura.Width * mitextura.Height * 4]; // el 4 son ARGB (alpha, red, green, blue)
-
-                    //mitextura.GetData<byte>(data);
-
-                    //for (int i = 0; i < data.Length; i += 4)
-                    //{
-                    //    data[i + 2] = data[i + 1] = data[i] = (byte)(255);
-                    //}
-
-                    //int S = 0;
-                    //foreach(var D in data)
-                    //{
-                    //    if(D != 0)
-                    //    {
-                    //        S++;
-                    //    }
-                    //}
-
-                    //target.SetData<byte>(data);
- 
-                    //return target;
-                    //}
-
-                    //Color[] textureData = new Color[320 * this.Pieces_Anim[7].FrameCount];
-                    //Color[] textureData = new Color[320 * 320];
-                    //this.texturaCargada.textura.GetData(textureData);
-                    //player.animaciones[7].texturaCargada.textura.GetData(textureData, player.animaciones[7].FrameCount * player.animaciones[7].frameWidth, 1);
-                    //player.animaciones[7].texturaCargada.textura.GetData(0,player.animaciones[7].texturaCargada.textura.text,textureData,player.animaciones[7].CurrentFrame,player.animaciones[7].FrameCount);
-                    //int medida = this.Pieces_Anim[7].FrameCount * this.Pieces_Anim[7].frameWidth - this.Pieces_Anim[7].frameWidth;
-                    //this.Pieces_Anim[7].texturaCargada.textura.GetData(textureData, 0, this.Pieces_Anim[7].CurrentFrame);
-
-                    //Color[] textureData2 = new Color[this.Pieces_Anim[7].frameWidth * this.Pieces_Anim[7].frameHeight];
-                    //Color[] textureData2 = new Color[320 * 320];
-                    //this.Pieces_Anim[7].texturaCargada.textura.GetData(textureData2,this.Pieces_Anim[7].FrameCount * this.Pieces_Anim[7].frameWidth, 1);
-
                     Rectangle temp = player.animaciones[7].ObtenerPosicion();
                     Rectangle temp2 = this.Pieces_Anim[7].ObtenerPosicion();
 
                     // reajusto el ancho de los temp al del frame y no al de la textura
-                    temp.Width = this.Pieces_Anim[7].ObtenerPosicion().Width / this.Pieces_Anim[7].FrameCount;
-                    temp2.Width = player.animaciones[7].ObtenerPosicion().Width / player.animaciones[7].FrameCount;
+                    //temp.Width = this.Pieces_Anim[7].ObtenerPosicion().Width / this.Pieces_Anim[7].FrameCount;
+                    //temp2.Width = player.animaciones[7].ObtenerPosicion().Width / player.animaciones[7].FrameCount;
+                    temp.Width = temp.Height;
+                    temp2.Width = temp2.Height;
 
                     Color[] textureData = new Color[temp.Width * temp.Height];
                     Color[] textureData2 = new Color[temp2.Width * temp2.Height];
@@ -316,6 +268,22 @@ namespace Hunting_Lord_Garzul
                         int bottom = Math.Min(temp.Bottom, temp2.Bottom);
                         int left = Math.Max(temp.Left, temp2.Left);
                         int right = Math.Min(temp.Right, temp2.Right);
+                        
+                        Globales.Rectangulo_Colision.X = left;
+                        Globales.Rectangulo_Colision.Width = right - left;
+                        Globales.Rectangulo_Colision.Y = top;
+                        Globales.Rectangulo_Colision.Height = bottom - top;
+
+                        for (int i = 0; i < textureData.Length; i++)
+                        {
+                            Color colour1 = textureData[i];
+                            Color colour2 = textureData2[i];
+
+                            if (colour1.A != 0 && colour2.A != 0)
+                            {
+                                this.pieces_anim[7].CambiarColor(Color.Red);
+                            }
+                        }
 
                         for (int y = top; y < bottom; y++)
                         {
@@ -387,7 +355,7 @@ namespace Hunting_Lord_Garzul
             mensaje3 = Direccion;
             mensaje4 = accionActual;
             mensaje5 = this.Pieces_Anim[7].ObtenerPosicion().Height;
-            mensaje6 = this.Pieces_Anim[7].ObtenerPosicion().Width / this.Pieces_Anim[7].FrameCount;
+            mensaje6 = this.Pieces_Anim[7].ObtenerPosicion().Width;
             mensaje7 = this.Pieces_Anim[7].ObtenerPosicion().X;
             mensaje8 = this.Pieces_Anim[7].ObtenerPosicion().Y;
         }

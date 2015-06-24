@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -74,5 +75,8 @@ namespace Hunting_Lord_Garzul.Objetos
         
         // Punto blanco
         public static Texture2D Punto_Blanco;
+
+        // Rectangulos de colisiones para chequear
+        public static Rectangle Rectangulo_Colision;
     }
 }
