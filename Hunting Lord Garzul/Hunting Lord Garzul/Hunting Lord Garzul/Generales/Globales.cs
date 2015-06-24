@@ -78,5 +78,6 @@ namespace Hunting_Lord_Garzul.Objetos
 
         // Rectangulos de colisiones para chequear
         public static Rectangle Rectangulo_Colision;
+        public static Rectangle Rectangulo_Colision_2;
     }
 }

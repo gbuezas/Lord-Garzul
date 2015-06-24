@@ -84,6 +84,7 @@ namespace Hunting_Lord_Garzul.Objetos
             Globales.players[1].controles[(int)Globales.Controls.ABAJO] = Keys.Down;
             Globales.players[1].controles[(int)Globales.Controls.IZQUIERDA] = Keys.Left;
             Globales.players[1].controles[(int)Globales.Controls.DERECHA] = Keys.Right;
+            Globales.players[1].controles[(int)Globales.Controls.BOTON_1] = Keys.Space;
 
             // Hacer un foreach para todos, despues solo los buenos,
             // los malos no, asi pueden salir y no me desconcha toda la camara y el zoom

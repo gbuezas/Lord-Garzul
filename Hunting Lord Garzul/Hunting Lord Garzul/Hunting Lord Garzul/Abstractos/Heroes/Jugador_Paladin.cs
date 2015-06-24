@@ -218,6 +218,7 @@ namespace Hunting_Lord_Garzul
             // rectangulos de colision para chequear (borrar)
             //DrawRectangle(this.pieces_anim[7].ObtenerPosicion(), Globales.Punto_Blanco, spriteBatch);
             DrawRectangle(Globales.Rectangulo_Colision, Globales.Punto_Blanco, spriteBatch);
+            DrawRectangle(Globales.Rectangulo_Colision_2, Globales.Punto_Blanco, spriteBatch);
         }
 
         /// <summary>
@@ -242,74 +243,6 @@ namespace Hunting_Lord_Garzul
 
             // Logica de las colisiones al golpear
             ColissionLogic();
-
-            #region LOGICA DE COLISION
-
-            foreach(Jugadores player in Globales.players)
-            {
-                // Chequea jugador por jugador a ver con quien toca, si le toca chequear con el mismo se saltea.
-                if(player != this)
-                {
-                    Rectangle temp = player.animaciones[7].ObtenerPosicion();
-                    Rectangle temp2 = this.Pieces_Anim[7].ObtenerPosicion();
-
-                    // reajusto el ancho de los temp al del frame y no al de la textura
-                    //temp.Width = this.Pieces_Anim[7].ObtenerPosicion().Width / this.Pieces_Anim[7].FrameCount;
-                    //temp2.Width = player.animaciones[7].ObtenerPosicion().Width / player.animaciones[7].FrameCount;
-                    temp.Width = temp.Height;
-                    temp2.Width = temp2.Height;
-
-                    Color[] textureData = new Color[temp.Width * temp.Height];
-                    Color[] textureData2 = new Color[temp2.Width * temp2.Height];
-
-                    if (temp2.Intersects(temp))
-                    {
-                        int top = Math.Max(temp.Top, temp2.Top);
-                        int bottom = Math.Min(temp.Bottom, temp2.Bottom);
-                        int left = Math.Max(temp.Left, temp2.Left);
-                        int right = Math.Min(temp.Right, temp2.Right);
-                        
-                        Globales.Rectangulo_Colision.X = left;
-                        Globales.Rectangulo_Colision.Width = right - left;
-                        Globales.Rectangulo_Colision.Y = top;
-                        Globales.Rectangulo_Colision.Height = bottom - top;
-
-                        for (int i = 0; i < textureData.Length; i++)
-                        {
-                            Color colour1 = textureData[i];
-                            Color colour2 = textureData2[i];
-
-                            if (colour1.A != 0 && colour2.A != 0)
-                            {
-                                this.pieces_anim[7].CambiarColor(Color.Red);
-                            }
-                        }
-
-                        for (int y = top; y < bottom; y++)
-                        {
-                            for (int x = left; x < right; x++)
-                            {
-                                Color colour1 = textureData[(x - temp.Left) + (y - temp.Top) * temp.Width];
-                                Color colour2 = textureData2[(x - temp2.Left) + (y - temp2.Top) * temp2.Width];
-
-                                // Si los pixeles tienen el valor alfa distintos de 0 entonces tienen color
-                                if (colour1.A != 0 && colour2.A != 0)
-                                {
-                                    this.pieces_anim[7].CambiarColor(Color.Red);
-                                }
-                            }
-                        }
-
-                        //this.pieces_anim[7].CambiarColor(Color.Red);
-                    }
-                    else
-                    {
-                        this.pieces_anim[7].CambiarColor(Color.Green);
-                    }
-                }
-            }
-
-            #endregion
 
             // Hace que el jugador no salga de la pantalla reacomodandolo dentro de la misma
             // Tomamos el rectangulo que genera la camara para acomodar al jugador.
@@ -427,7 +360,42 @@ namespace Hunting_Lord_Garzul
         /// </summary>
         private void ColissionLogic()
         {
-        
+            if(this.accionActual == Globales.Actions.HIT1 ||
+               this.accionActual == Globales.Actions.HIT2 ||
+               this.accionActual == Globales.Actions.HIT3)
+            {
+                foreach (Jugadores player in Globales.players)
+                {
+                    // Chequea jugador por jugador a ver con quien toca, si le toca chequear con el mismo se saltea.
+                    // Implementamos un chequeo por radio a la hora de golpear, si alguien esta dentro del radio es golpeado.
+                    if (player != this && this.animaciones[7].CurrentFrame >= 3)
+                    {
+                        Rectangle temp = this.Pieces_Anim[7].ObtenerPosicion();
+                        Rectangle temp2 = player.animaciones[7].ObtenerPosicion();
+
+                        int top = Math.Max(temp.Top, temp2.Top);
+                        int bottom = Math.Min(temp.Bottom, temp2.Bottom);
+                        int left = Math.Max(temp.Left, temp2.Left);
+                        int right = Math.Min(temp.Right, temp2.Right);
+
+                        if (temp.X + temp.Width >= temp2.Center.X &&
+                           temp.X <= temp2.X &&
+                           temp.Y >= temp2.Y - 5 &&
+                           temp.Y <= temp2.Y + 5 ||
+                           temp.X <= temp2.Center.X &&
+                           temp.X + temp.Width > temp2.X + temp2.Width &&
+                           temp.Y >= temp2.Y - 5 &&
+                           temp.Y <= temp2.Y + 5)
+                        {
+                            this.pieces_anim[7].CambiarColor(Color.Red);
+                        }
+                        else
+                        {
+                            this.pieces_anim[7].CambiarColor(Color.White);
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
