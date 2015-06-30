@@ -28,7 +28,6 @@ namespace Hunting_Lord_Garzul
             set { Controles = value; }
         }
 
-        // Piezas de animacion para chequear colision. 
         // Esta es una copia de las animaciones que va a usar el hijo de esta clase, en donde se decide que texturas va a utilizar
         // En esta instancia la clase no sabe que textras se van a utilizar.
         private Animacion[] Animaciones = null;
@@ -37,6 +36,51 @@ namespace Hunting_Lord_Garzul
             get { return Animaciones; }
             set { Animaciones = value; }
         }
+
+        #region Variables de efecto
+
+        // Si el personaje fue dañado
+        private Boolean Injured = false;
+        public Boolean injured
+        {
+            get { return Injured; }
+            set { Injured = value; }
+        }
+        
+        // La cantidad de daño recibida
+        private int Injured_Value = 0;
+        public int injured_value
+        {
+            get { return Injured_Value; }
+            set { Injured_Value = value; }
+        }
+
+        // La vitalidad del personaje
+        private int Health = 100;
+        public int health
+        {
+            get { return Health; }
+            set { Health = value; }
+        }
+
+        // Contador de vuelta lógica, para evitar que se repita la lógica de varias acciones en un mismo frame, 
+        // principalmente fue creado para evitar que se quite HP varias veces en el mismo frame
+        private int Logic_Counter = 0;
+        public int logic_counter
+        {
+            get { return Logic_Counter; }
+            set { Logic_Counter = value; }
+        }
+
+        // Si pierde toda su HP pasa a modo fantasma
+        private Boolean Ghost_Mode = false;
+        public Boolean ghost_mode
+        {
+            get { return Ghost_Mode; }
+            set { Ghost_Mode = value; }
+        }
+
+        #endregion
 
         #endregion
 

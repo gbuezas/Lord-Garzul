@@ -47,8 +47,7 @@ namespace Hunting_Lord_Garzul.Objetos
 
             // Ordeno la lista y la invierto para obtener el efecto buscado
             Lista_Coordenadas.Sort();
-            //Lista_Coordenadas.Reverse();
-
+            
             // Ahora por cada elemento de la lista ordenada comparo quien tiene el eje del primer elemento y lo dibujo
             // despues con el segundo y asi sucesivamente
             foreach (float Coordenada in Lista_Coordenadas)

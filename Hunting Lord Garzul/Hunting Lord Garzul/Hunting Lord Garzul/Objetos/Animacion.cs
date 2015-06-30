@@ -219,35 +219,6 @@ namespace Hunting_Lord_Garzul
             }
         }
 
-        public bool DetectPerPixColl(Rectangle rect2, Color[] data2)
-        {
-            Color[] textureData = new Color[this.frameWidth * this.frameHeight];
-            //this.texturaCargada.textura.GetData(textureData);
-            this.texturaCargada.textura.GetData(textureData, frameCount * frameWidth, 1);
-            
-            int top = Math.Max(this.destinationRect.Top, rect2.Top);
-            int bottom = Math.Min(this.destinationRect.Bottom, rect2.Bottom);
-            int left = Math.Max(this.destinationRect.Left, rect2.Left);
-            int right = Math.Min(this.destinationRect.Right, rect2.Right);
-            
-            for (int y = top; y < bottom; y++)
-            {
-                for (int x = left; x < right; x++)
-                {
-                    Color colour1 = textureData[(x - this.destinationRect.Left) + (y - this.destinationRect.Top) * this.destinationRect.Width];
-                    Color colour2 = data2[(x - rect2.Left) + (y - rect2.Top) * rect2.Width];
-
-                    // Si los pixeles tienen el valor alfa distintos de 0 entonces tienen color
-                    if (colour1.A != 0 && colour2.A != 0)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
         #endregion
     }
 }

@@ -23,7 +23,7 @@ namespace Hunting_Lord_Garzul
         GraphicsDeviceManager graphics;
 
         // Donde se va a alojar el mensaje de chequeo de status
-        Vector2 ChkStatVar = new Vector2(50, 50);
+        Vector2 ChkStatVar = new Vector2(50, 550);
 
         // Check de estado de juego
         Globales.EstadosJuego Estado_Check;
@@ -68,7 +68,7 @@ namespace Hunting_Lord_Garzul
 
             Globales.Estado_Actual.Initialize();
 
-            // Ralentizar los cuadros por segundo
+            // Ralentizar los cuadros por segundo de todo el juego
             //this.TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 5);
 
             base.Initialize();
@@ -226,10 +226,8 @@ namespace Hunting_Lord_Garzul
         protected override void Update(GameTime gameTime)
         {
             // Permite salir del juego desde el joystick o teclado
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || 
+                Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
             // Chequea en que estado tiene que estar

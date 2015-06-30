@@ -77,7 +77,7 @@ namespace Hunting_Lord_Garzul.Objetos
         public static Texture2D Punto_Blanco;
 
         // Rectangulos de colisiones para chequear
-        public static Rectangle Rectangulo_Colision;
-        public static Rectangle Rectangulo_Colision_2;
+        //public static Rectangle Rectangulo_Colision;
+        //public static Rectangle Rectangulo_Colision_2;
     }
 }

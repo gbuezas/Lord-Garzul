@@ -64,13 +64,13 @@ namespace Hunting_Lord_Garzul
 
         // Si esta activa esta instancia o no
         protected bool Active;
-        
+
+        //protected bool Invalidate_Hit = false;
+
         // Ancho de un cuadro del sprite
         protected int AnchoPersonaje = 320;
-        //protected int AnchoPersonaje = 200;
         // Alto de un cuadro del sprite
         protected int AltoPersonaje = 320;
-        //protected int AltoPersonaje = 600;
         
         // Velocidad de movimiento del jugador
         protected float VelocidadPersonaje;
@@ -95,7 +95,7 @@ namespace Hunting_Lord_Garzul
         protected float mensaje6;
         protected float mensaje7;
         protected float mensaje8;
-        
+        protected float mensaje9;
         // Donde se va a alojar el mensaje de chequeo de status
         Vector2 mensaje;
         
@@ -116,6 +116,7 @@ namespace Hunting_Lord_Garzul
             accionActual = Globales.Actions.STAND;
             accionAnterior = accionActual;
             Tiempo_Frame = 50;
+            health += 300;
 
             // Inicializo partes de armadura actual
             pieces_armor.Initialize();
@@ -178,7 +179,10 @@ namespace Hunting_Lord_Garzul
             controles[(int)Globales.Controls.IZQUIERDA] = Keys.A;
             controles[(int)Globales.Controls.DERECHA] = Keys.D;
             controles[(int)Globales.Controls.BOTON_1] = Keys.T;
-            controles[(int)Globales.Controls.BOTON_2] = Keys.Y;      
+            controles[(int)Globales.Controls.BOTON_2] = Keys.Y;
+
+            // Ralentizar los cuadros por segundo del personaje
+            // TiempoFrameEjecucion(1);
         }
 
         // Actualizar animacion
@@ -212,13 +216,14 @@ namespace Hunting_Lord_Garzul
             "Alto = " + mensaje5.ToString() + System.Environment.NewLine +
             "Ancho = " + mensaje6.ToString() + System.Environment.NewLine +
             "X = " + mensaje7.ToString() + System.Environment.NewLine +
-            "Y = " + mensaje8.ToString() + System.Environment.NewLine,
+            "Y = " + mensaje8.ToString() + System.Environment.NewLine + 
+            "Vida = " + mensaje9.ToString(),
             mensaje, Color.DarkRed);
 
             // rectangulos de colision para chequear (borrar)
             //DrawRectangle(this.pieces_anim[7].ObtenerPosicion(), Globales.Punto_Blanco, spriteBatch);
-            DrawRectangle(Globales.Rectangulo_Colision, Globales.Punto_Blanco, spriteBatch);
-            DrawRectangle(Globales.Rectangulo_Colision_2, Globales.Punto_Blanco, spriteBatch);
+            //DrawRectangle(Globales.Rectangulo_Colision, Globales.Punto_Blanco, spriteBatch);
+            //DrawRectangle(Globales.Rectangulo_Colision_2, Globales.Punto_Blanco, spriteBatch);
         }
 
         /// <summary>
@@ -243,6 +248,9 @@ namespace Hunting_Lord_Garzul
 
             // Logica de las colisiones al golpear
             ColissionLogic();
+
+            // Aqui aplicamos los daños y todo lo correspondiente a los efectos de las acciones hechas anteriormente
+            EffectLogic();
 
             // Hace que el jugador no salga de la pantalla reacomodandolo dentro de la misma
             // Tomamos el rectangulo que genera la camara para acomodar al jugador.
@@ -350,7 +358,9 @@ namespace Hunting_Lord_Garzul
                 // Si esta pegando tiene que terminar su animacion y despues desbloquear otra vez la gama de movimientos
                 if (this.Pieces_Anim[0].CurrentFrame == this.Pieces_Anim[0].FrameCount - 1)
                 {
+                    //accionActual = Globales.Actions.WAIT;
                     accionActual = Globales.Actions.STAND;
+                    this.logic_counter = 0;
                 }
             }
         }
@@ -368,16 +378,21 @@ namespace Hunting_Lord_Garzul
                 {
                     // Chequea jugador por jugador a ver con quien toca, si le toca chequear con el mismo se saltea.
                     // Implementamos un chequeo por radio a la hora de golpear, si alguien esta dentro del radio es golpeado.
-                    if (player != this && this.animaciones[7].CurrentFrame >= 3)
+                    if (player != this && this.animaciones[7].CurrentFrame == 5 && !player.injured)
                     {
                         Rectangle temp = this.Pieces_Anim[7].ObtenerPosicion();
                         Rectangle temp2 = player.animaciones[7].ObtenerPosicion();
-
+                        
                         int top = Math.Max(temp.Top, temp2.Top);
                         int bottom = Math.Min(temp.Bottom, temp2.Bottom);
                         int left = Math.Max(temp.Left, temp2.Left);
                         int right = Math.Min(temp.Right, temp2.Right);
 
+                        /// Para poder chequear tenemos que hacer un contador de vueltas logicas, por afuera de lo que se dibuja por segundo.
+                        /// Cuando este contador esta en 1, porque el mismo se resetea por animacion, puede entrar y hacer los calculos necesarios, sino no esta en 1 no pasa.
+                        /// De esta manera cuando se cambia de animacion se vuelve a empezar de 0 con el contador lógico.
+                        /// Tratar de que quede un poco mas lindo todos estos condicionales del if, ya que son demasiados.
+            
                         if (temp.X + temp.Width >= temp2.Center.X &&
                            temp.X <= temp2.X &&
                            temp.Y >= temp2.Y - 5 &&
@@ -387,15 +402,43 @@ namespace Hunting_Lord_Garzul
                            temp.Y >= temp2.Y - 5 &&
                            temp.Y <= temp2.Y + 5)
                         {
-                            this.pieces_anim[7].CambiarColor(Color.Red);
-                        }
-                        else
-                        {
-                            this.pieces_anim[7].CambiarColor(Color.White);
+                            if (this.logic_counter == 0)
+                            {
+                                // Cuando la armadura esta detras del efecto de la espada no se puede ver bien el cambio de color,
+                                // es mas parece que no cambia, pero funciona bien
+                                player.animaciones[3].CambiarColor(Color.Red);
+                                player.injured = true;
+                                player.injured_value = 10;
+                                this.logic_counter++;
+                            }
                         }
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Lógica de los efectos de las colisiones y movimientos realizados.
+        /// </summary>
+        private void EffectLogic()
+        {
+
+            if (this.injured)
+            {
+                this.health -= this.injured_value;
+                this.injured = false;
+                
+                if(this.health <= 0)
+                {
+                    this.ghost_mode = true;
+                }
+            }
+            else
+            {
+                this.animaciones[3].CambiarColor(Color.White);
+            }
+            
+            mensaje9 = this.health;
         }
 
         /// <summary>
@@ -448,31 +491,6 @@ namespace Hunting_Lord_Garzul
                 piezaAnimada.pausa = desactivar;
             }
         }
-
-        //static bool IntersectsPixels(Rectangle rect1, Color[] data1, Rectangle rect2, Color[] data2)
-        //{
-        //    int top = Math.Max(rect1.Top, rect2.Top);
-        //    int bottom = Math.Min(rect1.Bottom,rect2.Bottom);
-        //    int left = Math.Max(rect1.Left, rect2.Left);
-        //    int right = Math.Min(rect1.Right,rect2.Right);
-
-        //    for (int y = top; y < bottom; y++ )
-        //    {
-        //        for (int x = left; x < right; x++ )
-        //        {
-        //            Color colour1 = data1[(x - rect1.Left) + (y - rect1.Top) * rect1.Width];
-        //            Color colour2 = data2[(x - rect2.Left) + (y - rect2.Top) * rect2.Width];
-
-        //            // Si los pixeles tienen el valor alfa distintos de 0 entonces tienen color
-        //            if(colour1.A != 0 && colour2.A != 0)
-        //            {
-        //                return true;
-        //            }
-        //        }
-        //    }
-
-        //    return false;
-        //}
 
         #region Rectangulo de colision dibujado
 
