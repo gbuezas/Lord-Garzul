@@ -28,9 +28,6 @@ namespace Hunting_Lord_Garzul
             set { AccionAnterior = value; }
         }
         
-        // Mirada del personaje
-        protected Objetos.Globales.Mirada Direccion;
-
         // Tipo de cada pieza de armadura
         // shield, gauntletback, greaveback, helm, breastplate, tasset, greavetop, sword, gauntlettop.
         protected Pieces_Sets pieces_armor = new Pieces_Sets();
@@ -112,11 +109,12 @@ namespace Hunting_Lord_Garzul
             mensaje = Position;
             Active = true;
             VelocidadPersonaje = 3.0f;
-            Direccion = Objetos.Globales.Mirada.DERECHA;
+            direccion = Objetos.Globales.Mirada.DERECHA;
             accionActual = Globales.Actions.STAND;
             accionAnterior = accionActual;
             Tiempo_Frame = 50;
-            health += 300;
+            //health += 300;
+            health -= 50;
 
             // Inicializo partes de armadura actual
             pieces_armor.Initialize();
@@ -203,14 +201,14 @@ namespace Hunting_Lord_Garzul
         {
             foreach (Animacion piezaAnimada in Pieces_Anim)
             {
-                piezaAnimada.Draw(spriteBatch, Direccion, piezaAnimada.color);
+                piezaAnimada.Draw(spriteBatch, direccion, piezaAnimada.color);
             }
             
             // Si no separo este proceso de dibujo desconcha las posiciones de las capas del jugador
             // +++ Me parece que esto se soluciono cuando cambie el parametro de dibujo en el draw general +++
             spriteBatch.DrawString(Globales.CheckStatusVar_2,
             "Frame Actual = " + mensaje1.ToString() + System.Environment.NewLine +
-            "Frame Total = " + mensaje2.ToString() + System.Environment.NewLine +
+            "Frame Total = " + mensaje2.ToString() + System.Environment.NewLine + 
             "Direccion Actual = " + mensaje3.ToString() + System.Environment.NewLine +
             "Accion Actual = " + mensaje4.ToString() + System.Environment.NewLine +
             "Alto = " + mensaje5.ToString() + System.Environment.NewLine +
@@ -220,10 +218,13 @@ namespace Hunting_Lord_Garzul
             "Vida = " + mensaje9.ToString(),
             mensaje, Color.DarkRed);
 
-            // rectangulos de colision para chequear (borrar)
-            //DrawRectangle(this.pieces_anim[7].ObtenerPosicion(), Globales.Punto_Blanco, spriteBatch);
-            //DrawRectangle(Globales.Rectangulo_Colision, Globales.Punto_Blanco, spriteBatch);
-            //DrawRectangle(Globales.Rectangulo_Colision_2, Globales.Punto_Blanco, spriteBatch);
+            // rectangulos de colision para chequear
+            if(Globales.HabilitarRectangulos)
+            {
+                DrawRectangle(this.pieces_anim[7].ObtenerPosicion(), Globales.Punto_Blanco, spriteBatch);
+                DrawRectangle(Globales.Rectangulo_Colision, Globales.Punto_Blanco, spriteBatch);
+                DrawRectangle(Globales.Rectangulo_Colision_2, Globales.Punto_Blanco, spriteBatch);
+            }
         }
 
         /// <summary>
@@ -293,7 +294,7 @@ namespace Hunting_Lord_Garzul
             // Status del personaje
             mensaje1 = Pieces_Anim[0].CurrentFrame;
             mensaje2 = Pieces_Anim[0].FrameCount;
-            mensaje3 = Direccion;
+            mensaje3 = direccion;
             mensaje4 = accionActual;
             mensaje5 = this.Pieces_Anim[7].ObtenerPosicion().Height;
             mensaje6 = this.Pieces_Anim[7].ObtenerPosicion().Width;
@@ -320,13 +321,13 @@ namespace Hunting_Lord_Garzul
                 if (Globales.currentKeyboardState.IsKeyDown(controles[(int)Globales.Controls.IZQUIERDA]))
                 {
                     Position.X -= VelocidadPersonaje;
-                    Direccion = Globales.Mirada.IZQUIERDA;
+                    direccion = Globales.Mirada.IZQUIERDA;
                     accionActual = Globales.Actions.WALK;
                 }
                 else if (Globales.currentKeyboardState.IsKeyDown(controles[(int)Globales.Controls.DERECHA]))
                 {
                     Position.X += VelocidadPersonaje;
-                    Direccion = Globales.Mirada.DERECHA;
+                    direccion = Globales.Mirada.DERECHA;
                     accionActual = Globales.Actions.WALK;
                 }
 
@@ -366,47 +367,40 @@ namespace Hunting_Lord_Garzul
         }
 
         /// <summary>
-        /// Logica de las colisiones de los golpes.
+        /// Logica de las colisiones de los golpes:
+        /// 
+        /// 1) Implementamos un chequeo jugador por jugador a la hora de golpear, que cumpla con las siguientes reglas:
+        ///     - Si le toca chequear con el mismo se saltea.
+        ///     - Si el frame de la animacion no es justo cuando golpea con la espada se saltea.
+        ///     - Si fue golpeado anteriormente se saltea
+        ///     - Si es fantasma se saltea
+        ///     
+        /// 2) Contador de vueltas logicas, independiente de lo que se dibuja por segundo.
+        ///    Cuando este contador esta en 1, porque el mismo se resetea por animacion, puede entrar y hacer los calculos necesarios, sino no pasa.
+        ///    De esta manera cuando se cambia de animacion se vuelve a empezar de 0 con el contador lógico.
         /// </summary>
         private void ColissionLogic()
         {
-            if(this.accionActual == Globales.Actions.HIT1 ||
-               this.accionActual == Globales.Actions.HIT2 ||
-               this.accionActual == Globales.Actions.HIT3)
+            if((this.accionActual == Globales.Actions.HIT1 || this.accionActual == Globales.Actions.HIT2 || this.accionActual == Globales.Actions.HIT3)
+               && !this.ghost_mode)
             {
                 foreach (Jugadores player in Globales.players)
                 {
-                    // Chequea jugador por jugador a ver con quien toca, si le toca chequear con el mismo se saltea.
-                    // Implementamos un chequeo por radio a la hora de golpear, si alguien esta dentro del radio es golpeado.
-                    if (player != this && this.animaciones[7].CurrentFrame == 5 && !player.injured)
+                    // 1) Ver summary
+                    if (player != this && this.animaciones[7].CurrentFrame == 5 && !player.injured && !player.ghost_mode)
                     {
                         Rectangle temp = this.Pieces_Anim[7].ObtenerPosicion();
                         Rectangle temp2 = player.animaciones[7].ObtenerPosicion();
                         
-                        int top = Math.Max(temp.Top, temp2.Top);
-                        int bottom = Math.Min(temp.Bottom, temp2.Bottom);
-                        int left = Math.Max(temp.Left, temp2.Left);
-                        int right = Math.Min(temp.Right, temp2.Right);
-
-                        /// Para poder chequear tenemos que hacer un contador de vueltas logicas, por afuera de lo que se dibuja por segundo.
-                        /// Cuando este contador esta en 1, porque el mismo se resetea por animacion, puede entrar y hacer los calculos necesarios, sino no esta en 1 no pasa.
-                        /// De esta manera cuando se cambia de animacion se vuelve a empezar de 0 con el contador lógico.
-                        /// Tratar de que quede un poco mas lindo todos estos condicionales del if, ya que son demasiados.
-            
-                        if (temp.X + temp.Width >= temp2.Center.X &&
-                           temp.X <= temp2.X &&
-                           temp.Y >= temp2.Y - 5 &&
-                           temp.Y <= temp2.Y + 5 ||
-                           temp.X <= temp2.Center.X &&
-                           temp.X + temp.Width > temp2.X + temp2.Width &&
-                           temp.Y >= temp2.Y - 5 &&
-                           temp.Y <= temp2.Y + 5)
+                        // Si esta dentro del radio del golpe
+                        if (CollisionVerifier(ref temp, ref temp2))
                         {
+                            // 2) Ver summary
                             if (this.logic_counter == 0)
                             {
-                                // Cuando la armadura esta detras del efecto de la espada no se puede ver bien el cambio de color,
-                                // es mas parece que no cambia, pero funciona bien
-                                player.animaciones[3].CambiarColor(Color.Red);
+                                // Cuando la armadura esta detras del efecto de la espada no se puede ver bien el cambio de color
+                                player.CambiarColorTotal(Color.Red, player.animaciones);
+                                
                                 player.injured = true;
                                 player.injured_value = 10;
                                 this.logic_counter++;
@@ -423,22 +417,42 @@ namespace Hunting_Lord_Garzul
         private void EffectLogic()
         {
 
-            if (this.injured)
+            if (this.injured && !this.ghost_mode)
             {
+                // Hago la resta necesaria a la health
                 this.health -= this.injured_value;
+
+                // Vuelvo el contador de daño a 0 y quito que este dañado
+                this.injured_value = 0;
                 this.injured = false;
                 
-                if(this.health <= 0)
+                // Si pierde toda su HP se vuelve fantasma
+                if (this.health <= 0)
                 {
                     this.ghost_mode = true;
                 }
             }
             else
             {
-                this.animaciones[3].CambiarColor(Color.White);
+                // Reestablezco su color natural despues de recibir daño
+                this.CambiarColorTotal(Color.White, this.animaciones);
             }
             
+            if(this.ghost_mode)
+            {
+                Color fantasma = Color.White;
+                fantasma.A = 30;
+                this.CambiarColorTotal(fantasma, this.animaciones);
+
+                if(this.health > 0)
+                {
+                    ghost_mode = false;
+                }
+            }
+
+            // MENSAJES: Veo la health de los personajes
             mensaje9 = this.health;
+            //mensaje6 = Tiempo_Frame;
         }
 
         /// <summary>
@@ -490,6 +504,21 @@ namespace Hunting_Lord_Garzul
             {
                 piezaAnimada.pausa = desactivar;
             }
+        }
+
+        private bool CollisionVerifier(ref Rectangle temp, ref Rectangle temp2)
+        {
+            return (temp.X + temp.Width >= temp2.Center.X - Globales.HitRangeX &&
+                    temp.X <= temp2.X &&
+                    temp.Y >= temp2.Y - Globales.HitRangeY &&
+                    temp.Y <= temp2.Y + Globales.HitRangeY &&
+                    this.direccion == Globales.Mirada.DERECHA)
+                    ||
+                   (temp.X <= temp2.Center.X + Globales.HitRangeX &&
+                    temp.X + temp.Width >= temp2.X + temp2.Width &&
+                    temp.Y >= temp2.Y - Globales.HitRangeY &&
+                    temp.Y <= temp2.Y + Globales.HitRangeY &&
+                    this.direccion == Globales.Mirada.IZQUIERDA);
         }
 
         #region Rectangulo de colision dibujado

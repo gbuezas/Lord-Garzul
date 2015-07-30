@@ -16,8 +16,7 @@ namespace Hunting_Lord_Garzul.Objetos
         public static float mensaje3;
         public static float mensaje4;
         public static float mensaje5;
-        public static string mensaje6;
-
+        
         // La clase de los estados del juego
         public static Estados Estado_Actual;
 
@@ -73,11 +72,21 @@ namespace Hunting_Lord_Garzul.Objetos
         public static Texture2D Pantalla_Seleccion;
         public static Texture2D Selector;
         
-        // Punto blanco
+        // Rectangulos de colisiones para chequear y su textura
+        public static Rectangle Rectangulo_Colision;
+        public static Rectangle Rectangulo_Colision_2;
         public static Texture2D Punto_Blanco;
+        public static Boolean HabilitarRectangulos = false;
 
-        // Rectangulos de colisiones para chequear
-        //public static Rectangle Rectangulo_Colision;
-        //public static Rectangle Rectangulo_Colision_2;
+        // Para llevar la cuenta de los frames por segundo
+        public static TimeSpan elapsedTime = TimeSpan.Zero;
+        public static int frameRate = 0;
+        public static int frameCounter = 0;
+
+        /// <summary>
+        /// Rango que admite el golpe sobre el eje X e Y
+        /// </summary>
+        public static int HitRangeY = 7;
+        public static int HitRangeX = 15;
     }
 }

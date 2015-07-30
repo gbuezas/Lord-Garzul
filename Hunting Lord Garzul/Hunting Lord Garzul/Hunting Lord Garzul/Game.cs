@@ -230,6 +230,34 @@ namespace Hunting_Lord_Garzul
                 Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
+            // Da vida a los jugadores
+            if (Keyboard.GetState().IsKeyDown(Keys.D1))
+            {
+                foreach (Jugadores jugador in Globales.players)
+                {
+                    jugador.health += 1;
+                }
+            }
+
+            // Habilita cuadro de colisiones
+
+            Globales.previousKeyboardState = Globales.currentKeyboardState;
+            Globales.currentKeyboardState = Keyboard.GetState();
+
+
+            // action that should not repeat 
+            if (Globales.previousKeyboardState.IsKeyDown(Keys.D2) && Globales.currentKeyboardState.IsKeyUp(Keys.D2))
+            {
+                if (Globales.HabilitarRectangulos)
+                {
+                    Globales.HabilitarRectangulos = false;
+                }
+                else
+                {
+                    Globales.HabilitarRectangulos = true;
+                }
+            }
+
             // Chequea en que estado tiene que estar
             if(Estado_Check != Globales.Estado_Actual.Estado_ejecutandose)
             {
@@ -265,6 +293,15 @@ namespace Hunting_Lord_Garzul
             Globales.Estado_Actual.Update(gameTime);
 
             base.Update(gameTime);
+
+            Globales.elapsedTime += gameTime.ElapsedGameTime;
+
+            if (Globales.elapsedTime > TimeSpan.FromSeconds(1))
+            {
+                Globales.elapsedTime -= TimeSpan.FromSeconds(1);
+                Globales.frameRate = Globales.frameCounter;
+                Globales.frameCounter = 0;
+            }
         }
 
         /// <summary>
@@ -273,6 +310,8 @@ namespace Hunting_Lord_Garzul
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            Globales.frameCounter++;
+
             GraphicsDevice.Clear(Color.White);
 
             // Dibuja el estado actual
@@ -287,7 +326,7 @@ namespace Hunting_Lord_Garzul
             "limitePantallaX = " + Globales.mensaje3.ToString() + System.Environment.NewLine +
             "limitePantallaAncho = " + Globales.mensaje4.ToString() + System.Environment.NewLine + 
             "Zoom = " + Globales.mensaje5.ToString() + System.Environment.NewLine + 
-            Globales.mensaje6,
+            "FPS = " + Globales.frameRate + System.Environment.NewLine,
             ChkStatVar, Color.DarkRed);
 
             spriteBatch.End();

@@ -6,7 +6,7 @@ using Hunting_Lord_Garzul.Objetos;
 
 namespace Hunting_Lord_Garzul
 {
-    class Animacion
+    public class Animacion
     {
         #region VARIABLES
 

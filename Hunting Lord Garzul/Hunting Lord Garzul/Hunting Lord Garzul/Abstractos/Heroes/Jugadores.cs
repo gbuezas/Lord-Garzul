@@ -19,7 +19,15 @@ namespace Hunting_Lord_Garzul
             get { return Dibujado; }
             set { Dibujado = value; }
         }
-        
+
+        // Mirada del personaje
+        private Globales.Mirada Direccion;
+        public Globales.Mirada direccion
+        {
+            get { return Direccion; }
+            set { Direccion = value; }
+        }
+
         // Controles del jugador
         private Keys[] Controles = new Keys[Enum.GetNames(typeof(Globales.Controls)).Length];
         public Keys[] controles
@@ -103,6 +111,21 @@ namespace Hunting_Lord_Garzul
 
         // Posicion del jugador relativa a la parte superior izquierda de la pantalla
         public abstract Vector2 Posicion();
+
+        // Cambia el color del personaje entero
+        public void CambiarColorTotal(Color tinte, Animacion[] animacion)
+        {
+            foreach (Animacion elemento in animacion)
+            {
+                elemento.CambiarColor(tinte);
+            }
+        }
+
+        // Cambia el color de una pieza del personaje
+        public void CambiarColorPieza(Color tinte, Animacion animacion)
+        {
+            animacion.CambiarColor(tinte);
+        }
 
         #endregion
     }
