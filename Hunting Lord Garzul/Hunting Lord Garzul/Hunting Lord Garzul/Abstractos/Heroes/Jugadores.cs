@@ -20,6 +20,14 @@ namespace Hunting_Lord_Garzul
             set { Dibujado = value; }
         }
 
+        // Si el personaje es manejado por la maquina o por un humano
+        private Boolean Machine = false;
+        public Boolean machine
+        {
+            get { return Machine; }
+            set { Machine = value; }
+        }
+
         // Mirada del personaje
         private Globales.Mirada Direccion;
         public Globales.Mirada direccion
@@ -37,7 +45,7 @@ namespace Hunting_Lord_Garzul
         }
 
         // Esta es una copia de las animaciones que va a usar el hijo de esta clase, en donde se decide que texturas va a utilizar
-        // En esta instancia la clase no sabe que textras se van a utilizar.
+        // En esta instancia la clase no sabe que texturas se van a utilizar.
         private Animacion[] Animaciones = null;
         internal Animacion[] animaciones
         {
@@ -104,7 +112,7 @@ namespace Hunting_Lord_Garzul
         public abstract void Draw(SpriteBatch spriteBatch);
         
         // Actualizar cosas del jugador
-        public abstract void UpdatePlayer(GameTime gameTime, int Jugador, Rectangle LimitesJugador, int AltoNivel, int AnchoNivel);
+        public abstract void UpdatePlayer(GameTime gameTime, Rectangle LimitesJugador, int AltoNivel, int AnchoNivel);
 
         // Actualizar armadura
         public abstract void UpdateArmor(List<Piece_Set> set_pieces);

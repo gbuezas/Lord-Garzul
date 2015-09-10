@@ -51,10 +51,8 @@ namespace Hunting_Lord_Garzul
         // El area donde queremos mostrar el sprite
         Rectangle destinationRect = new Rectangle();
         
-        // Ancho de un cuadro dado
+        // Ancho y alto de un cuadro dado
         public int frameWidth;
-        
-        // Alto de un cuadro dado
         public int frameHeight;
         
         // El estado de la animacion
@@ -67,7 +65,7 @@ namespace Hunting_Lord_Garzul
         public Vector2 position;
 
         // Escala de Heroes con respecto al alto de la pantalla
-        public float escalaAnimacion = Globales.AltoViewport/4;
+        public float escalaAnimacion = Globales.AltoViewport / Globales.Escalar;
         
         #endregion
 
@@ -170,7 +168,7 @@ namespace Hunting_Lord_Garzul
             sourceRect = new Rectangle(currentFrame * frameWidth, 0, frameWidth, frameHeight);
 
             // Escalo con respecto a la altura que deseo comparando el personaje con la pantalla.
-            // Este valor esta en variables generales para simplificar su cambio (EscalaHeroes).
+            // Se cambia el valor de la escala desde Globales.Escalar
             float AspectRatio = (float)frameHeight / frameWidth;
             int Height = (int)((escalaAnimacion) + 0.5f);
             int Width = (int)((Height / AspectRatio) + 0.5f);

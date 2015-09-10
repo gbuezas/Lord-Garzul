@@ -31,6 +31,9 @@ namespace Hunting_Lord_Garzul.Objetos
 
         // Alto del nivel
         int Var_AltoNivel = Globales.AltoViewport;
+
+        // Ancho del nivel
+        int Var_AnchoNivel = Globales.AnchoViewport / 4 * Mapa_Nubes.Length;
         
         // Creo la variable de la camara en estatica
         static Camera Camara;
@@ -66,10 +69,9 @@ namespace Hunting_Lord_Garzul.Objetos
             Input_Management();
 
             // Actualiza jugador
-            for (int numero_jugador = 0; numero_jugador < 2; numero_jugador++ )
+            foreach(Jugadores Jugador in Globales.players)
             {
-                Globales.players[numero_jugador].
-                    UpdatePlayer(gameTime, numero_jugador, Camara.LimitesPantalla, Var_AltoNivel, Globales.AnchoViewport / 4 * Mapa_Nubes.Length);
+                Jugador.UpdatePlayer(gameTime, Camara.LimitesPantalla, Var_AltoNivel, Var_AnchoNivel);
             }
 
             // Ajusto los limites de la camara para que no pueda mostrar mas de este rectangulo
@@ -86,11 +88,32 @@ namespace Hunting_Lord_Garzul.Objetos
             Globales.players[1].controles[(int)Globales.Controls.DERECHA] = Keys.Right;
             Globales.players[1].controles[(int)Globales.Controls.BOTON_1] = Keys.Space;
 
-            // Hacer un foreach para todos, despues solo los buenos,
-            // los malos no, asi pueden salir y no me desconcha toda la camara y el zoom
+            Globales.players[2].controles[(int)Globales.Controls.ARRIBA] = Keys.I;
+            Globales.players[2].controles[(int)Globales.Controls.ABAJO] = Keys.K;
+            Globales.players[2].controles[(int)Globales.Controls.IZQUIERDA] = Keys.J;
+            Globales.players[2].controles[(int)Globales.Controls.DERECHA] = Keys.L;
+            Globales.players[2].controles[(int)Globales.Controls.BOTON_1] = Keys.Enter;
+
+            Globales.players[3].controles[(int)Globales.Controls.ARRIBA] = Keys.I;
+            Globales.players[3].controles[(int)Globales.Controls.ABAJO] = Keys.K;
+            Globales.players[3].controles[(int)Globales.Controls.IZQUIERDA] = Keys.J;
+            Globales.players[3].controles[(int)Globales.Controls.DERECHA] = Keys.L;
+            Globales.players[3].controles[(int)Globales.Controls.BOTON_1] = Keys.Enter;
+
+            // Enemigo
+            Globales.players[4].controles = null; 
+            Globales.players[5].controles = null;
+            
+            // Hacer un foreach para todos los personajes que quedan en camara, 
+            // solo los controlados por humanos, la maquina no, asi pueden salir y no me desconcha toda la camara y el zoom
             Camara.ViewTargets.Clear();
-            Camara.ViewTargets.Add(Globales.players[0].Posicion());
-            Camara.ViewTargets.Add(Globales.players[1].Posicion());
+            foreach( Jugadores Jugador in Globales.players )
+            {
+                if(!Jugador.machine)
+                {
+                    Camara.ViewTargets.Add(Jugador.Posicion());
+                }
+            }
             Camara.CentrarCamara();
 
             Globales.mensaje1 = Globales.AltoViewport;

@@ -1,14 +1,19 @@
-using System;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using Hunting_Lord_Garzul.Objetos;
 
-namespace Hunting_Lord_Garzul
+namespace Hunting_Lord_Garzul.Abstractos.Heroes
 {
-    class Jugador_Paladin : Jugadores
+    class IA_1 : Jugadores
     {
+
+        public IA_1(Globales.TargetCondition)
+        { 
+        
+        }
 
         # region VARIABLES
 
@@ -19,7 +24,7 @@ namespace Hunting_Lord_Garzul
             get { return AccionActual; }
             set { AccionActual = value; }
         }
-       
+
         // Accion realizada anteriormente
         private Globales.Actions AccionAnterior;
         public Globales.Actions accionAnterior
@@ -27,7 +32,7 @@ namespace Hunting_Lord_Garzul
             get { return AccionAnterior; }
             set { AccionAnterior = value; }
         }
-        
+
         // Tipo de cada pieza de armadura
         // shield, gauntletback, greaveback, helm, breastplate, tasset, greavetop, sword, gauntlettop.
         protected Pieces_Sets pieces_armor = new Pieces_Sets();
@@ -49,7 +54,7 @@ namespace Hunting_Lord_Garzul
             get { return Pieces_Anim; }
             set { Pieces_Anim = value; }
         }
-        
+
         // Posicion del jugador relativa a la parte superior izquierda de la pantalla.
         // Esta posicion marca donde se encuentra el jugador en la pantalla y no en el mapa donde se esta moviendo,
         // ya que a esta posicion se le aplican los limites de la pantalla. 
@@ -67,34 +72,17 @@ namespace Hunting_Lord_Garzul
         // Ancho y alto de un cuadro del sprite
         protected int AnchoPersonaje = Globales.AnchoFrame;
         protected int AltoPersonaje = Globales.AltoFrame;
-        
+
         // Velocidad de movimiento del jugador
         protected float VelocidadPersonaje;
-        
+
         // Establece tiempo de frame inicial cuando llama al UpdateArmor
         // El UpdateArmor no ocurre en el loop se pide explicitamente
         protected int Tiempo_Frame;
 
-        // Para teclado o Dpad
-        //protected bool reposo;
-        //protected bool derecha;
+        // Parametro de busqueda de objetivo a atacar
+        protected Globales.TargetCondition TargetCond;
 
-        // Teclado del jugador
-        //protected KeyboardState Teclado_Jugador;
-
-        // Mensajes de datos
-        protected float mensaje1;
-        protected float mensaje2;
-        protected Globales.Mirada mensaje3;
-        protected Globales.Actions mensaje4;
-        protected float mensaje5;
-        protected float mensaje6;
-        protected float mensaje7;
-        protected float mensaje8;
-        protected float mensaje9;
-        // Donde se va a alojar el mensaje de chequeo de status
-        Vector2 mensaje;
-        
         #endregion
 
         #region METODOS
@@ -102,80 +90,37 @@ namespace Hunting_Lord_Garzul
         // Inicializar al jugador
         public override void Initialize(Vector2 posicion)
         {
-            
+
             // Establezco variables por default para comenzar
             Position = posicion;
-            mensaje = Position;
             Active = true;
             VelocidadPersonaje = 3.0f;
             direccion = Objetos.Globales.Mirada.DERECHA;
             accionActual = Globales.Actions.STAND;
             accionAnterior = accionActual;
             Tiempo_Frame = 50;
-            health -= 10;
+            health -= 70;
+
+            // Seteo IA
+            machine = true;
 
             // Inicializo partes de armadura actual
             pieces_armor.Initialize();
-            
+
             // Inicializo las piezas de animacion
-            for (int i = 0; i < Globales.PiezasPaladin.Length; i++ )
+            for (int i = 0; i < Globales.PiezasPaladin.Length; i++)
             {
                 Pieces_Anim[i] = new Animacion();
                 Pieces_Anim[i].Initialize(Globales.PiezasPaladin[i]);
             }
-
-            #region cambiar armadura (solo para probar, borrar mas tarde)
-            // Coloco un recambio de armadura, que en el juego orginal esto tiene que pasar al obtener armaduras nuevas
-            // por lo tanto se haria chequeando el inventario.
-            //Piece_Set recambio = new Piece_Set();
-            //recambio.Initialize("shield", "set1");
-            //pieces_armor_new.Add(recambio);
-
-            //recambio = new Piece_Set();
-            //recambio.Initialize("gauntletback", "set1");
-            //pieces_armor_new.Add(recambio);
-
-            //recambio = new Piece_Set();
-            //recambio.Initialize("greaveback", "set1");
-            //pieces_armor_new.Add(recambio);
-
-            //recambio = new Piece_Set();
-            //recambio.Initialize("helm", "set1");
-            //pieces_armor_new.Add(recambio);
-
-            //recambio = new Piece_Set();
-            //recambio.Initialize("breastplate", "set1");
-            //pieces_armor_new.Add(recambio);
-
-            //recambio = new Piece_Set();
-            //recambio.Initialize("tasset", "set1");
-            //pieces_armor_new.Add(recambio);
-
-            //recambio = new Piece_Set();
-            //recambio.Initialize("greavetop", "set1");
-            //pieces_armor_new.Add(recambio);
-
-            //recambio = new Piece_Set();
-            //recambio.Initialize("sword", "set1");
-            //pieces_armor_new.Add(recambio);
-
-            //recambio = new Piece_Set();
-            //recambio.Initialize("gauntlettop", "set1");
-            //pieces_armor_new.Add(recambio);
-            #endregion
-
+            
             // Piezas de la armadura al comenzar
             UpdateArmor(pieces_armor_new);
 
             this.animaciones = this.Pieces_Anim;
 
-            // Asigno control por default al jugador
-            controles[(int)Globales.Controls.ARRIBA] = Keys.W;
-            controles[(int)Globales.Controls.ABAJO] = Keys.S;
-            controles[(int)Globales.Controls.IZQUIERDA] = Keys.A;
-            controles[(int)Globales.Controls.DERECHA] = Keys.D;
-            controles[(int)Globales.Controls.BOTON_1] = Keys.T;
-            controles[(int)Globales.Controls.BOTON_2] = Keys.Y;
+            // Seteo condicion de busqueda de objetico para atacar
+            GetCondition();
 
             // Ralentizar los cuadros por segundo del personaje
             // TiempoFrameEjecucion(1);
@@ -184,13 +129,10 @@ namespace Hunting_Lord_Garzul
         // Actualizar animacion
         public override void Update(GameTime gameTime)
         {
-            foreach(Animacion piezaAnimada in Pieces_Anim)
+            foreach (Animacion piezaAnimada in Pieces_Anim)
             {
                 piezaAnimada.position = Position;
                 piezaAnimada.Update(gameTime);
-                
-                // Para los stats de cada personaje (borrar mas tarde)
-                mensaje = Position;
             }
         }
 
@@ -200,28 +142,6 @@ namespace Hunting_Lord_Garzul
             foreach (Animacion piezaAnimada in Pieces_Anim)
             {
                 piezaAnimada.Draw(spriteBatch, direccion, piezaAnimada.color);
-            }
-            
-            // Si no separo este proceso de dibujo desconcha las posiciones de las capas del jugador
-            // +++ Me parece que esto se soluciono cuando cambie el parametro de dibujo en el draw general +++
-            spriteBatch.DrawString(Globales.CheckStatusVar_2,
-            "Frame Actual = " + mensaje1.ToString() + System.Environment.NewLine +
-            "Frame Total = " + mensaje2.ToString() + System.Environment.NewLine + 
-            "Direccion Actual = " + mensaje3.ToString() + System.Environment.NewLine +
-            "Accion Actual = " + mensaje4.ToString() + System.Environment.NewLine +
-            "Alto = " + mensaje5.ToString() + System.Environment.NewLine +
-            "Ancho = " + mensaje6.ToString() + System.Environment.NewLine +
-            "X = " + mensaje7.ToString() + System.Environment.NewLine +
-            "Y = " + mensaje8.ToString() + System.Environment.NewLine + 
-            "Vida = " + mensaje9.ToString(),
-            mensaje, Color.DarkRed);
-
-            // rectangulos de colision para chequear
-            if(Globales.HabilitarRectangulos)
-            {
-                DrawRectangle(this.pieces_anim[7].ObtenerPosicion(), Globales.Punto_Blanco, spriteBatch);
-                DrawRectangle(Globales.Rectangulo_Colision, Globales.Punto_Blanco, spriteBatch);
-                DrawRectangle(Globales.Rectangulo_Colision_2, Globales.Punto_Blanco, spriteBatch);
             }
         }
 
@@ -239,25 +159,15 @@ namespace Hunting_Lord_Garzul
 
             Update(gameTime);
 
-            // Obtengo teclas presionadas
-            Globales.currentKeyboardState = Keyboard.GetState();
-
             // Logica de las acciones, moverse, pegar, etc
             ActionLogic();
 
             // Logica de las colisiones al golpear
             CollissionLogic();
 
-            // Aqui aplicamos los da�os y todo lo correspondiente a los efectos de las acciones hechas anteriormente
+            // Aqui aplicamos los daños y todo lo correspondiente a los efectos de las acciones hechas anteriormente
             EffectLogic();
 
-            // Hace que el jugador no salga de la pantalla reacomodandolo dentro de la misma.
-            // Tomamos como pantalla el rectangulo que genera la camara para acomodar al jugador y limitamos de acuerdo a estas medidas.
-            // El FrameEscalado es para acomodar al personaje de acuerdo a la nueva escala adquirida dependiendo de la pantalla fisica donde se ejecuta el juego.
-            Rectangle FrameEscalado = this.animaciones[0].ObtenerPosicion();
-            Position.X = MathHelper.Clamp(Position.X, LimitesPantalla.Left + FrameEscalado.Width / 2, LimitesPantalla.Width - FrameEscalado.Width / 2);
-            Position.Y = MathHelper.Clamp(Position.Y, AltoNivel - AltoNivel/2, AltoNivel - FrameEscalado.Height/2);
-            
             // No es necesario mas acomodar la fila ya que todos vienen con fila 0
             // Solo se acomoda la cantidad de frames por animacion y que animacion va en cada pieza segun la accion ejecutandose.
             #region ANIMACION POR PIEZA
@@ -267,7 +177,7 @@ namespace Hunting_Lord_Garzul
                 foreach (Texturas textura in Globales.TexturasPaladin)
                 {
                     string aver = pieces_armor.Get_Set(textura.piece);
-                    
+
                     if (textura.piece == piezaAnimacion.nombrePieza &&
                         textura.set == pieces_armor.Get_Set(textura.piece) &&
                         textura.action == accionActual.ToString().ToLower())
@@ -284,21 +194,12 @@ namespace Hunting_Lord_Garzul
                 {
                     animacion.CurrentFrame = 0;
                 }
-                
+
                 accionAnterior = accionActual;
             }
 
             #endregion
 
-            // Status del personaje
-            mensaje1 = Pieces_Anim[0].CurrentFrame;
-            mensaje2 = Pieces_Anim[0].FrameCount;
-            mensaje3 = direccion;
-            mensaje4 = accionActual;
-            mensaje5 = this.Pieces_Anim[7].ObtenerPosicion().Height;
-            mensaje6 = this.Pieces_Anim[7].ObtenerPosicion().Width;
-            mensaje7 = this.Pieces_Anim[7].ObtenerPosicion().X;
-            mensaje8 = this.Pieces_Anim[7].ObtenerPosicion().Y;
         }
 
         /// <summary>
@@ -306,52 +207,69 @@ namespace Hunting_Lord_Garzul
         /// </summary>
         private void ActionLogic()
         {
+            // Busca blanco ara golpear segun los criterios dados
+            Jugadores target = GetTarget(this.TargetCond);
+            
             if (accionActual != Globales.Actions.HIT1 &&
                 accionActual != Globales.Actions.HIT2 &&
                 accionActual != Globales.Actions.HIT3)
             {
-                
+
                 #region MOVIMIENTO
 
-                // Si no se toca nada quedara por default que esta parado
+                // Si no esta en movimiento por default queda parado
                 accionActual = Globales.Actions.STAND;
 
-                // Si se presiona alguna tecla de movimiento
-                if (Globales.currentKeyboardState.IsKeyDown(controles[(int)Globales.Controls.IZQUIERDA]))
+                // Dirigirse al blanco, dependiendo de donde esta ele eje del blanco vamos a sumarle la velocidad hacia el.
+                // Tambien se toma el lugar donde la IA va a detenerse y el punto que va a buscar para atacar a cierto personaja.
+                // Para obtener el lugar antes mencionado usamos la variable de HitRange asi se posiciona optimamente para su ataque.
+                // El HitRangeX tiene que ser mayor para que no hostigue tanto al blanco, sino se pega mucho a el
+                if (target.Posicion().X < this.Position.X - Globales.HitRangeX * 4)
                 {
+                    // Izquierda
                     Position.X -= VelocidadPersonaje;
                     direccion = Globales.Mirada.IZQUIERDA;
                     accionActual = Globales.Actions.WALK;
                 }
-                else if (Globales.currentKeyboardState.IsKeyDown(controles[(int)Globales.Controls.DERECHA]))
+                else if (target.Posicion().X > this.Position.X + Globales.HitRangeX * 4)
                 {
+                    // Derecha
                     Position.X += VelocidadPersonaje;
                     direccion = Globales.Mirada.DERECHA;
                     accionActual = Globales.Actions.WALK;
                 }
 
-                if (Globales.currentKeyboardState.IsKeyDown(controles[(int)Globales.Controls.ARRIBA]))
+                if (target.Posicion().Y < this.Position.Y - Globales.HitRangeY)
                 {
+                    // Arriba
                     Position.Y -= VelocidadPersonaje;
                     accionActual = Globales.Actions.WALK;
                 }
-                else if (Globales.currentKeyboardState.IsKeyDown(controles[(int)Globales.Controls.ABAJO]))
+                else if (target.Posicion().Y > this.Position.Y + Globales.HitRangeY)
                 {
+                    // Abajo
                     Position.Y += VelocidadPersonaje;
                     accionActual = Globales.Actions.WALK;
                 }
 
                 #endregion
 
-                // Si presiono golpear cancela todas las demas acciones hasta que esta termine su ciclo
-                // Tambien genera un rango de los 3 diferentes tipos de golpes (algo netamente visual sin impacto en el juego)
-                if (Globales.currentKeyboardState.IsKeyDown(controles[(int)Globales.Controls.BOTON_1]))
+                #region GOLPEAR
+
+                // Obtengo las posiciones del blanco y nuestra
+                Rectangle temp = this.Pieces_Anim[7].ObtenerPosicion();
+                Rectangle temp2 = target.animaciones[7].ObtenerPosicion();
+                
+                // Si el blanco esta dentro del rango de golpe se lo ataca
+                if (CollisionVerifier(ref temp, ref temp2))
                 {
                     Random azar = new Random(System.DateTime.UtcNow.Second);
 
                     // El rango depende de como estan almacenados en las variables globales, la primer variable es incluyente y la segunda excluyente.
                     accionActual = (Globales.Actions)azar.Next(2, 5);
                 }
+
+                #endregion
             }
             else
             {
@@ -366,6 +284,77 @@ namespace Hunting_Lord_Garzul
         }
 
         /// <summary>
+        /// Obtiene condiciones al azar
+        /// </summary>
+        private void GetCondition()
+        {
+            // Genero condicion al azar
+            Random azar = new Random(System.DateTime.UtcNow.Second);
+            TargetCond = (Globales.TargetCondition)azar.Next(0, 4);
+        }
+
+        /// <summary>
+        /// Setea un objetivo segun los criterios de busqueda que se obtuvieron de GetCondition(), en Initialize
+        /// </summary>
+        /// <returns></returns>
+        private Jugadores GetTarget(Globales.TargetCondition Condition)
+        {
+            switch (Condition)
+            {
+
+                case Globales.TargetCondition.MAXHEALTH:
+                    {
+                        int vida = 0;
+                        int playerMaxHealth = 0;
+
+                        for(int i = 0; i < Globales.playersCant; i++)
+                        {
+                            if(Globales.players[i].health > vida)
+                            {
+                                vida = Globales.players[i].health;
+                                playerMaxHealth = i;
+                            }
+                        }
+
+                        return Globales.players[playerMaxHealth];
+                    }
+
+                case Globales.TargetCondition.MINHEALTH:
+                    {
+                        int vida = 1000;
+                        int playerMinHealth = 0;
+
+                        for (int i = 0; i < Globales.playersCant; i++)
+                        {
+                            if (Globales.players[i].health < vida)
+                            {
+                                vida = Globales.players[i].health;
+                                playerMinHealth = i;
+                            }
+                        }
+
+                        return Globales.players[playerMinHealth];
+                    }
+
+                case Globales.TargetCondition.MAXMONEY:
+                    {
+                        return Globales.players[2];
+                    }
+
+                case Globales.TargetCondition.MINMONEY:
+                    {
+                        return Globales.players[3];
+                    }
+
+                default: break;
+
+            }
+
+            
+            return Globales.players[0];
+        }
+
+        /// <summary>
         /// Logica de las colisiones de los golpes:
         /// 
         /// 1) Implementamos un chequeo jugador por jugador a la hora de golpear, que cumpla con las siguientes reglas:
@@ -373,24 +362,25 @@ namespace Hunting_Lord_Garzul
         ///     - Si el frame de la animacion no es justo cuando golpea con la espada se saltea.
         ///     - Si fue golpeado anteriormente se saltea
         ///     - Si es fantasma se saltea
+        ///     - Si es otra IA se saltea
         ///     
         /// 2) Contador de vueltas logicas, independiente de lo que se dibuja por segundo.
         ///    Cuando este contador esta en 1, porque el mismo se resetea por animacion, puede entrar y hacer los calculos necesarios, sino no pasa.
-        ///    De esta manera cuando se cambia de animacion se vuelve a empezar de 0 con el contador l�gico.
+        ///    De esta manera cuando se cambia de animacion se vuelve a empezar de 0 con el contador lógico.
         /// </summary>
         private void CollissionLogic()
         {
-            if((this.accionActual == Globales.Actions.HIT1 || this.accionActual == Globales.Actions.HIT2 || this.accionActual == Globales.Actions.HIT3)
+            if ((this.accionActual == Globales.Actions.HIT1 || this.accionActual == Globales.Actions.HIT2 || this.accionActual == Globales.Actions.HIT3)
                && !this.ghost_mode)
             {
-                foreach (Jugadores player in Globales.players)
+                foreach (Jugadores Jugador in Globales.players)
                 {
                     // 1) Ver summary
-                    if (player != this && this.animaciones[7].CurrentFrame == 5 && !player.injured && !player.ghost_mode)
+                    if (Jugador != this && this.animaciones[7].CurrentFrame == 5 && !Jugador.injured && !Jugador.ghost_mode && !Jugador.machine)
                     {
                         Rectangle temp = this.Pieces_Anim[7].ObtenerPosicion();
-                        Rectangle temp2 = player.animaciones[7].ObtenerPosicion();
-                        
+                        Rectangle temp2 = Jugador.animaciones[7].ObtenerPosicion();
+
                         // Si esta dentro del radio del golpe
                         if (CollisionVerifier(ref temp, ref temp2))
                         {
@@ -398,10 +388,10 @@ namespace Hunting_Lord_Garzul
                             if (this.logic_counter == 0)
                             {
                                 // Cuando la armadura esta detras del efecto de la espada no se puede ver bien el cambio de color
-                                player.CambiarColorTotal(Color.Red, player.animaciones);
-                                
-                                player.injured = true;
-                                player.injured_value = 10;
+                                Jugador.CambiarColorTotal(Color.Red, Jugador.animaciones);
+
+                                Jugador.injured = true;
+                                Jugador.injured_value = 10;
                                 this.logic_counter++;
                             }
                         }
@@ -411,7 +401,7 @@ namespace Hunting_Lord_Garzul
         }
 
         /// <summary>
-        /// L�gica de los efectos de las colisiones y movimientos realizados.
+        /// Lógica de los efectos de las colisiones y movimientos realizados.
         /// </summary>
         private void EffectLogic()
         {
@@ -421,10 +411,10 @@ namespace Hunting_Lord_Garzul
                 // Hago la resta necesaria a la health
                 this.health -= this.injured_value;
 
-                // Vuelvo el contador de da�o a 0 y quito que este da�ado
+                // Vuelvo el contador de daño a 0 y quito que este dañado
                 this.injured_value = 0;
                 this.injured = false;
-                
+
                 // Si pierde toda su HP se vuelve fantasma
                 if (this.health <= 0)
                 {
@@ -433,24 +423,24 @@ namespace Hunting_Lord_Garzul
             }
             else
             {
-                // Reestablezco su color natural despues de recibir da�o
+                // Reestablezco su color natural despues de recibir daño
                 this.CambiarColorTotal(Color.White, this.animaciones);
             }
-            
-            if(this.ghost_mode)
+
+            if (this.ghost_mode)
             {
                 Color fantasma = Color.White;
                 fantasma.A = 30;
                 this.CambiarColorTotal(fantasma, this.animaciones);
 
-                if(this.health > 0)
+                if (this.health > 0)
                 {
                     ghost_mode = false;
                 }
             }
 
             // MENSAJES: Veo la health de los personajes
-            mensaje9 = this.health;
+            //mensaje9 = this.health;
             //mensaje6 = Tiempo_Frame;
         }
 
@@ -466,12 +456,12 @@ namespace Hunting_Lord_Garzul
                 pieces_armor.Set_Set(set_piece);
             }
 
-            foreach(Animacion piezaAnimacion in Pieces_Anim)
+            foreach (Animacion piezaAnimacion in Pieces_Anim)
             {
                 foreach (Texturas textura in Globales.TexturasPaladin)
                 {
-                    if (textura.piece == piezaAnimacion.nombrePieza && 
-                        textura.set == pieces_armor.Get_Set(textura.piece) && 
+                    if (textura.piece == piezaAnimacion.nombrePieza &&
+                        textura.set == pieces_armor.Get_Set(textura.piece) &&
                         textura.action == accionActual.ToString().ToLower())
                     {
                         piezaAnimacion.CargarTextura(textura, Position, AnchoPersonaje, AltoPersonaje, Tiempo_Frame, Color.White, true);
@@ -569,7 +559,7 @@ namespace Hunting_Lord_Garzul
 
             spriteBatch.Draw(tex, rec, col);
         }
-        
+
         #endregion
 
     }

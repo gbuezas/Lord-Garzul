@@ -32,11 +32,13 @@ namespace Hunting_Lord_Garzul.Objetos
         public abstract void UpdateState(GameTime gameTime);
 
         // Ordenar lista de personajes segun su eje Y
+        // Ahora con los enemigos se manejan 2 listas lo que complico las cosas a la hora de dibujar el eje Y ordenadamente.
         public void Reordenar_Personajes(SpriteBatch spriteBatch)
         {
             // Genero una lista para todas las coordenadas de los personajes y las agrego
             List<float> Lista_Coordenadas = new List<float>();
 
+            // Agrego personajes y enemigos
             foreach (Jugadores Jugador in Globales.players)
             {
                 Lista_Coordenadas.Add(Jugador.Posicion().Y);

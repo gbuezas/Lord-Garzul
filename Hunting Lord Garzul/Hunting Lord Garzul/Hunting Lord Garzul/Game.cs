@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Hunting_Lord_Garzul.Objetos;
 using System.IO;
+using Hunting_Lord_Garzul.Abstractos.Heroes;
 
 namespace Hunting_Lord_Garzul
 {
@@ -18,6 +19,8 @@ namespace Hunting_Lord_Garzul
     /// </summary>
     public class Game : Microsoft.Xna.Framework.Game
     {
+        #region VARIABLES
+
         // Variables necesarias para dibujar por default
         SpriteBatch spriteBatch;
         GraphicsDeviceManager graphics;
@@ -27,6 +30,10 @@ namespace Hunting_Lord_Garzul
 
         // Check de estado de juego
         Globales.EstadosJuego Estado_Check;
+
+        #endregion
+
+        #region METODOS
 
         public Game()
         {
@@ -54,9 +61,16 @@ namespace Hunting_Lord_Garzul
         protected override void Initialize()
         {
             // Agrego los personajes a la lista asi se pueden utilizar mas tarde
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < Globales.playersCant; i++)
             {
                 Globales.players.Add(new Jugador_Paladin());
+            }
+
+            // Agrego los enemigos a la lista
+            Random azar = new Random(System.DateTime.UtcNow.Second);
+            for (int i = 0; i < Globales.enemiesCant; i++)
+            {
+                Globales.players.Add(new IA_1((Globales.TargetCondition)azar.Next(0, 4)));
             }
 
             Globales.Estado_Actual = new Estado_Avance();
@@ -200,13 +214,15 @@ namespace Hunting_Lord_Garzul
             Globales.CheckStatusVar = Content.Load<SpriteFont>("Fuente_Prueba");
             Globales.CheckStatusVar_2 = Content.Load<SpriteFont>("Fuente_Prueba_2");
 
-            // Asigno posiciones iniciales de los jugadores
-            Globales.players[0].Initialize(new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, 
-                GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2));
-
-            Globales.players[1].Initialize(new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
-                GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2 + 50));
-
+            // Asigno posiciones iniciales de los personajes, tanto jugadores como IA
+            int ejeX = 0;
+            foreach (Jugadores Jugador in Globales.players)
+            {
+                Jugador.Initialize(new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
+                    GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2 + ejeX));
+                
+                ejeX = ejeX + 50;
+            }
         }
 
         /// <summary>
@@ -225,70 +241,13 @@ namespace Hunting_Lord_Garzul
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // Permite salir del juego desde el joystick o teclado
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || 
-                Keyboard.GetState().IsKeyDown(Keys.Escape))
-                this.Exit();
+            // Funciones del juego
+            QuitGame();
+            GiveLife();
+            EnableColRec();
 
-            // Da vida a los jugadores
-            if (Keyboard.GetState().IsKeyDown(Keys.D1))
-            {
-                foreach (Jugadores jugador in Globales.players)
-                {
-                    jugador.health += 1;
-                }
-            }
-
-            // Habilita cuadro de colisiones
-
-            Globales.previousKeyboardState = Globales.currentKeyboardState;
-            Globales.currentKeyboardState = Keyboard.GetState();
-
-
-            // action that should not repeat 
-            if (Globales.previousKeyboardState.IsKeyDown(Keys.D2) && Globales.currentKeyboardState.IsKeyUp(Keys.D2))
-            {
-                if (Globales.HabilitarRectangulos)
-                {
-                    Globales.HabilitarRectangulos = false;
-                }
-                else
-                {
-                    Globales.HabilitarRectangulos = true;
-                }
-            }
-
-            // Chequea en que estado tiene que estar
-            if(Estado_Check != Globales.Estado_Actual.Estado_ejecutandose)
-            {
-                switch (Globales.Estado_Actual.Estado_ejecutandose)
-                {
-                    
-                    case Globales.EstadosJuego.TITULO:
-                        {
-                            Estado_Check = Globales.EstadosJuego.TITULO;
-                            Globales.Estado_Actual = new Estado_Titulos();
-                            break;
-                        }
-
-                    case Globales.EstadosJuego.SELECCION:
-                        {
-                            Estado_Check = Globales.EstadosJuego.SELECCION;
-                            Globales.Estado_Actual = new Estado_Seleccion();
-                            break;
-                        }
-
-                    case Globales.EstadosJuego.AVANCE:
-                        {
-                            Estado_Check = Globales.EstadosJuego.AVANCE;
-                            Globales.Estado_Actual = new Estado_Avance();
-                            break;
-                        }
-                    
-                    default:break;
-                        
-                }
-            }
+            // Acomoda los estados correspondientes del jeugo
+            StateSwitch();
 
             Globales.Estado_Actual.Update(gameTime);
 
@@ -335,5 +294,91 @@ namespace Hunting_Lord_Garzul
             base.Draw(gameTime);
         }
 
+        /// <summary>
+        /// Añade vida a todos los jugadores
+        /// </summary>
+        private static void GiveLife()
+        {
+            // Da vida a los jugadores
+            if (Keyboard.GetState().IsKeyDown(Keys.D1))
+            {
+                foreach (Jugadores jugador in Globales.players)
+                {
+                    jugador.health += 1;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Permite salir del juego desde el joystick o teclado apretando select o escape.
+        /// </summary>
+        private void QuitGame()
+        {
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+                Keyboard.GetState().IsKeyDown(Keys.Escape))
+                this.Exit();
+        }
+
+        /// <summary>
+        /// Habilita rectangulo de colisiones.
+        /// </summary>
+        private static void EnableColRec()
+        {
+            Globales.previousKeyboardState = Globales.currentKeyboardState;
+            Globales.currentKeyboardState = Keyboard.GetState();
+
+            // Acciones que no se tienen que repetir al mantener la tecla
+            if (Globales.previousKeyboardState.IsKeyDown(Keys.D2) && Globales.currentKeyboardState.IsKeyUp(Keys.D2))
+            {
+                if (Globales.HabilitarRectangulos)
+                {
+                    Globales.HabilitarRectangulos = false;
+                }
+                else
+                {
+                    Globales.HabilitarRectangulos = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Chequea en que estado tiene que estar el juego y lo gestiona.
+        /// </summary>
+        private void StateSwitch()
+        {
+            
+            if (Estado_Check != Globales.Estado_Actual.Estado_ejecutandose)
+            {
+                switch (Globales.Estado_Actual.Estado_ejecutandose)
+                {
+
+                    case Globales.EstadosJuego.TITULO:
+                        {
+                            Estado_Check = Globales.EstadosJuego.TITULO;
+                            Globales.Estado_Actual = new Estado_Titulos();
+                            break;
+                        }
+
+                    case Globales.EstadosJuego.SELECCION:
+                        {
+                            Estado_Check = Globales.EstadosJuego.SELECCION;
+                            Globales.Estado_Actual = new Estado_Seleccion();
+                            break;
+                        }
+
+                    case Globales.EstadosJuego.AVANCE:
+                        {
+                            Estado_Check = Globales.EstadosJuego.AVANCE;
+                            Globales.Estado_Actual = new Estado_Avance();
+                            break;
+                        }
+
+                    default: break;
+
+                }
+            }
+        }
+
+        #endregion
     }
 }

@@ -30,8 +30,16 @@ namespace Hunting_Lord_Garzul.Objetos
         public static int AltoViewport;
         public static int AnchoViewport;
         
-        // Crea lista de jugadores
+        // Dimensiones del frame de los personajes y escala de los mismos
+        public static int AltoFrame = 240;
+        public static int AnchoFrame = 320;
+        // Mas grande es el numero mas chico es el personaje
+        public static int Escalar = 6;
+
+        // Crea lista de jugadores y enemigos
         public static List<Jugadores> players = new List<Jugadores>();
+        public static int playersCant = 4;
+        public static int enemiesCant = 16;
 
         // Para donde mira el personaje
         public enum Mirada { DERECHA, IZQUIERDA };
@@ -42,6 +50,9 @@ namespace Hunting_Lord_Garzul.Objetos
         
         // Los distintos estados del juego
         public enum EstadosJuego { INTRO, TITULO, SELECCION, MAPA, VS, AVANCE, PAUSA, GAMEOVER, FINAL }
+
+        // Los distintos parametros de busqueda de objetivo de la IA
+        public enum TargetCondition { MAXHEALTH, MINHEALTH, MAXMONEY, MINMONEY }
 
         // Los distintos heroes
         public static string[] Heroes = new string[6] { "Paladin", "Paladina", "Barbaro", "Barbara", "Arquero", "Arquera" };
