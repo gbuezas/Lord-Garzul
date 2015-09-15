@@ -61,26 +61,26 @@ namespace Hunting_Lord_Garzul
         protected override void Initialize()
         {
             // Agrego los personajes a la lista asi se pueden utilizar mas tarde
-            for (int i = 0; i < Globales.playersCant; i++)
+            for (int i = 0; i < Globales.playersQuant; i++)
             {
                 Globales.players.Add(new Jugador_Paladin());
             }
 
             // Agrego los enemigos a la lista
-            Random azar = new Random(System.DateTime.UtcNow.Second);
-            for (int i = 0; i < Globales.enemiesCant; i++)
+            for (int i = 0; i < Globales.enemiesQuant; i++)
             {
-                Globales.players.Add(new IA_1((Globales.TargetCondition)azar.Next(0, 4)));
+                //Globales.players.Add(new IA_1((Globales.TargetCondition)azar.Next(0, 4)));
+                Globales.players.Add(new IA_1());
             }
 
-            Globales.Estado_Actual = new Estado_Avance();
-            Globales.Estado_Actual.Estado_ejecutandose = Globales.EstadosJuego.TITULO;
+            Globales.CurrentState = new Estado_Avance();
+            Globales.CurrentState.Estado_ejecutandose = Globales.EstadosJuego.TITULO;
             
             // Ponemos este estado por defecto en un modo que no es nada, asi cuando va al case detecta incongruencia
             // y acomoda al que corresponde, que seria el que dice arriba en ejecutandose.
             Estado_Check = Globales.EstadosJuego.GAMEOVER;
 
-            Globales.Estado_Actual.Initialize();
+            Globales.CurrentState.Initialize();
 
             // Ralentizar los cuadros por segundo de todo el juego
             //this.TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 5);
@@ -97,10 +97,10 @@ namespace Hunting_Lord_Garzul
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Globales.AnchoViewport = GraphicsDevice.Viewport.Width;
-            Globales.AltoViewport = GraphicsDevice.Viewport.Height;
+            Globales.ViewportWidth = GraphicsDevice.Viewport.Width;
+            Globales.ViewportHeight = GraphicsDevice.Viewport.Height;
 
-            Globales.Estado_Actual.Load(GraphicsDevice.Viewport);
+            Globales.CurrentState.Load(GraphicsDevice.Viewport);
 
             // Cargo todas las texturas de los personas y sus movimientos de cada carpeta.
             // Acordarse que los png tienen que estar en la carpeta DEBUG para el modo DEBUG, y asi con cada modo.
@@ -124,7 +124,7 @@ namespace Hunting_Lord_Garzul
 
                             case "Paladin":
                                 {
-                                    Globales.TexturasPaladin.Add(textura);
+                                    Globales.PaladinTextures.Add(textura);
                                     break;
                                 }
                             
@@ -135,9 +135,9 @@ namespace Hunting_Lord_Garzul
 
                         }
  
-                        if (!Globales.Armaduras.Contains(Nombre.Split('_')[0]))
+                        if (!Globales.Armors.Contains(Nombre.Split('_')[0]))
                         {
-                            Globales.Armaduras.Add(Nombre.Split('_')[0]);
+                            Globales.Armors.Add(Nombre.Split('_')[0]);
                         }
                     }
                 }
@@ -154,7 +154,7 @@ namespace Hunting_Lord_Garzul
             // Cargo los niveles
             #region TEXTURA_NIVELES
 
-            foreach (String escenario in Globales.Escenarios)
+            foreach (String escenario in Globales.Scenes)
             {
                 try
                 {
@@ -170,13 +170,13 @@ namespace Hunting_Lord_Garzul
 
                             case "Avance":
                                 {
-                                    Globales.TexturasAvance.Add(textura);
+                                    Globales.AvanceTextures.Add(textura);
                                     break;
                                 }
 
                             case "Versus":
                                 {
-                                    Globales.TexturasVersus.Add(textura);
+                                    Globales.VersusTextures.Add(textura);
                                     break;
                                 }
 
@@ -216,12 +216,16 @@ namespace Hunting_Lord_Garzul
 
             // Asigno posiciones iniciales de los personajes, tanto jugadores como IA
             int ejeX = 0;
+            int ejeY = 0;
             foreach (Jugadores Jugador in Globales.players)
             {
-                Jugador.Initialize(new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
-                    GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2 + ejeX));
+
+
+                Jugador.Initialize(new Vector2( GraphicsDevice.Viewport.TitleSafeArea.X + ejeX,
+                                                GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2 + ejeY));
                 
                 ejeX = ejeX + 50;
+                ejeY = ejeY + 50;
             }
         }
 
@@ -249,7 +253,7 @@ namespace Hunting_Lord_Garzul
             // Acomoda los estados correspondientes del jeugo
             StateSwitch();
 
-            Globales.Estado_Actual.Update(gameTime);
+            Globales.CurrentState.Update(gameTime);
 
             base.Update(gameTime);
 
@@ -274,7 +278,7 @@ namespace Hunting_Lord_Garzul
             GraphicsDevice.Clear(Color.White);
 
             // Dibuja el estado actual
-            Globales.Estado_Actual.Draw(spriteBatch);
+            Globales.CurrentState.Draw(spriteBatch);
 
             # region MENSAJES DE ERROR
             spriteBatch.Begin();
@@ -330,13 +334,13 @@ namespace Hunting_Lord_Garzul
             // Acciones que no se tienen que repetir al mantener la tecla
             if (Globales.previousKeyboardState.IsKeyDown(Keys.D2) && Globales.currentKeyboardState.IsKeyUp(Keys.D2))
             {
-                if (Globales.HabilitarRectangulos)
+                if (Globales.EnableRectangles)
                 {
-                    Globales.HabilitarRectangulos = false;
+                    Globales.EnableRectangles = false;
                 }
                 else
                 {
-                    Globales.HabilitarRectangulos = true;
+                    Globales.EnableRectangles = true;
                 }
             }
         }
@@ -347,29 +351,29 @@ namespace Hunting_Lord_Garzul
         private void StateSwitch()
         {
             
-            if (Estado_Check != Globales.Estado_Actual.Estado_ejecutandose)
+            if (Estado_Check != Globales.CurrentState.Estado_ejecutandose)
             {
-                switch (Globales.Estado_Actual.Estado_ejecutandose)
+                switch (Globales.CurrentState.Estado_ejecutandose)
                 {
 
                     case Globales.EstadosJuego.TITULO:
                         {
                             Estado_Check = Globales.EstadosJuego.TITULO;
-                            Globales.Estado_Actual = new Estado_Titulos();
+                            Globales.CurrentState = new Estado_Titulos();
                             break;
                         }
 
                     case Globales.EstadosJuego.SELECCION:
                         {
                             Estado_Check = Globales.EstadosJuego.SELECCION;
-                            Globales.Estado_Actual = new Estado_Seleccion();
+                            Globales.CurrentState = new Estado_Seleccion();
                             break;
                         }
 
                     case Globales.EstadosJuego.AVANCE:
                         {
                             Estado_Check = Globales.EstadosJuego.AVANCE;
-                            Globales.Estado_Actual = new Estado_Avance();
+                            Globales.CurrentState = new Estado_Avance();
                             break;
                         }
 

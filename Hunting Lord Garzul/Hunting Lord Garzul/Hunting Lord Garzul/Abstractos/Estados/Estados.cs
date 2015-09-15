@@ -41,10 +41,10 @@ namespace Hunting_Lord_Garzul.Objetos
             // Agrego personajes y enemigos
             foreach (Jugadores Jugador in Globales.players)
             {
-                Lista_Coordenadas.Add(Jugador.Posicion().Y);
+                Lista_Coordenadas.Add(Jugador.GetPosition().Y);
                 
                 // Reseteo el estado de dibujado
-                Jugador.dibujado = false;
+                Jugador.drawn = false;
             }
 
             // Ordeno la lista y la invierto para obtener el efecto buscado
@@ -56,12 +56,12 @@ namespace Hunting_Lord_Garzul.Objetos
             {
                 foreach (Jugadores Jugador in Globales.players)
                 {
-                    if (Jugador.dibujado == false && Jugador.Posicion().Y == Coordenada)
+                    if (Jugador.drawn == false && Jugador.GetPosition().Y == Coordenada)
                     {
                         Jugador.Draw(spriteBatch);
 
                         // Lo pongo como dibujado para que no lo repita
-                        Jugador.dibujado = true;
+                        Jugador.drawn = true;
                     }
                 }
             }

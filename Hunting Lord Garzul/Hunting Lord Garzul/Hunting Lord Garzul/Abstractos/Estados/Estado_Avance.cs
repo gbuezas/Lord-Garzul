@@ -30,10 +30,10 @@ namespace Hunting_Lord_Garzul.Objetos
         Rectangle[] sourceRect = new Rectangle[Mapa_Nubes.Length];
 
         // Alto del nivel
-        int Var_AltoNivel = Globales.AltoViewport;
+        int Var_AltoNivel = Globales.ViewportHeight;
 
         // Ancho del nivel
-        int Var_AnchoNivel = Globales.AnchoViewport / 4 * Mapa_Nubes.Length;
+        int Var_AnchoNivel = Globales.ViewportWidth / 4 * Mapa_Nubes.Length;
         
         // Creo la variable de la camara en estatica
         static Camera Camara;
@@ -49,9 +49,9 @@ namespace Hunting_Lord_Garzul.Objetos
         public override void Initialize()
         {
             // Agrego las diferentes capas de parallax
-            Globales.Capas.Add(Nubes);
-            Globales.Capas.Add(Arboles);
-            Globales.Capas.Add(Piso);
+            Globales.Layers.Add(Nubes);
+            Globales.Layers.Add(Arboles);
+            Globales.Layers.Add(Piso);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace Hunting_Lord_Garzul.Objetos
         public override void Load(Viewport _viewport)
         {
             // Seteo el viewport correspondiente a la camara
-            Camara = new Camera(_viewport, Var_AltoNivel, Globales.AnchoViewport / 4 * Mapa_Nubes.Length);
+            Camara = new Camera(_viewport, Var_AltoNivel, Globales.ViewportWidth / 4 * Mapa_Nubes.Length);
         }
 
         public override void Update(GameTime gameTime)
@@ -75,34 +75,34 @@ namespace Hunting_Lord_Garzul.Objetos
             }
 
             // Ajusto los limites de la camara para que no pueda mostrar mas de este rectangulo
-            Camara.Limits = new Rectangle(0, 0, Globales.AnchoViewport / 4 * Mapa_Nubes.Length, Var_AltoNivel);
+            Camara.Limits = new Rectangle(0, 0, Globales.ViewportWidth / 4 * Mapa_Nubes.Length, Var_AltoNivel);
             
             // Tomo tiempo transcurrido.
             //float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // Para poder controlar al otro personaje por separado
             // Si lo saco de aca no me toma los cambios del control
-            Globales.players[1].controles[(int)Globales.Controls.ARRIBA] = Keys.Up;
-            Globales.players[1].controles[(int)Globales.Controls.ABAJO] = Keys.Down;
-            Globales.players[1].controles[(int)Globales.Controls.IZQUIERDA] = Keys.Left;
-            Globales.players[1].controles[(int)Globales.Controls.DERECHA] = Keys.Right;
-            Globales.players[1].controles[(int)Globales.Controls.BOTON_1] = Keys.Space;
+            Globales.players[1].controls[(int)Globales.Controls.UP] = Keys.Up;
+            Globales.players[1].controls[(int)Globales.Controls.DOWN] = Keys.Down;
+            Globales.players[1].controls[(int)Globales.Controls.LEFT] = Keys.Left;
+            Globales.players[1].controls[(int)Globales.Controls.RIGHT] = Keys.Right;
+            Globales.players[1].controls[(int)Globales.Controls.BUTTON_1] = Keys.Space;
 
-            Globales.players[2].controles[(int)Globales.Controls.ARRIBA] = Keys.I;
-            Globales.players[2].controles[(int)Globales.Controls.ABAJO] = Keys.K;
-            Globales.players[2].controles[(int)Globales.Controls.IZQUIERDA] = Keys.J;
-            Globales.players[2].controles[(int)Globales.Controls.DERECHA] = Keys.L;
-            Globales.players[2].controles[(int)Globales.Controls.BOTON_1] = Keys.Enter;
+            Globales.players[2].controls[(int)Globales.Controls.UP] = Keys.I;
+            Globales.players[2].controls[(int)Globales.Controls.DOWN] = Keys.K;
+            Globales.players[2].controls[(int)Globales.Controls.LEFT] = Keys.J;
+            Globales.players[2].controls[(int)Globales.Controls.RIGHT] = Keys.L;
+            Globales.players[2].controls[(int)Globales.Controls.BUTTON_1] = Keys.Enter;
 
-            Globales.players[3].controles[(int)Globales.Controls.ARRIBA] = Keys.I;
-            Globales.players[3].controles[(int)Globales.Controls.ABAJO] = Keys.K;
-            Globales.players[3].controles[(int)Globales.Controls.IZQUIERDA] = Keys.J;
-            Globales.players[3].controles[(int)Globales.Controls.DERECHA] = Keys.L;
-            Globales.players[3].controles[(int)Globales.Controls.BOTON_1] = Keys.Enter;
+            Globales.players[3].controls[(int)Globales.Controls.UP] = Keys.I;
+            Globales.players[3].controls[(int)Globales.Controls.DOWN] = Keys.K;
+            Globales.players[3].controls[(int)Globales.Controls.LEFT] = Keys.J;
+            Globales.players[3].controls[(int)Globales.Controls.RIGHT] = Keys.L;
+            Globales.players[3].controls[(int)Globales.Controls.BUTTON_1] = Keys.Enter;
 
             // Enemigo
-            Globales.players[4].controles = null; 
-            Globales.players[5].controles = null;
+            Globales.players[4].controls = null; 
+            Globales.players[5].controls = null;
             
             // Hacer un foreach para todos los personajes que quedan en camara, 
             // solo los controlados por humanos, la maquina no, asi pueden salir y no me desconcha toda la camara y el zoom
@@ -111,13 +111,13 @@ namespace Hunting_Lord_Garzul.Objetos
             {
                 if(!Jugador.machine)
                 {
-                    Camara.ViewTargets.Add(Jugador.Posicion());
+                    Camara.ViewTargets.Add(Jugador.GetPosition());
                 }
             }
             Camara.CentrarCamara();
 
-            Globales.mensaje1 = Globales.AltoViewport;
-            Globales.mensaje2 = Globales.AnchoViewport;
+            Globales.mensaje1 = Globales.ViewportHeight;
+            Globales.mensaje2 = Globales.ViewportWidth;
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Hunting_Lord_Garzul.Objetos
             // La posicion donde va el siguiente rectangulo
             int posicion;
             
-            foreach (Parallax capa in Globales.Capas)
+            foreach (Parallax capa in Globales.Layers)
             {
                 
                 Camara.parallax = new Vector2(capa.parallax_x, capa.parallax_y);
@@ -146,13 +146,13 @@ namespace Hunting_Lord_Garzul.Objetos
 
                 foreach (string seccion in capa.capa_parallax)
                 {
-                    foreach (Texturas avance in Globales.TexturasAvance)
+                    foreach (Texturas avance in Globales.AvanceTextures)
                     {
                         if (seccion == avance.piece)
                         {
                             sourceRect[rectangulo] = new Rectangle(posicion, 0,
-                                Globales.AnchoViewport / 4,
-                                Globales.AltoViewport);
+                                Globales.ViewportWidth / 4,
+                                Globales.ViewportHeight);
 
                             // Recalculo el rectangulo para que se adapte a la velocidad correspondiente de la capa
                             capa.RectanguloParallax = sourceRect[rectangulo];
@@ -168,7 +168,7 @@ namespace Hunting_Lord_Garzul.Objetos
                                 spriteBatch.Draw(avance.textura, sourceRect[rectangulo], Color.White);
                             }
 
-                            posicion += Globales.AnchoViewport / 4;
+                            posicion += Globales.ViewportWidth / 4;
                         }
 
                     }

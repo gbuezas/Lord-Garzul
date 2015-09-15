@@ -13,8 +13,8 @@ namespace Hunting_Lord_Garzul.Objetos
         // El area de la linea de sprite que queremos mostrar
         Rectangle sourceRect;
 
-        int Var_AltoNivel = Globales.AltoViewport;
-        int Var_AnchoNivel = Globales.AnchoViewport;
+        int Var_AltoNivel = Globales.ViewportHeight;
+        int Var_AnchoNivel = Globales.ViewportWidth;
 
         // Traigo la camara del game
         Camera CamaraTraida;
@@ -32,8 +32,8 @@ namespace Hunting_Lord_Garzul.Objetos
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
         {
             // Agarro el cuadro correcto
-            sourceRect = new Rectangle(0, 0, Globales.AnchoViewport, 
-                Globales.AltoViewport);
+            sourceRect = new Rectangle(0, 0, Globales.ViewportWidth, 
+                Globales.ViewportHeight);
 
             // Guarda y lee los estados actuales y anteriores del joystick y teclado
             Input_Management();
@@ -59,7 +59,7 @@ namespace Hunting_Lord_Garzul.Objetos
 
             if ((Keyboard.GetState().IsKeyDown(Keys.A)))
             {
-                Globales.Estado_Actual.Estado_ejecutandose = Globales.EstadosJuego.SELECCION;
+                Globales.CurrentState.Estado_ejecutandose = Globales.EstadosJuego.SELECCION;
             }
             
         }

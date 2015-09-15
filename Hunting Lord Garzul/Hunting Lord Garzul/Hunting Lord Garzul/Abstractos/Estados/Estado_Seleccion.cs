@@ -14,8 +14,8 @@ namespace Hunting_Lord_Garzul.Objetos
         Rectangle sourceRect;
         Rectangle[] Fichas = new Rectangle[4];
 
-        int Var_AltoNivel = Globales.AltoViewport;
-        int Var_AnchoNivel = Globales.AnchoViewport;
+        int Var_AltoNivel = Globales.ViewportHeight;
+        int Var_AnchoNivel = Globales.ViewportWidth;
         
         public override void Initialize()
         {
@@ -30,8 +30,8 @@ namespace Hunting_Lord_Garzul.Objetos
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
         {
             // Agarro el cuadro correcto
-            sourceRect = new Rectangle(0, 0, Globales.AnchoViewport, 
-                Globales.AltoViewport);
+            sourceRect = new Rectangle(0, 0, Globales.ViewportWidth, 
+                Globales.ViewportHeight);
 
             Fichas[0] = new Rectangle(0, 0, 200, 150);
             Fichas[1] = new Rectangle(200, 0, 200, 150);
@@ -65,7 +65,7 @@ namespace Hunting_Lord_Garzul.Objetos
 
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
-                Globales.Estado_Actual.Estado_ejecutandose = Globales.EstadosJuego.AVANCE;
+                Globales.CurrentState.Estado_ejecutandose = Globales.EstadosJuego.AVANCE;
             }
         }
     }

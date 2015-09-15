@@ -11,7 +11,7 @@ namespace Hunting_Lord_Garzul.Objetos
 
         public void Initialize()
         {
-            foreach (string piece in Globales.PiezasPaladin)
+            foreach (string piece in Globales.PiecesPaladin)
             {
                 Piece_Set newPiece = new Piece_Set();
                 newPiece.Initialize(piece, "set1");
