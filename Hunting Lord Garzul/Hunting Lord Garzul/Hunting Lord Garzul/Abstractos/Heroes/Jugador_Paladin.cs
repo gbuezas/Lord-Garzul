@@ -249,7 +249,7 @@ namespace Hunting_Lord_Garzul
                     // rectangulos de colision para chequear
                     if (Globales.EnableRectangles)
                     {
-                        DrawRectangle(this.pieces_anim[7].ObtenerPosicion(), Globales.Punto_Blanco, spriteBatch);
+                        DrawRectangle(this.pieces_anim[0].GetPosition(), Globales.Punto_Blanco, spriteBatch);
                         DrawRectangle(Globales.Rectangle_Collision, Globales.Punto_Blanco, spriteBatch);
                         DrawRectangle(Globales.Rectangle_Collision_2, Globales.Punto_Blanco, spriteBatch);
                     }
@@ -284,7 +284,7 @@ namespace Hunting_Lord_Garzul
                     // Hace que el jugador no salga de la pantalla reacomodandolo dentro de la misma.
                     // Tomamos como pantalla el rectangulo que genera la camara para acomodar al jugador y limitamos de acuerdo a estas medidas.
                     // El FrameEscalado es para acomodar al personaje de acuerdo a la nueva escala adquirida dependiendo de la pantalla fisica donde se ejecuta el juego.
-                    Rectangle FrameEscalado = this.animations[0].ObtenerPosicion();
+                    Rectangle FrameEscalado = this.animations[0].GetPosition();
                     Position.X = MathHelper.Clamp(Position.X, LimitesPantalla.Left + FrameEscalado.Width / 2, LimitesPantalla.Width - FrameEscalado.Width / 2);
                     Position.Y = MathHelper.Clamp(Position.Y, AltoNivel - AltoNivel / 2, AltoNivel - FrameEscalado.Height / 2);
 
@@ -298,11 +298,11 @@ namespace Hunting_Lord_Garzul
                         {
                             string aver = pieces_armor.Get_Set(textura.piece);
 
-                            if (textura.piece == piezaAnimacion.nombrePieza &&
+                            if (textura.piece == piezaAnimacion.pieceName &&
                                 textura.set == pieces_armor.Get_Set(textura.piece) &&
                                 textura.action == currentAction.ToString().ToLower())
                             {
-                                piezaAnimacion.CargarTextura(textura);
+                                piezaAnimacion.LoadTexture(textura);
                             }
                         }
                     }
@@ -325,10 +325,10 @@ namespace Hunting_Lord_Garzul
                     mensaje2 = Pieces_Anim[0].FrameCount;
                     mensaje3 = direction;
                     mensaje4 = currentAction;
-                    mensaje5 = this.Pieces_Anim[7].ObtenerPosicion().Height;
-                    mensaje6 = this.Pieces_Anim[7].ObtenerPosicion().Width;
-                    mensaje7 = this.Pieces_Anim[7].ObtenerPosicion().X;
-                    mensaje8 = this.Pieces_Anim[7].ObtenerPosicion().Y;
+                    mensaje5 = this.Pieces_Anim[0].GetPosition().Height;
+                    mensaje6 = this.Pieces_Anim[0].GetPosition().Width;
+                    mensaje7 = this.Pieces_Anim[0].GetPosition().X;
+                    mensaje8 = this.Pieces_Anim[0].GetPosition().Y;
                 }
 
                 /// <summary>
@@ -347,11 +347,11 @@ namespace Hunting_Lord_Garzul
                     {
                         foreach (Texturas textura in Globales.PaladinTextures)
                         {
-                            if (textura.piece == piezaAnimacion.nombrePieza &&
+                            if (textura.piece == piezaAnimacion.pieceName &&
                                 textura.set == pieces_armor.Get_Set(textura.piece) &&
                                 textura.action == currentAction.ToString().ToLower())
                             {
-                                piezaAnimacion.CargarTextura(textura, Position, FrameWidth, FrameHeight, FrameTime, Color.White, true);
+                                piezaAnimacion.LoadTexture(textura, Position, FrameWidth, FrameHeight, FrameTime, Color.White, true);
                             }
                         }
                     }
@@ -375,7 +375,7 @@ namespace Hunting_Lord_Garzul
                 {
                     foreach (Animacion animacion in this.animations)
                     {
-                        animacion.CambiarColor(tinte);
+                        animacion.ColorChange(tinte);
                     }
                 }
 
@@ -386,7 +386,7 @@ namespace Hunting_Lord_Garzul
                 /// <param name="pieza"> Pieza que queremos cambiar el color </param>
                 public override void ColorPieceChange(Color tinte, int pieza)
                 {
-                    this.animations[pieza].CambiarColor(tinte);
+                    this.animations[pieza].ColorChange(tinte);
                 }
 
                 /// <summary>
@@ -426,7 +426,7 @@ namespace Hunting_Lord_Garzul
                 /// Establece el tiempo de frame en ejecucion
                 /// </summary>
                 /// <param name="Tiempo">El tiempo que va a durar el frame en pantalla de las distintas animaciones del personaje</param>
-                void TiempoFrameEjecucion(int Tiempo)
+                void FrameSpeed(int Tiempo)
                 {
                     foreach (Animacion piezaAnimada in Pieces_Anim)
                     {
@@ -442,7 +442,7 @@ namespace Hunting_Lord_Garzul
                 {
                     foreach (Animacion piezaAnimada in Pieces_Anim)
                     {
-                        piezaAnimada.pausa = desactivar;
+                        piezaAnimada.pause = desactivar;
                     }
                 }
 
@@ -538,8 +538,8 @@ namespace Hunting_Lord_Garzul
                             // 1) Ver summary
                             if (player != this && this.GetCurrentFrame() == 5 && !player.injured && !player.ghost_mode)
                             {
-                                Rectangle temp = this.Pieces_Anim[7].ObtenerPosicion();
-                                Rectangle temp2 = player.animations[7].ObtenerPosicion();
+                                Rectangle temp = this.Pieces_Anim[0].GetPosition();
+                                Rectangle temp2 = player.animations[0].GetPosition();
 
                                 // Si esta dentro del radio del golpe
                                 if (CollisionVerifier(ref temp, ref temp2))

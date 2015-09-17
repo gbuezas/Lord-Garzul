@@ -19,7 +19,7 @@ namespace Hunting_Lord_Garzul.Objetos
         
         // Colores
         public static Color ColorGhost = new Color(255, 255, 255, 30);
-        public static Color ColorEnemy = Color.Olive;
+        public static Color ColorEnemy = Color.White;
 
         // La clase de los estados del juego
         public static Estados CurrentState;
@@ -59,11 +59,13 @@ namespace Hunting_Lord_Garzul.Objetos
         public enum TargetCondition { MAXHEALTH, MINHEALTH, MAXMONEY, MINMONEY }
 
         // Los distintos heroes
-        public static string[] Heroes = new string[6] { "Paladin", "Paladina", "Barbaro", "Barbara", "Arquero", "Arquera" };
+        public static string[] Heroes = new string[7] { "Paladin", "Paladina", "Barbaro", "Barbara", "Arquero", "Arquera", "IA_1" };
+        
         // El orden de los items influye directamente en el orden en el que se dibujan las piezas.
         // Cada clase tiene su set de items (paladin, barbaro, etc)
         public static string[] PiecesPaladin = new string[] { "shield", "gauntletback", "greaveback", "breastplate", "helm", "tasset", "greavetop", "sword", "gauntlettop" };
         public static string[] PiecesBarbaro = new string[] { "gauntletback", "greaveback", "breastplate", "helm", "tasset", "greavetop", "sword", "gauntlettop" };
+        public static string[] PiecesIA_1 = new string[] { "gauntletback", "greaveback", "breastplate", "helm", "tasset", "greavetop", "gauntlettop" };
         public static List<string> Armors = new List<string>();
 
         // Los distintos estilos de escenarios
@@ -71,6 +73,7 @@ namespace Hunting_Lord_Garzul.Objetos
 
         // Las distintas armaduras o skins que puede llevar y las piezas de animacion
         public static List<Texturas> PaladinTextures = new List<Texturas>();
+        public static List<Texturas> IA_1Textures = new List<Texturas>();
         
         // Los distintos niveles de avance
         public static List<Texturas> AvanceTextures = new List<Texturas>();

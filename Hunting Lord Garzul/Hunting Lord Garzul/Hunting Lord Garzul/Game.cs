@@ -127,7 +127,13 @@ namespace Hunting_Lord_Garzul
                                     Globales.PaladinTextures.Add(textura);
                                     break;
                                 }
-                            
+
+                            case "IA_1":
+                                {
+                                    Globales.IA_1Textures.Add(textura);
+                                    break;
+                                }
+
                             default:
                                 {
                                     break;

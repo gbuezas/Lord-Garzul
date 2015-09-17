@@ -11,10 +11,10 @@ namespace Hunting_Lord_Garzul
         #region VARIABLES
 
         // La textura con los sprites dentro
-        public Texturas texturaCargada;
+        public Texturas loadedTexture;
 
         // Nombre de la pieza a animar
-        public string nombrePieza;
+        public string pieceName;
 
         // El tiempo que actualizamos el cuadro por ultima vez
         int elapsedTime;
@@ -23,10 +23,10 @@ namespace Hunting_Lord_Garzul
         public int frameTime;
 
         // Para pausarse en un frame especifico
-        public bool pausa;
+        public bool pause;
 
         // El numero de cuadros que tiene la animacion
-        int oldframeCount;
+        int oldFrameCount;
         int frameCount;
         public int FrameCount
         {
@@ -73,16 +73,16 @@ namespace Hunting_Lord_Garzul
 
         public void Initialize(string nombre)
         {
-            nombrePieza = nombre;
+            pieceName = nombre;
         }
 
         /// <summary>
         /// Carga de textura al cambiar de animacion, es la que se usa durante el juego repetidas veces.
         /// </summary>
         /// <param name="texture"></param>
-        public void CargarTextura(Texturas texture)
+        public void LoadTexture(Texturas texture)
         {
-            this.texturaCargada = texture;
+            this.loadedTexture = texture;
             this.frameCount = int.Parse(texture.frame);
         }
 
@@ -96,25 +96,25 @@ namespace Hunting_Lord_Garzul
         /// <param name="frametime"></param>
         /// <param name="color"></param>
         /// <param name="looping"></param>
-        public void CargarTextura(Texturas texture, Vector2 position,int frameWidth, int frameHeight,int frametime, Color color, bool looping)
+        public void LoadTexture(Texturas texture, Vector2 position, int frameWidth, int frameHeight, int frametime, Color color, bool looping)
         {
             // Mantiene una copia local de los valores obtenidos
             this.color = color;
             this.frameWidth = frameWidth;
             this.frameHeight = frameHeight;
             this.frameCount = int.Parse(texture.frame);
-            this.oldframeCount = frameCount;
+            this.oldFrameCount = frameCount;
             this.frameTime = frametime;
             this.looping = looping;
             this.position = position;
-            this.texturaCargada = texture;
+            this.loadedTexture = texture;
 
             // Pone el tiempo en 0
             this.elapsedTime = 0;
             this.currentFrame = 0;
 
             // Cancela la pausa
-            this.pausa = false;
+            this.pause = false;
 
             // Pone la animacion en activa por defecto
             this.active = true;
@@ -124,12 +124,12 @@ namespace Hunting_Lord_Garzul
         /// Rectangulo donde se encuentra esta pieza de animacion en la pantalla
         /// </summary>
         /// <returns></returns>
-        public Rectangle ObtenerPosicion()
+        public Rectangle GetPosition()
         {
             return destinationRect;
         }
 
-        public void CambiarColor(Color tinte)
+        public void ColorChange(Color tinte)
         {
             this.color = tinte;
         }
@@ -145,16 +145,16 @@ namespace Hunting_Lord_Garzul
 
             // Si el tiempo transcurrido es mayor al tiempo del cuadro tenemos que cambiar de cuadro
             // Si esta activo la pausa no se pasara al siguiente frame pero seguira dibujandose
-            if (elapsedTime > frameTime && pausa == false)
+            if (elapsedTime > frameTime && pause == false)
             {
                 // Ir al otro cuadro
                 currentFrame++;
 
                 // Si el cuadro actual es igual a la cuenta total de cuadros pasamos el cuadro actual a 0
-                if (currentFrame >= frameCount || frameCount != oldframeCount || currentFrame >= oldframeCount)
+                if (currentFrame >= frameCount || frameCount != oldFrameCount || currentFrame >= oldFrameCount)
                 {
                     currentFrame = 0;
-                    oldframeCount = frameCount;
+                    oldFrameCount = frameCount;
                     // Si no hay loopeo desactivo la animacion
                     if (looping == false)
                         active = false;
@@ -188,12 +188,12 @@ namespace Hunting_Lord_Garzul
             {
                 if (direccion == Objetos.Globales.Mirada.LEFT)
                 {
-                    spriteBatch.Draw(texturaCargada.textura, destinationRect, sourceRect, color,
+                    spriteBatch.Draw(loadedTexture.textura, destinationRect, sourceRect, color,
                         0, Vector2.Zero, SpriteEffects.FlipHorizontally, 0);
                 }
                 else
                 {
-                    spriteBatch.Draw(texturaCargada.textura, destinationRect, sourceRect, color);
+                    spriteBatch.Draw(loadedTexture.textura, destinationRect, sourceRect, color);
                 }
                 
             }
@@ -206,12 +206,12 @@ namespace Hunting_Lord_Garzul
             {
                 if (direccion == Objetos.Globales.Mirada.LEFT)
                 {
-                    spriteBatch.Draw(texturaCargada.textura, destinationRect, sourceRect, tinte,
+                    spriteBatch.Draw(loadedTexture.textura, destinationRect, sourceRect, tinte,
                         0, Vector2.Zero, SpriteEffects.FlipHorizontally, 0);
                 }
                 else
                 {
-                    spriteBatch.Draw(texturaCargada.textura, destinationRect, sourceRect, tinte);
+                    spriteBatch.Draw(loadedTexture.textura, destinationRect, sourceRect, tinte);
                 }
 
             }
