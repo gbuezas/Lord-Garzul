@@ -52,12 +52,16 @@ namespace Hunting_Lord_Garzul
             #region JUGABILIDAD
 
                 /// <summary>
-                /// Si el personaje fue dañado 
+                /// Cuando daño a un personaje lo marco en esta lista.
+                /// La resta se hace inmediatamente en vuelta logica, no de dibujado, del damnificado.
+                /// Para evitar que se vuelva a generar daño en un plazo corto se utilizara esta variable que tendra en cuenta a quien se daño y sera interna de cada atacante, 
+                /// la misma se reseteara cuando acabe la animacion del golpe correspondiente.
+                /// Siempre tiene que englobar al total de personajes que estan en el juego (tanto jugables como IA).
                 /// </summary>
-                private Boolean Injured = false;
+                private Boolean[] Injured = new bool[Globales.totalQuant];
         
                 /// <summary>
-                /// La cantidad de daño recibida 
+                /// La cantidad de daño recibida, en un futuro sera un objeto o un struct que pueda contener distintos tipos de daño.
                 /// </summary>
                 private int Injured_Value = 0;
         
@@ -105,27 +109,27 @@ namespace Hunting_Lord_Garzul
                         set { Controls = value; }
                     }
 
+                    protected bool[] injured
+                    {
+                        get { return Injured; }
+                        set { Injured = value; }
+                    }
+
                     internal Animacion[] animations
                     {
                         get { return Animations; }
                         set { Animations = value; }
                     }
 
-                    public int logic_counter
-                    {
-                        get { return Logic_Counter; }
-                        set { Logic_Counter = value; }
-                    }
+                    //public int logic_counter
+                    //{
+                    //    get { return Logic_Counter; }
+                    //    set { Logic_Counter = value; }
+                    //}
 
                 #endregion
 
                 #region JUGABILIDAD
-
-                    public Boolean injured
-                    {
-                        get { return Injured; }
-                        set { Injured = value; }
-                    }
 
                     public int injured_value
                     {
@@ -179,10 +183,12 @@ namespace Hunting_Lord_Garzul
                 public abstract int GetCurrentFrame();
 
                 // Obtener frame totales de la animacion, se posa en la primer pieza del vector para obtenerla
-                public abstract int GetAnimationFrames();
+                public abstract int GetTotalFrames();
 
                 // Activa o desactiva al jugador (si no esta activo no se dibuja)
                 public abstract void ActivatePlayer(bool active);
+
+                public abstract void ResetInjured();
 
             #endregion
 
