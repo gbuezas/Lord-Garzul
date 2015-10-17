@@ -1,42 +1,40 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Hunting_Lord_Garzul.Generales;
+using Hunting_Lord_Garzul.Objetos;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Hunting_Lord_Garzul.Objetos
+namespace Hunting_Lord_Garzul.Abstractos.Estados
 {
-    class Estado_Avance : Estados
+    class EstadoAvance : Estados
     {
         #region VARIABLES
 
         #region MAPA Y PARALLAX
 
         // Mapa de tiles de las capas
-        static string[] Mapa_Piso = new string[] { "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1" };
-        static string[] Mapa_Arboles = new string[] { "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1" };
-        static string[] Mapa_Nubes = new string[] { "cloud1", "cloud2", "cloud3", "cloud4", "cloud5", "cloud6", "cloud7", "cloud8", "cloud9", "cloud10", "cloud11", "cloud1", "cloud2", "cloud3", "cloud4", "cloud5", };
+        static readonly string[] MapaPiso = { "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1", "soil1" };
+        static readonly string[] MapaArboles = { "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1", "wood1" };
+        static readonly string[] MapaNubes = { "cloud1", "cloud2", "cloud3", "cloud4", "cloud5", "cloud6", "cloud7", "cloud8", "cloud9", "cloud10", "cloud11", "cloud1", "cloud2", "cloud3", "cloud4", "cloud5" };
 
         // Velocidades del parallax de cada capa
-        Parallax Piso = new Parallax(Mapa_Piso, 1f, 1f);
-        Parallax Arboles = new Parallax(Mapa_Arboles, 0.8f, 0.5f);
-        Parallax Nubes = new Parallax(Mapa_Nubes, 0.5f, 1f);
+        readonly Parallax _piso = new Parallax(MapaPiso, 1f, 1f);
+        readonly Parallax _arboles = new Parallax(MapaArboles, 0.8f, 0.5f);
+        readonly Parallax _nubes = new Parallax(MapaNubes, 0.5f, 1f);
 
         #endregion
 
         // Genero un vector con la cantidad de rectangulos necesarios para pintar todo el mapa
-        Rectangle[] sourceRect = new Rectangle[Mapa_Nubes.Length];
+        readonly Rectangle[] _sourceRect = new Rectangle[MapaNubes.Length];
 
         // Alto del nivel
-        int Var_AltoNivel = Globales.ViewportHeight;
+        readonly int _varAltoNivel = Globales.ViewportHeight;
 
         // Ancho del nivel
-        int Var_AnchoNivel = Globales.ViewportWidth / 4 * Mapa_Nubes.Length;
+        readonly int _varAnchoNivel = Globales.ViewportWidth / 4 * MapaNubes.Length;
         
         // Creo la variable de la camara en estatica
-        static Camera Camara;
+        static Camera _camara;
 
         #endregion
 
@@ -49,18 +47,18 @@ namespace Hunting_Lord_Garzul.Objetos
         public override void Initialize()
         {
             // Agrego las diferentes capas de parallax
-            Globales.Layers.Add(Nubes);
-            Globales.Layers.Add(Arboles);
-            Globales.Layers.Add(Piso);
+            Globales.Layers.Add(_nubes);
+            Globales.Layers.Add(_arboles);
+            Globales.Layers.Add(_piso);
         }
 
         /// <summary>
         /// Para asignarle el viewport en el load del game.
         /// </summary>
-        public override void Load(Viewport _viewport)
+        public override void Load(Viewport viewport)
         {
             // Seteo el viewport correspondiente a la camara
-            Camara = new Camera(_viewport, Var_AltoNivel, Globales.ViewportWidth / 4 * Mapa_Nubes.Length);
+            _camara = new Camera(viewport, _varAltoNivel, Globales.ViewportWidth / 4 * MapaNubes.Length);
         }
 
         public override void Update(GameTime gameTime)
@@ -69,103 +67,100 @@ namespace Hunting_Lord_Garzul.Objetos
             Input_Management();
 
             // Actualiza jugador
-            foreach(Jugadores Jugador in Globales.players)
+            foreach(var jugador in Globales.Players)
             {
-                Jugador.UpdatePlayer(gameTime, Camara.LimitesPantalla, Var_AltoNivel, Var_AnchoNivel);
+                jugador.UpdatePlayer(gameTime, _camara.LimitesPantalla, _varAltoNivel, _varAnchoNivel);
             }
 
             // Ajusto los limites de la camara para que no pueda mostrar mas de este rectangulo
-            Camara.Limits = new Rectangle(0, 0, Globales.ViewportWidth / 4 * Mapa_Nubes.Length, Var_AltoNivel);
+            _camara.Limits = new Rectangle(0, 0, Globales.ViewportWidth / 4 * MapaNubes.Length, _varAltoNivel);
             
             // Tomo tiempo transcurrido.
             //float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // Para poder controlar al otro personaje por separado
             // Si lo saco de aca no me toma los cambios del control
-            Globales.players[1].controls[(int)Globales.Controls.UP] = Keys.Up;
-            Globales.players[1].controls[(int)Globales.Controls.DOWN] = Keys.Down;
-            Globales.players[1].controls[(int)Globales.Controls.LEFT] = Keys.Left;
-            Globales.players[1].controls[(int)Globales.Controls.RIGHT] = Keys.Right;
-            Globales.players[1].controls[(int)Globales.Controls.BUTTON_1] = Keys.Space;
+            Globales.Players[1].Controls[(int)Globales.Controls.Up] = Keys.Up;
+            Globales.Players[1].Controls[(int)Globales.Controls.Down] = Keys.Down;
+            Globales.Players[1].Controls[(int)Globales.Controls.Left] = Keys.Left;
+            Globales.Players[1].Controls[(int)Globales.Controls.Right] = Keys.Right;
+            Globales.Players[1].Controls[(int)Globales.Controls.Button1] = Keys.Space;
 
-            Globales.players[2].controls[(int)Globales.Controls.UP] = Keys.I;
-            Globales.players[2].controls[(int)Globales.Controls.DOWN] = Keys.K;
-            Globales.players[2].controls[(int)Globales.Controls.LEFT] = Keys.J;
-            Globales.players[2].controls[(int)Globales.Controls.RIGHT] = Keys.L;
-            Globales.players[2].controls[(int)Globales.Controls.BUTTON_1] = Keys.Enter;
+            Globales.Players[2].Controls[(int)Globales.Controls.Up] = Keys.I;
+            Globales.Players[2].Controls[(int)Globales.Controls.Down] = Keys.K;
+            Globales.Players[2].Controls[(int)Globales.Controls.Left] = Keys.J;
+            Globales.Players[2].Controls[(int)Globales.Controls.Right] = Keys.L;
+            Globales.Players[2].Controls[(int)Globales.Controls.Button1] = Keys.Enter;
 
-            Globales.players[3].controls[(int)Globales.Controls.UP] = Keys.I;
-            Globales.players[3].controls[(int)Globales.Controls.DOWN] = Keys.K;
-            Globales.players[3].controls[(int)Globales.Controls.LEFT] = Keys.J;
-            Globales.players[3].controls[(int)Globales.Controls.RIGHT] = Keys.L;
-            Globales.players[3].controls[(int)Globales.Controls.BUTTON_1] = Keys.Enter;
+            Globales.Players[3].Controls[(int)Globales.Controls.Up] = Keys.I;
+            Globales.Players[3].Controls[(int)Globales.Controls.Down] = Keys.K;
+            Globales.Players[3].Controls[(int)Globales.Controls.Left] = Keys.J;
+            Globales.Players[3].Controls[(int)Globales.Controls.Right] = Keys.L;
+            Globales.Players[3].Controls[(int)Globales.Controls.Button1] = Keys.Enter;
 
             // Enemigo
-            Globales.players[4].controls = null; 
-            Globales.players[5].controls = null;
+            Globales.Players[4].Controls = null; 
+            Globales.Players[5].Controls = null;
             
             // Hacer un foreach para todos los personajes que quedan en camara, 
             // solo los controlados por humanos, la maquina no, asi pueden salir y no me desconcha toda la camara y el zoom
-            Camara.ViewTargets.Clear();
-            foreach( Jugadores Jugador in Globales.players )
+            _camara.ViewTargets.Clear();
+            foreach( var jugador in Globales.Players )
             {
-                if(!Jugador.machine)
+                if(!jugador.Machine)
                 {
-                    Camara.ViewTargets.Add(Jugador.GetPosition());
+                    _camara.ViewTargets.Add(jugador.GetPosition());
                 }
             }
-            Camara.CentrarCamara();
+            _camara.CentrarCamara();
 
-            Globales.mensaje1 = Globales.ViewportHeight;
-            Globales.mensaje2 = Globales.ViewportWidth;
+            Globales.Mensaje1 = Globales.ViewportHeight;
+            Globales.Mensaje2 = Globales.ViewportWidth;
         }
 
         /// <summary>
         /// Aca se hace el calculo de que personaje se dibuja primero
         /// Tambien se hace el calculo de la camara y el parallax
         /// </summary>
-        public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
 
             # region CAPAS
 
-            // El rectangulo contenedor del tile
-            int rectangulo;
-            // La posicion donde va el siguiente rectangulo
-            int posicion;
-            
-            foreach (Parallax capa in Globales.Layers)
+            foreach (var capa in Globales.Layers)
             {
                 
-                Camara.parallax = new Vector2(capa.parallax_x, capa.parallax_y);
+                _camara.Parallax = new Vector2(capa.ParallaxX, capa.ParallaxY);
 
-                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp, null, null, null, Camara.ViewMatrix);
+                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp, null, null, null, _camara.ViewMatrix);
 
-                rectangulo = 0;
-                posicion = 0;
+                // El rectangulo contenedor del tile
+                var rectangulo = 0;
+                // La posicion donde va el siguiente rectangulo
+                var posicion = 0;
 
-                foreach (string seccion in capa.capa_parallax)
+                foreach (var seccion in capa.CapaParallax)
                 {
-                    foreach (Texturas avance in Globales.AvanceTextures)
+                    foreach (var avance in Globales.AvanceTextures)
                     {
-                        if (seccion == avance.piece)
+                        if (seccion == avance.Piece)
                         {
-                            sourceRect[rectangulo] = new Rectangle(posicion, 0,
+                            _sourceRect[rectangulo] = new Rectangle(posicion, 0,
                                 Globales.ViewportWidth / 4,
                                 Globales.ViewportHeight);
 
                             // Recalculo el rectangulo para que se adapte a la velocidad correspondiente de la capa
-                            capa.RectanguloParallax = sourceRect[rectangulo];
-                            capa.RectanguloParallax.X += (int)(Camara.LimitesPantalla.X * capa.parallax_x + 0.5f);
+                            capa.RectanguloParallax = _sourceRect[rectangulo];
+                            capa.RectanguloParallax.X += (int)(_camara.LimitesPantalla.X * capa.ParallaxX + 0.5f);
 
                             // Mensajes de chequeo
-                            Globales.mensaje3 = Camara.LimitesPantalla.X;
-                            Globales.mensaje4 = Camara.LimitesPantalla.Width;
+                            Globales.Mensaje3 = _camara.LimitesPantalla.X;
+                            Globales.Mensaje4 = _camara.LimitesPantalla.Width;
 
                             // Si no esta dentro de la camara no lo dibujo
-                            if (Camara.EnCamara(capa.RectanguloParallax))
+                            if (_camara.EnCamara(capa.RectanguloParallax))
                             {
-                                spriteBatch.Draw(avance.textura, sourceRect[rectangulo], Color.White);
+                                spriteBatch.Draw(avance.Textura, _sourceRect[rectangulo], Color.White);
                             }
 
                             posicion += Globales.ViewportWidth / 4;
@@ -183,7 +178,7 @@ namespace Hunting_Lord_Garzul.Objetos
             #region PERSONAJES
 
             // SpriteSortMode.Deferred soluciono el problema de que pegaba las capas como se le cantaba el ojete, estaba en BacktoFront
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp, null, null, null, Camara.ViewMatrix); 
+            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp, null, null, null, _camara.ViewMatrix); 
 
             Reordenar_Personajes(spriteBatch);
             

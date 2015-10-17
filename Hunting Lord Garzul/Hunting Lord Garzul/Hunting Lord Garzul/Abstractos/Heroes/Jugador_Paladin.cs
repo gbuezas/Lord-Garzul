@@ -1,30 +1,21 @@
 using System;
+using System.Collections.Generic;
+using Hunting_Lord_Garzul.Generales;
+using Hunting_Lord_Garzul.Objetos;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
-using Hunting_Lord_Garzul.Objetos;
 
-namespace Hunting_Lord_Garzul
+namespace Hunting_Lord_Garzul.Abstractos.Heroes
 {
-    class Jugador_Paladin : Jugadores
+    class JugadorPaladin : Jugadores
     {
 
         # region VARIABLES
 
             #region CONTROLES
 
-                /// <summary>
-                /// Accion que se realiza 
-                /// </summary>
-                private Globales.Actions CurrentAction;
-
-                /// <summary>
-                /// Accion realizada anteriormente
-                /// </summary>
-                private Globales.Actions OldAction;
-                
-                /// <summary>
+        /// <summary>
                 /// Animacion de cada pieza de armadura:
                 /// 1.shield
                 /// 2.gauntletback
@@ -36,7 +27,7 @@ namespace Hunting_Lord_Garzul
                 /// 8.sword
                 /// 9.gauntlettop
                 /// </summary>
-                private Animacion[] Pieces_Anim = new Animacion[9];
+                private Animacion[] _piecesAnim = new Animacion[9];
     
                 /// <summary>
                 /// Posicion del jugador relativa a la parte superior izquierda de la pantalla.
@@ -59,8 +50,8 @@ namespace Hunting_Lord_Garzul
                 /// Tipo de cada pieza de armadura:
                 /// Shield, gauntletback, greaveback, helm, breastplate, tasset, greavetop, sword, gauntlettop. 
                 /// </summary>
-                protected Pieces_Sets pieces_armor = new Pieces_Sets();
-                protected List<Piece_Set> pieces_armor_new = new List<Piece_Set>();
+                protected PiecesSets PiecesArmor = new PiecesSets();
+                protected List<PieceSet> PiecesArmorNew = new List<PieceSet>();
         
                 /// <summary>
                 /// Velocidad de movimiento del jugador 
@@ -78,18 +69,18 @@ namespace Hunting_Lord_Garzul
             #region DATOS
 
                 // Mensajes de datos
-                protected float mensaje1;
-                protected float mensaje2;
-                protected Globales.Mirada mensaje3;
-                protected Globales.Actions mensaje4;
-                protected float mensaje5;
-                protected float mensaje6;
-                protected float mensaje7;
-                protected float mensaje8;
-                protected float mensaje9;
+                protected float Mensaje1;
+                protected float Mensaje2;
+                protected Globales.Mirada Mensaje3;
+                protected Globales.Actions Mensaje4;
+                protected float Mensaje5;
+                protected float Mensaje6;
+                protected float Mensaje7;
+                protected float Mensaje8;
+                protected float Mensaje9;
 
                 // Donde se va a alojar el mensaje de chequeo de status
-                Vector2 mensaje;
+                Vector2 _mensaje;
             
             #endregion
 
@@ -99,23 +90,15 @@ namespace Hunting_Lord_Garzul
             
             #region GET-SET
 
-                public Globales.Actions currentAction
-                {
-                    get { return CurrentAction; }
-                    set { CurrentAction = value; }
-                }
+                public Globales.Actions CurrentAction { get; set; }
 
-                public Globales.Actions oldAction
-                {
-                    get { return OldAction; }
-                    set { OldAction = value; }
-                }
+                public Globales.Actions OldAction { get; set; }
 
-                public Animacion[] pieces_anim
-                {
-                    get { return Pieces_Anim; }
-                    set { Pieces_Anim = value; }
-                }
+                public Animacion[] PiecesAnim
+                        {
+                            get { return _piecesAnim; }
+                            set { _piecesAnim = value; }
+                        }
 
             #endregion
 
@@ -130,22 +113,22 @@ namespace Hunting_Lord_Garzul
 
                     // Establezco variables por default para comenzar
                     Position = posicion;
-                    mensaje = Position;
+                    _mensaje = Position;
                     PlayerSpeed = 3.0f;
-                    direction = Objetos.Globales.Mirada.RIGHT;
-                    currentAction = Globales.Actions.STAND;
-                    oldAction = currentAction;
+                    Direction = Globales.Mirada.Right;
+                    CurrentAction = Globales.Actions.Stand;
+                    OldAction = CurrentAction;
                     FrameTime = 50;
-                    health -= 10;
+                    Health -= 10;
 
                     // Inicializo partes de armadura actual
-                    pieces_armor.Initialize();
+                    PiecesArmor.Initialize();
 
                     // Inicializo las piezas de animacion
-                    for (int i = 0; i < Globales.PiecesPaladin.Length; i++)
+                    for (var i = 0; i < Globales.PiecesPaladin.Length; i++)
                     {
-                        Pieces_Anim[i] = new Animacion();
-                        Pieces_Anim[i].Initialize(Globales.PiecesPaladin[i]);
+                        _piecesAnim[i] = new Animacion();
+                        _piecesAnim[i].Initialize(Globales.PiecesPaladin[i]);
                     }
 
                     #region cambiar armadura (solo para probar, borrar mas tarde)
@@ -189,17 +172,17 @@ namespace Hunting_Lord_Garzul
                     #endregion
 
                     // Piezas de la armadura al comenzar
-                    UpdateArmor(pieces_armor_new);
+                    UpdateArmor(PiecesArmorNew);
 
-                    this.animations = this.Pieces_Anim;
+                    Animations = _piecesAnim;
 
                     // Asigno control por default al jugador
-                    controls[(int)Globales.Controls.UP] = Keys.W;
-                    controls[(int)Globales.Controls.DOWN] = Keys.S;
-                    controls[(int)Globales.Controls.LEFT] = Keys.A;
-                    controls[(int)Globales.Controls.RIGHT] = Keys.D;
-                    controls[(int)Globales.Controls.BUTTON_1] = Keys.T;
-                    controls[(int)Globales.Controls.BUTTON_2] = Keys.Y;
+                    Controls[(int)Globales.Controls.Up] = Keys.W;
+                    Controls[(int)Globales.Controls.Down] = Keys.S;
+                    Controls[(int)Globales.Controls.Left] = Keys.A;
+                    Controls[(int)Globales.Controls.Right] = Keys.D;
+                    Controls[(int)Globales.Controls.Button1] = Keys.T;
+                    Controls[(int)Globales.Controls.Button2] = Keys.Y;
 
                     // Ralentizar los cuadros por segundo del personaje
                     // TiempoFrameEjecucion(1);
@@ -211,13 +194,13 @@ namespace Hunting_Lord_Garzul
                 /// <param name="gameTime"></param>
                 public override void Update(GameTime gameTime)
                 {
-                    foreach (Animacion piezaAnimada in Pieces_Anim)
+                    foreach (var piezaAnimada in _piecesAnim)
                     {
-                        piezaAnimada.position = Position;
+                        piezaAnimada.Position = Position;
                         piezaAnimada.Update(gameTime);
 
                         // Para los stats de cada personaje (borrar mas tarde) GAB
-                        mensaje = Position;
+                        _mensaje = Position;
                     }
                 }
 
@@ -227,31 +210,31 @@ namespace Hunting_Lord_Garzul
                 /// <param name="spriteBatch"></param>
                 public override void Draw(SpriteBatch spriteBatch)
                 {
-                    foreach (Animacion piezaAnimada in Pieces_Anim)
+                    foreach (var piezaAnimada in _piecesAnim)
                     {
-                        piezaAnimada.Draw(spriteBatch, direction, piezaAnimada.color);
+                        piezaAnimada.Draw(spriteBatch, Direction, piezaAnimada.Color);
                     }
 
                     // Si no separo este proceso de dibujo desconcha las posiciones de las capas del jugador
                     // +++ Me parece que esto se soluciono cuando cambie el parametro de dibujo en el draw general +++
-                    spriteBatch.DrawString(Globales.CheckStatusVar_2,
-                    "Frame Actual = " + mensaje1.ToString() + System.Environment.NewLine +
-                    "Frame Total = " + mensaje2.ToString() + System.Environment.NewLine +
-                    "Direccion Actual = " + mensaje3.ToString() + System.Environment.NewLine +
-                    "Accion Actual = " + mensaje4.ToString() + System.Environment.NewLine +
-                    "Alto = " + mensaje5.ToString() + System.Environment.NewLine +
-                    "Ancho = " + mensaje6.ToString() + System.Environment.NewLine +
-                    "X = " + mensaje7.ToString() + System.Environment.NewLine +
-                    "Y = " + mensaje8.ToString() + System.Environment.NewLine +
-                    "Vida = " + mensaje9.ToString(),
-                    mensaje, Color.DarkRed);
+                    spriteBatch.DrawString(Globales.CheckStatusVar2,
+                    "Frame Actual = " + Mensaje1 + Environment.NewLine +
+                    "Frame Total = " + Mensaje2 + Environment.NewLine +
+                    "Direccion Actual = " + Mensaje3 + Environment.NewLine +
+                    "Accion Actual = " + Mensaje4 + Environment.NewLine +
+                    "Alto = " + Mensaje5 + Environment.NewLine +
+                    "Ancho = " + Mensaje6 + Environment.NewLine +
+                    "X = " + Mensaje7 + Environment.NewLine +
+                    "Y = " + Mensaje8 + Environment.NewLine +
+                    "Vida = " + Mensaje9,
+                    _mensaje, Color.DarkRed);
 
                     // rectangulos de colision para chequear
                     if (Globales.EnableRectangles)
                     {
-                        DrawRectangle(this.pieces_anim[0].GetPosition(), Globales.Punto_Blanco, spriteBatch);
-                        DrawRectangle(Globales.Rectangle_Collision, Globales.Punto_Blanco, spriteBatch);
-                        DrawRectangle(Globales.Rectangle_Collision_2, Globales.Punto_Blanco, spriteBatch);
+                        DrawRectangle(PiecesAnim[0].GetPosition(), Globales.PuntoBlanco, spriteBatch);
+                        DrawRectangle(Globales.RectangleCollision, Globales.PuntoBlanco, spriteBatch);
+                        DrawRectangle(Globales.RectangleCollision2, Globales.PuntoBlanco, spriteBatch);
                     }
                 }
 
@@ -259,18 +242,16 @@ namespace Hunting_Lord_Garzul
                 /// Actualizar cosas del jugador antes del update general. Aca va todo lo que es la logica del mismo, saltar pegar, etc.
                 /// </summary>
                 /// <param name="gameTime">El gametime del juego.</param>
-                /// <param name="currentKeyboardState">Para el teclado.</param>
-                /// <param name="currentGamePadState">Para los gamepad.</param>
-                /// <param name="LimitesPantalla">Los limites que puso la camara con respecto a la pantalla que vemos.</param>
-                /// <param name="AltoNivel">La altura total del escenario.</param>
-                /// <param name="AnchoNivel">El ancho total del escenario.</param>
-                public override void UpdatePlayer(GameTime gameTime, Rectangle LimitesPantalla, int AltoNivel, int AnchoNivel)
+                /// <param name="limitesJugador">Los limites que puso la camara con respecto a la pantalla que vemos.</param>
+                /// <param name="altoNivel">La altura total del escenario.</param>
+                /// <param name="anchoNivel">El ancho total del escenario.</param>
+                public override void UpdatePlayer(GameTime gameTime, Rectangle limitesJugador, int altoNivel, int anchoNivel)
                 {
 
                     Update(gameTime);
 
                     // Obtengo teclas presionadas
-                    Globales.currentKeyboardState = Keyboard.GetState();
+                    Globales.CurrentKeyboardState = Keyboard.GetState();
 
                     // Logica de las acciones, moverse, pegar, etc
                     ActionLogic();
@@ -284,23 +265,23 @@ namespace Hunting_Lord_Garzul
                     // Hace que el jugador no salga de la pantalla reacomodandolo dentro de la misma.
                     // Tomamos como pantalla el rectangulo que genera la camara para acomodar al jugador y limitamos de acuerdo a estas medidas.
                     // El FrameEscalado es para acomodar al personaje de acuerdo a la nueva escala adquirida dependiendo de la pantalla fisica donde se ejecuta el juego.
-                    Rectangle FrameEscalado = this.animations[0].GetPosition();
-                    Position.X = MathHelper.Clamp(Position.X, LimitesPantalla.Left + FrameEscalado.Width / 2, LimitesPantalla.Width - FrameEscalado.Width / 2);
-                    Position.Y = MathHelper.Clamp(Position.Y, AltoNivel - AltoNivel / 2, AltoNivel - FrameEscalado.Height / 2);
+                    var frameEscalado = Animations[0].GetPosition();
+                    Position.X = MathHelper.Clamp(Position.X, limitesJugador.Left + frameEscalado.Width / 2, limitesJugador.Width - frameEscalado.Width / 2);
+                    Position.Y = MathHelper.Clamp(Position.Y, altoNivel - altoNivel / 2, altoNivel - frameEscalado.Height / 2);
 
                     // No es necesario mas acomodar la fila ya que todos vienen con fila 0
                     // Solo se acomoda la cantidad de frames por animacion y que animacion va en cada pieza segun la accion ejecutandose.
                     #region ANIMACION POR PIEZA
 
-                    foreach (Animacion piezaAnimacion in Pieces_Anim)
+                    foreach (var piezaAnimacion in _piecesAnim)
                     {
-                        foreach (Texturas textura in Globales.PaladinTextures)
+                        foreach (var textura in Globales.PaladinTextures)
                         {
-                            string aver = pieces_armor.Get_Set(textura.piece);
+                            var aver = PiecesArmor.Get_Set(textura.Piece);
 
-                            if (textura.piece == piezaAnimacion.pieceName &&
-                                textura.set == pieces_armor.Get_Set(textura.piece) &&
-                                textura.action == currentAction.ToString().ToLower())
+                            if (textura.Piece == piezaAnimacion.PieceName &&
+                                textura.Set == PiecesArmor.Get_Set(textura.Piece) &&
+                                textura.Action == CurrentAction.ToString().ToLower())
                             {
                                 piezaAnimacion.LoadTexture(textura);
                             }
@@ -308,48 +289,48 @@ namespace Hunting_Lord_Garzul
                     }
 
                     // Vuelve a 0 el frame de la animacion si cambio de accion
-                    if (oldAction != currentAction)
+                    if (OldAction != CurrentAction)
                     {
-                        foreach (Animacion animacion in Pieces_Anim)
+                        foreach (var animacion in _piecesAnim)
                         {
                             animacion.CurrentFrame = 0;
                         }
 
-                        oldAction = currentAction;
+                        OldAction = CurrentAction;
                     }
 
                     #endregion
 
                     // Status del personaje
-                    mensaje1 = Pieces_Anim[0].CurrentFrame;
-                    mensaje2 = Pieces_Anim[0].FrameCount;
-                    mensaje3 = direction;
-                    mensaje4 = currentAction;
-                    mensaje5 = this.Pieces_Anim[0].GetPosition().Height;
-                    mensaje6 = this.Pieces_Anim[0].GetPosition().Width;
-                    mensaje7 = this.Pieces_Anim[0].GetPosition().X;
-                    mensaje8 = this.Pieces_Anim[0].GetPosition().Y;
+                    Mensaje1 = _piecesAnim[0].CurrentFrame;
+                    Mensaje2 = _piecesAnim[0].FrameCount;
+                    Mensaje3 = Direction;
+                    Mensaje4 = CurrentAction;
+                    Mensaje5 = _piecesAnim[0].GetPosition().Height;
+                    Mensaje6 = _piecesAnim[0].GetPosition().Width;
+                    Mensaje7 = _piecesAnim[0].GetPosition().X;
+                    Mensaje8 = _piecesAnim[0].GetPosition().Y;
                 }
 
                 /// <summary>
                 /// Cargo los set de armadura que corresponden a cada pieza del cuerpo.
                 /// </summary>
-                /// <param name="set_pieces"> Shield, gauntlets, greaves, helm, breastplate, tasset, sword respectivamente </param> 
-                public override void UpdateArmor(List<Piece_Set> set_pieces)
+                /// <param name="setPieces"> Shield, gauntlets, greaves, helm, breastplate, tasset, sword respectivamente </param> 
+                public override void UpdateArmor(List<PieceSet> setPieces)
                 {
                     // shield, gauntlets, greaves, helm, breastplate, tasset, sword
-                    foreach (Piece_Set set_piece in set_pieces)
+                    foreach (var setPiece in setPieces)
                     {
-                        pieces_armor.Set_Set(set_piece);
+                        PiecesArmor.Set_Set(setPiece);
                     }
 
-                    foreach (Animacion piezaAnimacion in Pieces_Anim)
+                    foreach (var piezaAnimacion in _piecesAnim)
                     {
-                        foreach (Texturas textura in Globales.PaladinTextures)
+                        foreach (var textura in Globales.PaladinTextures)
                         {
-                            if (textura.piece == piezaAnimacion.pieceName &&
-                                textura.set == pieces_armor.Get_Set(textura.piece) &&
-                                textura.action == currentAction.ToString().ToLower())
+                            if (textura.Piece == piezaAnimacion.PieceName &&
+                                textura.Set == PiecesArmor.Get_Set(textura.Piece) &&
+                                textura.Action == CurrentAction.ToString().ToLower())
                             {
                                 piezaAnimacion.LoadTexture(textura, Position, FrameWidth, FrameHeight, FrameTime, Color.White, true);
                             }
@@ -373,7 +354,7 @@ namespace Hunting_Lord_Garzul
                 /// <param name="tinte"> Color deseado </param>
                 public override void ColorAnimationChange(Color tinte)
                 {
-                    foreach (Animacion animacion in this.animations)
+                    foreach (var animacion in Animations)
                     {
                         animacion.ColorChange(tinte);
                     }
@@ -386,7 +367,7 @@ namespace Hunting_Lord_Garzul
                 /// <param name="pieza"> Pieza que queremos cambiar el color </param>
                 public override void ColorPieceChange(Color tinte, int pieza)
                 {
-                    this.animations[pieza].ColorChange(tinte);
+                    Animations[pieza].ColorChange(tinte);
                 }
 
                 /// <summary>
@@ -395,7 +376,7 @@ namespace Hunting_Lord_Garzul
                 /// <returns> Frame actual de la animacion </returns>
                 public override int GetCurrentFrame()
                 {
-                    return this.animations[0].CurrentFrame;
+                    return Animations[0].CurrentFrame;
                 }
 
                 /// <summary>
@@ -404,7 +385,7 @@ namespace Hunting_Lord_Garzul
                 /// <returns> Frames total de la animacion </returns>
                 public override int GetAnimationFrames()
                 {
-                    return this.animations[0].FrameCount;
+                    return Animations[0].FrameCount;
                 }
 
                 /// <summary>
@@ -412,9 +393,9 @@ namespace Hunting_Lord_Garzul
                 /// </summary>
                 public override void ActivatePlayer(bool active)
                 {
-                    foreach( Animacion piece in this.animations )
+                    foreach( var piece in Animations )
                     {
-                        piece.active = active;
+                        piece.Active = active;
                     }
                 }
 
@@ -425,12 +406,12 @@ namespace Hunting_Lord_Garzul
                 /// <summary>
                 /// Establece el tiempo de frame en ejecucion
                 /// </summary>
-                /// <param name="Tiempo">El tiempo que va a durar el frame en pantalla de las distintas animaciones del personaje</param>
-                void FrameSpeed(int Tiempo)
+                /// <param name="tiempo">El tiempo que va a durar el frame en pantalla de las distintas animaciones del personaje</param>
+                void FrameSpeed(int tiempo)
                 {
-                    foreach (Animacion piezaAnimada in Pieces_Anim)
+                    foreach (var piezaAnimada in _piecesAnim)
                     {
-                        piezaAnimada.frameTime = Tiempo;
+                        piezaAnimada.FrameTime = tiempo;
                     }
                 }
 
@@ -440,9 +421,9 @@ namespace Hunting_Lord_Garzul
                 /// <param name="desactivar">pone o quita la pausa segun este parametro</param>
                 void PauseAnimation(bool desactivar)
                 {
-                    foreach (Animacion piezaAnimada in Pieces_Anim)
+                    foreach (var piezaAnimada in _piecesAnim)
                     {
-                        piezaAnimada.pause = desactivar;
+                        piezaAnimada.Pause = desactivar;
                     }
                 }
 
@@ -451,39 +432,39 @@ namespace Hunting_Lord_Garzul
                 /// </summary>
                 private void ActionLogic()
                 {
-                    if (currentAction != Globales.Actions.HIT1 &&
-                        currentAction != Globales.Actions.HIT2 &&
-                        currentAction != Globales.Actions.HIT3)
+                    if (CurrentAction != Globales.Actions.Hit1 &&
+                        CurrentAction != Globales.Actions.Hit2 &&
+                        CurrentAction != Globales.Actions.Hit3)
                     {
 
                         #region MOVIMIENTO
 
                         // Si no se toca nada quedara por default que esta parado
-                        currentAction = Globales.Actions.STAND;
+                        CurrentAction = Globales.Actions.Stand;
 
                         // Si se presiona alguna tecla de movimiento
-                        if (Globales.currentKeyboardState.IsKeyDown(controls[(int)Globales.Controls.LEFT]))
+                        if (Globales.CurrentKeyboardState.IsKeyDown(Controls[(int)Globales.Controls.Left]))
                         {
                             Position.X -= PlayerSpeed;
-                            direction = Globales.Mirada.LEFT;
-                            currentAction = Globales.Actions.WALK;
+                            Direction = Globales.Mirada.Left;
+                            CurrentAction = Globales.Actions.Walk;
                         }
-                        else if (Globales.currentKeyboardState.IsKeyDown(controls[(int)Globales.Controls.RIGHT]))
+                        else if (Globales.CurrentKeyboardState.IsKeyDown(Controls[(int)Globales.Controls.Right]))
                         {
                             Position.X += PlayerSpeed;
-                            direction = Globales.Mirada.RIGHT;
-                            currentAction = Globales.Actions.WALK;
+                            Direction = Globales.Mirada.Right;
+                            CurrentAction = Globales.Actions.Walk;
                         }
 
-                        if (Globales.currentKeyboardState.IsKeyDown(controls[(int)Globales.Controls.UP]))
+                        if (Globales.CurrentKeyboardState.IsKeyDown(Controls[(int)Globales.Controls.Up]))
                         {
                             Position.Y -= PlayerSpeed;
-                            currentAction = Globales.Actions.WALK;
+                            CurrentAction = Globales.Actions.Walk;
                         }
-                        else if (Globales.currentKeyboardState.IsKeyDown(controls[(int)Globales.Controls.DOWN]))
+                        else if (Globales.CurrentKeyboardState.IsKeyDown(Controls[(int)Globales.Controls.Down]))
                         {
                             Position.Y += PlayerSpeed;
-                            currentAction = Globales.Actions.WALK;
+                            CurrentAction = Globales.Actions.Walk;
                         }
 
                         #endregion
@@ -493,10 +474,10 @@ namespace Hunting_Lord_Garzul
 
                         // Si presiono golpear cancela todas las demas acciones hasta que esta termine su ciclo
                         // Tambien genera un rango de los 3 diferentes tipos de golpes (algo netamente visual sin impacto en el juego)
-                        if (Globales.currentKeyboardState.IsKeyDown(controls[(int)Globales.Controls.BUTTON_1]))
+                        if (Globales.CurrentKeyboardState.IsKeyDown(Controls[(int)Globales.Controls.Button1]))
                         {
                             // La aleatoriedad en los golpes depende de como estan almacenados en las variables globales, la primer variable es incluyente y la segunda excluyente.
-                            currentAction = (Globales.Actions)Globales.randomly.Next(2, 5);
+                            CurrentAction = (Globales.Actions)Globales.Randomly.Next(2, 5);
 
                         }
                         #endregion
@@ -504,12 +485,12 @@ namespace Hunting_Lord_Garzul
                     else
                     {
                         // Si esta pegando tiene que terminar su animacion y despues desbloquear otra vez la gama de movimientos
-                        if (this.Pieces_Anim[0].CurrentFrame == this.Pieces_Anim[0].FrameCount - 1)
+                        if (_piecesAnim[0].CurrentFrame == _piecesAnim[0].FrameCount - 1)
                         {
-                            currentAction = Globales.Actions.STAND;
+                            CurrentAction = Globales.Actions.Stand;
 
                             // Reseteo contador logico
-                            this.logic_counter = 0;
+                            LogicCounter = 0;
                         }
                     }
                 }
@@ -530,29 +511,29 @@ namespace Hunting_Lord_Garzul
                 private void CollisionLogic()
                 {
                     // GAB retocar
-                    if ((this.currentAction == Globales.Actions.HIT1 || this.currentAction == Globales.Actions.HIT2 || this.currentAction == Globales.Actions.HIT3)
-                       && !this.ghost_mode)
+                    if ((CurrentAction == Globales.Actions.Hit1 || CurrentAction == Globales.Actions.Hit2 || CurrentAction == Globales.Actions.Hit3)
+                       && !GhostMode)
                     {
-                        foreach (Jugadores player in Globales.players)
+                        foreach (var player in Globales.Players)
                         {
                             // 1) Ver summary
-                            if (player != this && this.GetCurrentFrame() == 5 && !player.injured && !player.ghost_mode)
+                            if (player != this && GetCurrentFrame() == 5 && !player.Injured && !player.GhostMode)
                             {
-                                Rectangle temp = this.Pieces_Anim[0].GetPosition();
-                                Rectangle temp2 = player.animations[0].GetPosition();
+                                var temp = _piecesAnim[0].GetPosition();
+                                var temp2 = player.Animations[0].GetPosition();
 
                                 // Si esta dentro del radio del golpe
                                 if (CollisionVerifier(ref temp, ref temp2))
                                 {
                                     // Ver summary punto (2)
-                                    if (this.logic_counter == 0)
+                                    if (LogicCounter == 0)
                                     {
                                         // Cuando la armadura esta detras del efecto de la espada no se puede ver bien el cambio de color
                                         player.ColorAnimationChange(Color.Red);
 
-                                        player.injured = true;
-                                        player.injured_value = 10;
-                                        this.logic_counter++;
+                                        player.Injured = true;
+                                        player.InjuredValue = 10;
+                                        LogicCounter++;
                                     }
                                 }
                             }
@@ -566,39 +547,39 @@ namespace Hunting_Lord_Garzul
                 private void EffectLogic()
                 {
 
-                    if (this.injured && !this.ghost_mode)
+                    if (Injured && !GhostMode)
                     {
                         // Hago la resta necesaria a la health
-                        this.health -= this.injured_value;
+                        Health -= InjuredValue;
 
                         // Vuelvo el contador de daño a 0 y quito que este dañado
-                        this.injured_value = 0;
-                        this.injured = false;
+                        InjuredValue = 0;
+                        Injured = false;
 
                         // Si pierde toda su HP se vuelve fantasma
-                        if (this.health <= 0)
+                        if (Health <= 0)
                         {
-                            this.ghost_mode = true;
+                            GhostMode = true;
                         }
                     }
                     else
                     {
                         // Reestablezco su color natural despues de recibir daño
-                        this.ColorAnimationChange(Color.White);
+                        ColorAnimationChange(Color.White);
                     }
 
-                    if (this.ghost_mode)
+                    if (GhostMode)
                     {
-                        this.ColorAnimationChange(Globales.ColorGhost);
+                        ColorAnimationChange(Globales.ColorGhost);
 
-                        if (this.health > 0)
+                        if (Health > 0)
                         {
-                            ghost_mode = false;
+                            GhostMode = false;
                         }
                     }
 
                     // MENSAJES: Veo la health de los personajes
-                    mensaje9 = this.health;
+                    Mensaje9 = Health;
                     //mensaje6 = Tiempo_Frame;
                 }
 
@@ -614,13 +595,13 @@ namespace Hunting_Lord_Garzul
                             temp.X <= temp2.X &&
                             temp.Y >= temp2.Y - Globales.HitRangeY &&
                             temp.Y <= temp2.Y + Globales.HitRangeY &&
-                            this.direction == Globales.Mirada.RIGHT)
+                            Direction == Globales.Mirada.Right)
                             ||
                            (temp.X <= temp2.Center.X + Globales.HitRangeX &&
                             temp.X + temp.Width >= temp2.X + temp2.Width &&
                             temp.Y >= temp2.Y - Globales.HitRangeY &&
                             temp.Y <= temp2.Y + Globales.HitRangeY &&
-                            this.direction == Globales.Mirada.LEFT);
+                            Direction == Globales.Mirada.Left);
                 }
 
                 /// <summary>
@@ -631,43 +612,35 @@ namespace Hunting_Lord_Garzul
                 /// <param name="spriteBatch">Proceso de dibujado</param>
                 public static void DrawRectangle(Rectangle rec, Texture2D tex, SpriteBatch spriteBatch)
                 {
-                    Vector2 Position = new Vector2(rec.X, rec.Y);
-                    int border = 1;
+                    var position = new Vector2(rec.X, rec.Y);
+                    var border = 1;
 
-                    int borderWidth = (int)(rec.Width) + (border * 2);
-                    int borderHeight = (int)(rec.Height) + (border);
+                    var borderWidth = rec.Width + (border * 2);
+                    var borderHeight = rec.Height + (border);
 
-                    DrawStraightLine(new Vector2((int)rec.X, (int)rec.Y), new Vector2((int)rec.X + rec.Width, (int)rec.Y), tex, Color.White, spriteBatch, border);
-                    DrawStraightLine(new Vector2((int)rec.X, (int)rec.Y + rec.Height), new Vector2((int)rec.X + rec.Width, (int)rec.Y + rec.Height), tex, Color.White, spriteBatch, border);
-                    DrawStraightLine(new Vector2((int)rec.X, (int)rec.Y), new Vector2((int)rec.X, (int)rec.Y + rec.Height), tex, Color.White, spriteBatch, border);
-                    DrawStraightLine(new Vector2((int)rec.X + rec.Width, (int)rec.Y), new Vector2((int)rec.X + rec.Width, (int)rec.Y + rec.Height), tex, Color.White, spriteBatch, border);
+                    DrawStraightLine(new Vector2(rec.X, rec.Y), new Vector2(rec.X + rec.Width, rec.Y), tex, Color.White, spriteBatch, border);
+                    DrawStraightLine(new Vector2(rec.X, rec.Y + rec.Height), new Vector2(rec.X + rec.Width, rec.Y + rec.Height), tex, Color.White, spriteBatch, border);
+                    DrawStraightLine(new Vector2(rec.X, rec.Y), new Vector2(rec.X, rec.Y + rec.Height), tex, Color.White, spriteBatch, border);
+                    DrawStraightLine(new Vector2(rec.X + rec.Width, rec.Y), new Vector2(rec.X + rec.Width, rec.Y + rec.Height), tex, Color.White, spriteBatch, border);
                 }
 
                 /// <summary>
                 /// Dibuja lineas rectas
                 /// </summary>
-                /// <param name="A">Medida A</param>
-                /// <param name="B">Medida B</param>
+                /// <param name="a">Medida A</param>
+                /// <param name="b">Medida B</param>
                 /// <param name="tex">Textura utilizada para dibujar las lineas</param>
                 /// <param name="col">Color de las lineas</param>
                 /// <param name="spriteBatch">Proceso de dibujado</param>
                 /// <param name="thickness">Grosor de la linea</param>
-                public static void DrawStraightLine(Vector2 A, Vector2 B, Texture2D tex, Color col, SpriteBatch spriteBatch, int thickness)
+                public static void DrawStraightLine(Vector2 a, Vector2 b, Texture2D tex, Color col, SpriteBatch spriteBatch, int thickness)
                 {
-                    Rectangle rec;
-                    if (A.X < B.X)
-                    {
-                        rec = new Rectangle((int)A.X, (int)A.Y, (int)(B.X - A.X), thickness);
-                    }
-                    else
-                    {
-                        rec = new Rectangle((int)A.X, (int)A.Y, thickness, (int)(B.Y - A.Y));
-                    }
-
+                    var rec = a.X < b.X ? new Rectangle((int)a.X, (int)a.Y, (int)(b.X - a.X), thickness) : 
+                        new Rectangle((int)a.X, (int)a.Y, thickness, (int)(b.Y - a.Y));
                     spriteBatch.Draw(tex, rec, col);
                 }
-            
-            #endregion
+
+        #endregion
     
         #endregion
 

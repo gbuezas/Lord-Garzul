@@ -1,26 +1,22 @@
-using System;
 using System.Collections.Generic;
+using Hunting_Lord_Garzul.Generales;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Hunting_Lord_Garzul.Objetos;
+// ReSharper disable LoopCanBePartlyConvertedToQuery
+// ReSharper disable InvertIf
+// ReSharper disable CompareOfFloatsByEqualityOperator
 
-namespace Hunting_Lord_Garzul.Objetos
+namespace Hunting_Lord_Garzul.Abstractos.Estados
 {
     public abstract class Estados
     {
-        private Globales.EstadosJuego Estado_Ejecutandose;
-        public Globales.EstadosJuego Estado_ejecutandose
-        {
-            get { return Estado_Ejecutandose; }
-            set { Estado_Ejecutandose = value; }
-        }
+        public Globales.EstadosJuego EstadoEjecutandose { get; set; }
 
         // Inicializar estado
         public abstract void Initialize();
 
         // Cargar la camara y otras cosas
-        public abstract void Load(Viewport _viewport);
+        public abstract void Load(Viewport viewport);
 
         // Actualizar estado
         public abstract void Update(GameTime gameTime);
@@ -36,32 +32,32 @@ namespace Hunting_Lord_Garzul.Objetos
         public void Reordenar_Personajes(SpriteBatch spriteBatch)
         {
             // Genero una lista para todas las coordenadas de los personajes y las agrego
-            List<float> Lista_Coordenadas = new List<float>();
+            var listaCoordenadas = new List<float>();
 
             // Agrego personajes y enemigos
-            foreach (Jugadores Jugador in Globales.players)
+            foreach (var jugador in Globales.Players)
             {
-                Lista_Coordenadas.Add(Jugador.GetPosition().Y);
+                listaCoordenadas.Add(jugador.GetPosition().Y);
                 
                 // Reseteo el estado de dibujado
-                Jugador.drawn = false;
+                jugador.Drawn = false;
             }
 
             // Ordeno la lista y la invierto para obtener el efecto buscado
-            Lista_Coordenadas.Sort();
+            listaCoordenadas.Sort();
             
             // Ahora por cada elemento de la lista ordenada comparo quien tiene el eje del primer elemento y lo dibujo
             // despues con el segundo y asi sucesivamente
-            foreach (float Coordenada in Lista_Coordenadas)
+            foreach (var coordenada in listaCoordenadas)
             {
-                foreach (Jugadores Jugador in Globales.players)
+                foreach (var jugador in Globales.Players)
                 {
-                    if (Jugador.drawn == false && Jugador.GetPosition().Y == Coordenada)
+                    if (jugador.Drawn == false && jugador.GetPosition().Y == coordenada)
                     {
-                        Jugador.Draw(spriteBatch);
+                        jugador.Draw(spriteBatch);
 
                         // Lo pongo como dibujado para que no lo repita
-                        Jugador.drawn = true;
+                        jugador.Drawn = true;
                     }
                 }
             }
@@ -71,7 +67,7 @@ namespace Hunting_Lord_Garzul.Objetos
         public void Input_Management()
         {
             // Guarda los estados anteriores del joystick y del teclado
-            Globales.previousKeyboardState = Globales.currentKeyboardState;
+            Globales.PreviousKeyboardState = Globales.CurrentKeyboardState;
             
             //for (int i = 0; i < 4;i++ )
             //{
