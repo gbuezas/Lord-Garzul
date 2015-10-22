@@ -179,9 +179,6 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                     {
                         piezaAnimada.Draw(spriteBatch, direction, piezaAnimada.color);
                     }
-
-                    // Reseteo contador logico
-                    //this.logic_counter = 0;
                 }
 
                 /// <summary>

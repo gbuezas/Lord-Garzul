@@ -40,13 +40,6 @@ namespace Hunting_Lord_Garzul
                 /// </summary>
                 private Animacion[] Animations = null;
 
-                /// <summary>
-                /// Contador de vuelta lógica, para evitar que se repita la lógica de varias acciones en un mismo frame,
-                /// principalmente fue creado para evitar que se quite HP varias veces en el mismo frame cuando
-                /// se realiza un ataque.
-                /// </summary>
-                private int Logic_Counter = 0;
-
             #endregion
 
             #region JUGABILIDAD
@@ -120,13 +113,7 @@ namespace Hunting_Lord_Garzul
                         get { return Animations; }
                         set { Animations = value; }
                     }
-
-                    //public int logic_counter
-                    //{
-                    //    get { return Logic_Counter; }
-                    //    set { Logic_Counter = value; }
-                    //}
-
+                    
                 #endregion
 
                 #region JUGABILIDAD

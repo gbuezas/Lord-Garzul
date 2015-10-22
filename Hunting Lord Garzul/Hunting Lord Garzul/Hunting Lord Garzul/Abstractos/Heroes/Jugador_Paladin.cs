@@ -235,9 +235,6 @@ namespace Hunting_Lord_Garzul
                         piezaAnimada.Draw(spriteBatch, direction, piezaAnimada.color);
                     }
 
-                    // Reseteo contador logico
-                    //this.logic_counter = 0;
-
                     // Si no separo este proceso de dibujo desconcha las posiciones de las capas del jugador
                     // +++ Me parece que esto se soluciono cuando cambie el parametro de dibujo en el draw general +++
                     spriteBatch.DrawString(Globales.CheckStatusVar_2,
@@ -265,8 +262,6 @@ namespace Hunting_Lord_Garzul
                 /// Actualizar cosas del jugador antes del update general. Aca va todo lo que es la logica del mismo, saltar pegar, etc.
                 /// </summary>
                 /// <param name="gameTime">El gametime del juego.</param>
-                /// <param name="currentKeyboardState">Para el teclado.</param>
-                /// <param name="currentGamePadState">Para los gamepad.</param>
                 /// <param name="LimitesPantalla">Los limites que puso la camara con respecto a la pantalla que vemos.</param>
                 /// <param name="AltoNivel">La altura total del escenario.</param>
                 /// <param name="AnchoNivel">El ancho total del escenario.</param>
