@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using Hunting_Lord_Garzul.Generales;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 // Para usar la camara:
 // 1) Creo la variable de la camara como estatica en la seccion de las variables del objeto.
@@ -21,23 +21,23 @@ namespace Hunting_Lord_Garzul.Objetos
         private float _zoom = 1f;
         private Rectangle? _limits;
         private int _altonivel;
-        private readonly int _anchonivel;
+        private int _anchonivel;
 
         // Rectangulo delimitador de la camara para pasarle los parametros a los jugadores
         public Rectangle LimitesPantalla;
 
         // Para crear el efecto parallax
-        public Vector2 Parallax;
+        public Vector2 parallax;
 
         // Lista de los jugadores en la pantalla
         public List<Vector2> ViewTargets = new List<Vector2>();
 
-        public Camera(Viewport viewport, int altoNivel, int anchoNivel)
+        public Camera(Viewport viewport, int AltoNivel, int AnchoNivel)
         {
             _viewport = viewport;
             _origin = new Vector2(_viewport.Width / 2.0f, _viewport.Height / 2.0f);
-            _altonivel = altoNivel;
-            _anchonivel = anchoNivel;
+            _altonivel = AltoNivel;
+            _anchonivel = AnchoNivel;
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace Hunting_Lord_Garzul.Objetos
         {
             get
             {
-                return Matrix.CreateTranslation(new Vector3(-_position * Parallax, 0f)) *
+                return Matrix.CreateTranslation(new Vector3(-_position * parallax, 0f)) *
                        Matrix.CreateTranslation(new Vector3(-_origin, 0f)) *
                        Matrix.CreateScale(_zoom, _zoom, 1f) *
                        Matrix.CreateTranslation(new Vector3(_origin, 0f));
@@ -106,13 +106,15 @@ namespace Hunting_Lord_Garzul.Objetos
         /// </summary>
         private void ValidatePosition()
         {
-            if (!_limits.HasValue) return;
-            var cameraWorldMin = Vector2.Transform(Vector2.Zero, Matrix.Invert(ViewMatrix));
-            var cameraSize = new Vector2(_viewport.Width, _viewport.Height) / _zoom;
-            var limitWorldMin = new Vector2(_limits.Value.Left, _limits.Value.Top);
-            var limitWorldMax = new Vector2(_limits.Value.Right, _limits.Value.Bottom);
-            var positionOffset = _position - cameraWorldMin;
-            _position = Vector2.Clamp(cameraWorldMin, limitWorldMin, limitWorldMax - cameraSize) + positionOffset;
+            if (_limits.HasValue)
+            {
+                Vector2 cameraWorldMin = Vector2.Transform(Vector2.Zero, Matrix.Invert(ViewMatrix));
+                Vector2 cameraSize = new Vector2(_viewport.Width, _viewport.Height) / _zoom;
+                Vector2 limitWorldMin = new Vector2(_limits.Value.Left, _limits.Value.Top);
+                Vector2 limitWorldMax = new Vector2(_limits.Value.Right, _limits.Value.Bottom);
+                Vector2 positionOffset = _position - cameraWorldMin;
+                _position = Vector2.Clamp(cameraWorldMin, limitWorldMin, limitWorldMax - cameraSize) + positionOffset;
+            }
         }
 
         /// <summary>
@@ -120,64 +122,69 @@ namespace Hunting_Lord_Garzul.Objetos
         /// </summary>
         private void ValidateZoom()
         {
-            if (!_limits.HasValue) return;
-            var minZoomX = (float)_viewport.Width / _limits.Value.Width;
-            var minZoomY = (float)_viewport.Height / _limits.Value.Height;
-            _zoom = MathHelper.Clamp(_zoom, MathHelper.Max(minZoomX, minZoomY), 1.3f);
-            Globales.Mensaje5 = _zoom;
+            if (_limits.HasValue)
+            {
+                float minZoomX = (float)_viewport.Width / _limits.Value.Width;
+                float minZoomY = (float)_viewport.Height / _limits.Value.Height;
+                _zoom = MathHelper.Clamp(_zoom, MathHelper.Max(minZoomX, minZoomY), 1.3f);
+                Globales.mensaje5 = _zoom;
+            }
         }
 
         public void CentrarCamara()
         {
-            if (ViewTargets.Count <= 0) return;
-            var min = ViewTargets[0];
-            var max = ViewTargets[0];
-
-            for (var i = 1; i < ViewTargets.Count; i++)
+            if (ViewTargets.Count > 0)
             {
-                if (ViewTargets[i].X < min.X) min.X = ViewTargets[i].X;
-                else if (ViewTargets[i].X > max.X) max.X = ViewTargets[i].X;
-                if (ViewTargets[i].Y < min.Y) min.Y = ViewTargets[i].Y;
-                else if (ViewTargets[i].Y > max.Y) max.Y = ViewTargets[i].Y;
-            }
+                Vector2 min = ViewTargets[0];
+                Vector2 max = ViewTargets[0];
 
-            var rect = new Rectangle((int)min.X, (int)min.Y,
-                (int)(max.X - min.X), (int)(max.Y - min.Y));
+                for (int i = 1; i < ViewTargets.Count; i++)
+                {
+                    if (ViewTargets[i].X < min.X) min.X = ViewTargets[i].X;
+                    else if (ViewTargets[i].X > max.X) max.X = ViewTargets[i].X;
+                    if (ViewTargets[i].Y < min.Y) min.Y = ViewTargets[i].Y;
+                    else if (ViewTargets[i].Y > max.Y) max.Y = ViewTargets[i].Y;
+                }
 
-            // Centro la camara en el punto intermedio de los jugadores mas alejados
-            _position = new Vector2(rect.Center.X - _viewport.Width/2, rect.Center.Y - _viewport.Height/2);
+                Rectangle rect = new Rectangle((int)min.X, (int)min.Y,
+                    (int)(max.X - min.X), (int)(max.Y - min.Y));
 
-            // Acomodo el zoom de acuerdo a la distancia entre los puntos mas alejados
-            var diferencia = max.X - min.X;
-            if (diferencia <= 1000)
-            {
-                _zoom = -2 * diferencia / 1000 + 2;
-            }
+                // Centro la camara en el punto intermedio de los jugadores mas alejados
+                _position = new Vector2(rect.Center.X - _viewport.Width/2, rect.Center.Y - _viewport.Height/2);
 
-            ValidateZoom();
-            ValidatePosition();
+                // Acomodo el zoom de acuerdo a la distancia entre los puntos mas alejados
+                float diferencia = max.X - min.X;
+                if (diferencia <= 1000)
+                {
+                    _zoom = -2 * diferencia / 1000 + 2;
+                }
 
-            // Genero los limites de la pantalla para que los jugadores se puedan acomodar acorde a los mismos
-            // y hago que esten dentro de los limites del nivel cuando se genere el zoom
-            LimitesPantalla.X = (int)_position.X;
-            LimitesPantalla.Y = (int)_position.Y;
-            LimitesPantalla.Width = (int)_position.X + _viewport.Width;
-            LimitesPantalla.Height = (int)_position.Y + _viewport.Height;
+                ValidateZoom();
+                ValidatePosition();
 
-            // Corroboro que no se pueda estar fuera del nivel
-            if (LimitesPantalla.X < 0)
-            {
-                LimitesPantalla.X = 0;
-            }
-            else if (LimitesPantalla.Width > _anchonivel)
-            {
-                LimitesPantalla.Width = _anchonivel;
+                // Genero los limites de la pantalla para que los jugadores se puedan acomodar acorde a los mismos
+                // y hago que esten dentro de los limites del nivel cuando se genere el zoom
+                LimitesPantalla.X = (int)_position.X;
+                LimitesPantalla.Y = (int)_position.Y;
+                LimitesPantalla.Width = (int)_position.X + _viewport.Width;
+                LimitesPantalla.Height = (int)_position.Y + _viewport.Height;
+
+                // Corroboro que no se pueda estar fuera del nivel
+                if (LimitesPantalla.X < 0)
+                {
+                    LimitesPantalla.X = 0;
+                }
+                else if (LimitesPantalla.Width > _anchonivel)
+                {
+                    LimitesPantalla.Width = _anchonivel;
+                }
+                
             }
         }
 
-        public bool EnCamara(Rectangle objeto)
+        public bool EnCamara(Rectangle Objeto)
         {
-            return LimitesPantalla.Intersects(objeto);
+            return LimitesPantalla.Intersects(Objeto);
         }
     }
 }

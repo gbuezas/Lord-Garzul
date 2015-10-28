@@ -1,37 +1,42 @@
 using System;
-using Hunting_Lord_Garzul.Generales;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Hunting_Lord_Garzul.Abstractos.Estados
+namespace Hunting_Lord_Garzul.Objetos
 {
-    class EstadoSeleccion : Estados
+    class Estado_Seleccion : Estados
     {
         // El area de la linea de sprite que queremos mostrar
-        Rectangle _sourceRect;
-        readonly Rectangle[] _fichas = new Rectangle[4];
+        Rectangle sourceRect;
+        Rectangle[] Fichas = new Rectangle[4];
 
+        int Var_AltoNivel = Globales.ViewportHeight;
+        int Var_AnchoNivel = Globales.ViewportWidth;
+        
         public override void Initialize()
         {
             throw new NotImplementedException();
         }
 
-        public override void Load(Viewport viewport)
+        public override void Load(Viewport _viewport)
         {
             
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
         {
             // Agarro el cuadro correcto
-            _sourceRect = new Rectangle(0, 0, Globales.ViewportWidth, 
+            sourceRect = new Rectangle(0, 0, Globales.ViewportWidth, 
                 Globales.ViewportHeight);
 
-            _fichas[0] = new Rectangle(0, 0, 200, 150);
-            _fichas[1] = new Rectangle(200, 0, 200, 150);
-            _fichas[2] = new Rectangle(400, 0, 200, 150);
-            _fichas[3] = new Rectangle(600, 0, 200, 150);
+            Fichas[0] = new Rectangle(0, 0, 200, 150);
+            Fichas[1] = new Rectangle(200, 0, 200, 150);
+            Fichas[2] = new Rectangle(400, 0, 200, 150);
+            Fichas[3] = new Rectangle(600, 0, 200, 150);
 
             // Guarda y lee los estados actuales y anteriores del joystick y teclado
             Input_Management();
@@ -40,10 +45,10 @@ namespace Hunting_Lord_Garzul.Abstractos.Estados
             UpdateState(gameTime);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
-            spriteBatch.Draw(Globales.PantallaSeleccion, _sourceRect, Color.White);
+            spriteBatch.Draw(Globales.Pantalla_Seleccion, sourceRect, Color.White);
             //spriteBatch.Draw(Variables_Generales.Selector, new Vector2(0,0), Fichas[0], Color.White);
             //spriteBatch.Draw(Variables_Generales.Selector, new Vector2(200,0), Fichas[1], Color.White);
             //spriteBatch.Draw(Variables_Generales.Selector, new Vector2(400,0), Fichas[2], Color.White);
@@ -51,7 +56,7 @@ namespace Hunting_Lord_Garzul.Abstractos.Estados
             spriteBatch.End();
         }
 
-        public override void UpdateState(GameTime gameTime)
+        public override void UpdateState(Microsoft.Xna.Framework.GameTime gameTime)
         {
             //if (Variables_Generales.currentGamePadState[0].Buttons.B == ButtonState.Pressed)
             //{
@@ -60,7 +65,7 @@ namespace Hunting_Lord_Garzul.Abstractos.Estados
 
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
-                Globales.CurrentState.EstadoEjecutandose = Globales.EstadosJuego.Avance;
+                Globales.CurrentState.Estado_ejecutandose = Globales.EstadosJuego.AVANCE;
             }
         }
     }

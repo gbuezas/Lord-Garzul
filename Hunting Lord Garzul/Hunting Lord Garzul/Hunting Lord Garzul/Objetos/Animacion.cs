@@ -1,59 +1,71 @@
-using Hunting_Lord_Garzul.Generales;
+using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Hunting_Lord_Garzul.Objetos;
 
-namespace Hunting_Lord_Garzul.Objetos
+namespace Hunting_Lord_Garzul
 {
     public class Animacion
     {
         #region VARIABLES
 
         // La textura con los sprites dentro
-        public Texturas LoadedTexture;
+        public Texturas loadedTexture;
 
         // Nombre de la pieza a animar
-        public string PieceName;
+        public string pieceName;
 
         // El tiempo que actualizamos el cuadro por ultima vez
-        int _elapsedTime;
+        int elapsedTime;
         
         // El tiempo que mostramos el cuadro antes de cambiarlo
-        public int FrameTime;
+        public int frameTime;
 
         // Para pausarse en un frame especifico
-        public bool Pause;
+        public bool pause;
 
         // El numero de cuadros que tiene la animacion
-        int _oldFrameCount;
-        public int FrameCount { get; set; }
-
+        int oldFrameCount;
+        int frameCount;
+        public int FrameCount
+        {
+            get { return frameCount; }
+            set { frameCount = value; }
+        }
+        
         // El indice del cuadro que estamos mostrando
-        public int CurrentFrame { get; set; }
-
+        int currentFrame;
+        public int CurrentFrame
+        {
+            get { return currentFrame; }
+            set { currentFrame = value; }
+        }
+        
         // El color del cuadro que estamos mostrando
-        public Color Color;
+        public Color color;
         
         // El area de la linea de sprite que queremos mostrar
-        Rectangle _sourceRect;
+        Rectangle sourceRect = new Rectangle();
         
         // El area donde queremos mostrar el sprite
-        Rectangle _destinationRect;
+        Rectangle destinationRect = new Rectangle();
         
         // Ancho y alto de un cuadro dado
-        public int FrameWidth;
-        public int FrameHeight;
+        public int frameWidth;
+        public int frameHeight;
         
         // El estado de la animacion
-        public bool Active;
+        public bool active;
         
         // Activa o desactiva el loopeo
-        public bool Looping;
+        public bool looping;
         
         // Posicion de un cuadro determinado
-        public Vector2 Position;
+        public Vector2 position;
 
         // Escala de Heroes con respecto al alto de la pantalla
-        public float EscalaAnimacion = Globales.ViewportHeight / Globales.Scalar;
+        public float escalaAnimacion = Globales.ViewportHeight / Globales.Scalar;
         
         #endregion
 
@@ -61,7 +73,7 @@ namespace Hunting_Lord_Garzul.Objetos
 
         public void Initialize(string nombre)
         {
-            PieceName = nombre;
+            pieceName = nombre;
         }
 
         /// <summary>
@@ -70,8 +82,8 @@ namespace Hunting_Lord_Garzul.Objetos
         /// <param name="texture"></param>
         public void LoadTexture(Texturas texture)
         {
-            LoadedTexture = texture;
-            FrameCount = int.Parse(texture.Frame);
+            this.loadedTexture = texture;
+            this.frameCount = int.Parse(texture.frame);
         }
 
         /// <summary>
@@ -87,25 +99,25 @@ namespace Hunting_Lord_Garzul.Objetos
         public void LoadTexture(Texturas texture, Vector2 position, int frameWidth, int frameHeight, int frametime, Color color, bool looping)
         {
             // Mantiene una copia local de los valores obtenidos
-            Color = color;
-            FrameWidth = frameWidth;
-            FrameHeight = frameHeight;
-            FrameCount = int.Parse(texture.Frame);
-            _oldFrameCount = FrameCount;
-            FrameTime = frametime;
-            Looping = looping;
-            Position = position;
-            LoadedTexture = texture;
+            this.color = color;
+            this.frameWidth = frameWidth;
+            this.frameHeight = frameHeight;
+            this.frameCount = int.Parse(texture.frame);
+            this.oldFrameCount = frameCount;
+            this.frameTime = frametime;
+            this.looping = looping;
+            this.position = position;
+            this.loadedTexture = texture;
 
             // Pone el tiempo en 0
-            _elapsedTime = 0;
-            CurrentFrame = 0;
+            this.elapsedTime = 0;
+            this.currentFrame = 0;
 
             // Cancela la pausa
-            Pause = false;
+            this.pause = false;
 
             // Pone la animacion en activa por defecto
-            Active = true;
+            this.active = true;
         }
 
         /// <summary>
@@ -114,90 +126,94 @@ namespace Hunting_Lord_Garzul.Objetos
         /// <returns></returns>
         public Rectangle GetPosition()
         {
-            return _destinationRect;
+            return destinationRect;
         }
 
         public void ColorChange(Color tinte)
         {
-            Color = tinte;
+            this.color = tinte;
         }
 
         public void Update(GameTime gameTime)
         {
             // No actualizar la animacion si no esta activa
-            if (Active == false)
+            if (active == false)
                 return;
 
             // Actualizar el tiempo transcurrido
-            _elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
+            elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             // Si el tiempo transcurrido es mayor al tiempo del cuadro tenemos que cambiar de cuadro
             // Si esta activo la pausa no se pasara al siguiente frame pero seguira dibujandose
-            if (_elapsedTime > FrameTime && Pause == false)
+            if (elapsedTime > frameTime && pause == false)
             {
                 // Ir al otro cuadro
-                CurrentFrame++;
+                currentFrame++;
 
                 // Si el cuadro actual es igual a la cuenta total de cuadros pasamos el cuadro actual a 0
-                if (CurrentFrame >= FrameCount || FrameCount != _oldFrameCount || CurrentFrame >= _oldFrameCount)
+                if (currentFrame >= frameCount || frameCount != oldFrameCount || currentFrame >= oldFrameCount)
                 {
-                    CurrentFrame = 0;
-                    _oldFrameCount = FrameCount;
+                    currentFrame = 0;
+                    oldFrameCount = frameCount;
                     // Si no hay loopeo desactivo la animacion
-                    if (Looping == false)
-                        Active = false;
+                    if (looping == false)
+                        active = false;
                 }
 
                 // Pongo el tiempo transcurrido en 0
-                _elapsedTime = 0;
+                elapsedTime = 0;
             }
 
             // Agarro el cuadro correcto en la linea de strip multiplicando el indice del cuadro actual por el ancho del frame
-            _sourceRect = new Rectangle(CurrentFrame * FrameWidth, 0, FrameWidth, FrameHeight);
+            sourceRect = new Rectangle(currentFrame * frameWidth, 0, frameWidth, frameHeight);
 
             // Escalo con respecto a la altura que deseo comparando el personaje con la pantalla.
             // Se cambia el valor de la escala desde Globales.Escalar
-            var aspectRatio = (float)FrameHeight / FrameWidth;
-            var height = (int)((EscalaAnimacion) + 0.5f);
-            var width = (int)((height / aspectRatio) + 0.5f);
+            float AspectRatio = (float)frameHeight / frameWidth;
+            int Height = (int)((escalaAnimacion) + 0.5f);
+            int Width = (int)((Height / AspectRatio) + 0.5f);
 
             // Seteo el rectangulo donde va a ir con las dimensiones ajustadas.
-            _destinationRect = new Rectangle((int)Position.X - width / 2,
-            (int)Position.Y - height / 2,
-            width,
-            height);
+            destinationRect = new Rectangle((int)position.X - (int)(Width) / 2,
+            (int)position.Y - (int)(Height) / 2,
+            (int)(Width),
+            (int)(Height));
 
         }
 
-        public void Draw(SpriteBatch spriteBatch, Globales.Mirada direccion)
+        public void Draw(SpriteBatch spriteBatch, Objetos.Globales.Mirada direccion)
         {
             // Solo dibujar la animacion si esta activa
-            if (!Active) return;
-
-            if (direccion == Globales.Mirada.Left)
+            if (active)
             {
-                spriteBatch.Draw(LoadedTexture.Textura, _destinationRect, _sourceRect, Color,
-                    0, Vector2.Zero, SpriteEffects.FlipHorizontally, 0);
-            }
-            else
-            {
-                spriteBatch.Draw(LoadedTexture.Textura, _destinationRect, _sourceRect, Color);
+                if (direccion == Objetos.Globales.Mirada.LEFT)
+                {
+                    spriteBatch.Draw(loadedTexture.textura, destinationRect, sourceRect, color,
+                        0, Vector2.Zero, SpriteEffects.FlipHorizontally, 0);
+                }
+                else
+                {
+                    spriteBatch.Draw(loadedTexture.textura, destinationRect, sourceRect, color);
+                }
+                
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, Globales.Mirada direccion, Color tinte)
+        public void Draw(SpriteBatch spriteBatch, Objetos.Globales.Mirada direccion, Color tinte)
         {
             // Solo dibujar la animacion si esta activa
-            if (!Active) return;
+            if (active)
+            {
+                if (direccion == Objetos.Globales.Mirada.LEFT)
+                {
+                    spriteBatch.Draw(loadedTexture.textura, destinationRect, sourceRect, tinte,
+                        0, Vector2.Zero, SpriteEffects.FlipHorizontally, 0);
+                }
+                else
+                {
+                    spriteBatch.Draw(loadedTexture.textura, destinationRect, sourceRect, tinte);
+                }
 
-            if (direccion == Globales.Mirada.Left)
-            {
-                spriteBatch.Draw(LoadedTexture.Textura, _destinationRect, _sourceRect, tinte,
-                    0, Vector2.Zero, SpriteEffects.FlipHorizontally, 0);
-            }
-            else
-            {
-                spriteBatch.Draw(LoadedTexture.Textura, _destinationRect, _sourceRect, tinte);
             }
         }
 

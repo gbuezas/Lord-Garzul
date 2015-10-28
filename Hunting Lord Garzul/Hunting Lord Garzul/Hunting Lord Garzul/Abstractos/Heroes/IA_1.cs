@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
-using Hunting_Lord_Garzul.Generales;
-using Hunting_Lord_Garzul.Objetos;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using Hunting_Lord_Garzul.Objetos;
 
 namespace Hunting_Lord_Garzul.Abstractos.Heroes
 {
-    class Ia1 : Jugadores
+    class IA_1 : Jugadores
     {
 
         # region VARIABLES
@@ -16,12 +17,12 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// <summary>
                 /// Accion que se realiza 
                 /// </summary>
-                private Globales.Actions _currentAction;
+                private Globales.Actions CurrentAction;
 
                 /// <summary>
                 /// Accion realizada anteriormente
                 /// </summary>
-                private Globales.Actions _oldAction;
+                private Globales.Actions OldAction;
 
                 /// <summary>
                 /// Animacion de cada pieza de armadura:
@@ -35,7 +36,7 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// 8.sword
                 /// 9.gauntlettop
                 /// </summary>
-                private Animacion[] _piecesAnim = new Animacion[Globales.PiecesIa1.Length];
+                private Animacion[] Pieces_Anim = new Animacion[Globales.PiecesIA_1.Length];
 
                 /// <summary>
                 /// Posicion del jugador relativa a la parte superior izquierda de la pantalla.
@@ -60,8 +61,8 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// Tipo de cada pieza de armadura:
                 /// Gauntletback, greaveback, helm, breastplate, tasset, greavetop, gauntlettop. 
                 /// </summary>
-                protected PiecesSets PiecesArmor = new PiecesSets();
-                protected List<PieceSet> PiecesArmorNew = new List<PieceSet>();
+                protected Pieces_Sets pieces_armor = new Pieces_Sets();
+                protected List<Piece_Set> pieces_armor_new = new List<Piece_Set>();
 
                 /// <summary>
                 /// Velocidad de movimiento del jugador 
@@ -87,22 +88,22 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
 
             #region GET-SET
 
-                public Globales.Actions CurrentAction
+                public Globales.Actions currentAction
                 {
-                    get { return _currentAction; }
-                    set { _currentAction = value; }
+                    get { return CurrentAction; }
+                    set { CurrentAction = value; }
                 }
 
-                public Globales.Actions OldAction
+                public Globales.Actions oldAction
                 {
-                    get { return _oldAction; }
-                    set { _oldAction = value; }
+                    get { return OldAction; }
+                    set { OldAction = value; }
                 }
 
-                public Animacion[] PiecesAnim
+                public Animacion[] pieces_anim
                 {
-                    get { return _piecesAnim; }
-                    set { _piecesAnim = value; }
+                    get { return Pieces_Anim; }
+                    set { Pieces_Anim = value; }
                 }
 
             #endregion
@@ -119,29 +120,29 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                     // Establezco variables por default para comenzar
                     Position = posicion;
                     PlayerSpeed = 3.0f;
-                    Direction = Globales.Mirada.Right;
-                    CurrentAction = Globales.Actions.Stand;
-                    OldAction = CurrentAction;
+                    direction = Objetos.Globales.Mirada.RIGHT;
+                    currentAction = Globales.Actions.STAND;
+                    oldAction = currentAction;
                     FrameTime = 50;
-                    Health -= 70;
+                    health -= 70;
 
                     // Seteo IA
-                    Machine = true;
+                    machine = true;
 
                     // Inicializo partes de armadura actual
-                    PiecesArmor.Initialize();
+                    pieces_armor.Initialize();
 
                     // Inicializo las piezas de animacion
-                    for (var i = 0; i < Globales.PiecesIa1.Length; i++)
+                    for (int i = 0; i < Globales.PiecesIA_1.Length; i++)
                     {
-                        _piecesAnim[i] = new Animacion();
-                        _piecesAnim[i].Initialize(Globales.PiecesIa1[i]);
+                        Pieces_Anim[i] = new Animacion();
+                        Pieces_Anim[i].Initialize(Globales.PiecesIA_1[i]);
                     }
 
                     // Piezas de la armadura al comenzar
-                    UpdateArmor(PiecesArmorNew);
+                    UpdateArmor(pieces_armor_new);
 
-                    Animations = _piecesAnim;
+                    this.animations = this.Pieces_Anim;
 
                     // Seteo condicion de busqueda de objetivo para atacar
                     GetCondition();
@@ -158,9 +159,9 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// <param name="gameTime"></param>
                 public override void Update(GameTime gameTime)
                 {
-                    foreach (var piezaAnimada in _piecesAnim)
+                    foreach (Animacion piezaAnimada in Pieces_Anim)
                     {
-                        piezaAnimada.Position = Position;
+                        piezaAnimada.position = Position;
                         piezaAnimada.Update(gameTime);
                     }
                 }
@@ -171,9 +172,9 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// <param name="spriteBatch"></param>
                 public override void Draw(SpriteBatch spriteBatch)
                 {
-                    foreach (var piezaAnimada in _piecesAnim)
+                    foreach (Animacion piezaAnimada in Pieces_Anim)
                     {
-                        piezaAnimada.Draw(spriteBatch, Direction, piezaAnimada.Color);
+                        piezaAnimada.Draw(spriteBatch, direction, piezaAnimada.color);
                     }
                 }
 
@@ -183,10 +184,10 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// <param name="gameTime">El gametime del juego.</param>
                 /// <param name="currentKeyboardState">Para el teclado.</param>
                 /// <param name="currentGamePadState">Para los gamepad.</param>
-                /// <param name="limitesJugador">Los limites que puso la camara con respecto a la pantalla que vemos.</param>
-                /// <param name="altoNivel">La altura total del escenario.</param>
-                /// <param name="anchoNivel">El ancho total del escenario.</param>
-                public override void UpdatePlayer(GameTime gameTime, Rectangle limitesJugador, int altoNivel, int anchoNivel)
+                /// <param name="LimitesPantalla">Los limites que puso la camara con respecto a la pantalla que vemos.</param>
+                /// <param name="AltoNivel">La altura total del escenario.</param>
+                /// <param name="AnchoNivel">El ancho total del escenario.</param>
+                public override void UpdatePlayer(GameTime gameTime, Rectangle LimitesPantalla, int AltoNivel, int AnchoNivel)
                 {
 
                     Update(gameTime);
@@ -204,15 +205,15 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                     // Solo se acomoda la cantidad de frames por animacion y que animacion va en cada pieza segun la accion ejecutandose.
                     #region ANIMACION POR PIEZA
 
-                    foreach (var piezaAnimacion in _piecesAnim)
+                    foreach (Animacion piezaAnimacion in Pieces_Anim)
                     {
-                        foreach (var textura in Globales.Ia1Textures)
+                        foreach (Texturas textura in Globales.IA_1Textures)
                         {
-                            var aver = PiecesArmor.Get_Set(textura.Piece);
+                            string aver = pieces_armor.Get_Set(textura.piece);
 
-                            if (textura.Piece == piezaAnimacion.PieceName &&
-                                textura.Set == PiecesArmor.Get_Set(textura.Piece) &&
-                                textura.Action == CurrentAction.ToString().ToLower())
+                            if (textura.piece == piezaAnimacion.pieceName &&
+                                textura.set == pieces_armor.Get_Set(textura.piece) &&
+                                textura.action == currentAction.ToString().ToLower())
                             {
                                 piezaAnimacion.LoadTexture(textura);
                             }
@@ -220,14 +221,14 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                     }
 
                     // Vuelve a 0 el frame de la animacion si cambio de accion
-                    if (OldAction != CurrentAction)
+                    if (oldAction != currentAction)
                     {
-                        foreach (var animacion in _piecesAnim)
+                        foreach (Animacion animacion in Pieces_Anim)
                         {
                             animacion.CurrentFrame = 0;
                         }
 
-                        OldAction = CurrentAction;
+                        oldAction = currentAction;
                     }
 
                     #endregion
@@ -237,22 +238,22 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// <summary>
                 /// Cargo los set de armadura que corresponden a cada pieza del cuerpo.
                 /// </summary>
-                /// <param name="setPieces">Set de shield, gauntlets, greaves, helm, breastplate, tasset, sword respectivamente</param> 
-                public override void UpdateArmor(List<PieceSet> setPieces)
+                /// <param name="set_pieces">Set de shield, gauntlets, greaves, helm, breastplate, tasset, sword respectivamente</param> 
+                public override void UpdateArmor(List<Piece_Set> set_pieces)
                 {
                     // Gauntletback, greaveback, helm, breastplate, tasset, greavetop, gauntlettop. 
-                    foreach (var setPiece in setPieces)
+                    foreach (Piece_Set set_piece in set_pieces)
                     {
-                        PiecesArmor.Set_Set(setPiece);
+                        pieces_armor.Set_Set(set_piece);
                     }
 
-                    foreach (var piezaAnimacion in _piecesAnim)
+                    foreach (Animacion piezaAnimacion in Pieces_Anim)
                     {
-                        foreach (var textura in Globales.Ia1Textures)
+                        foreach (Texturas textura in Globales.IA_1Textures)
                         {
-                            if (textura.Piece == piezaAnimacion.PieceName &&
-                                textura.Set == PiecesArmor.Get_Set(textura.Piece) &&
-                                textura.Action == CurrentAction.ToString().ToLower())
+                            if (textura.piece == piezaAnimacion.pieceName &&
+                                textura.set == pieces_armor.Get_Set(textura.piece) &&
+                                textura.action == currentAction.ToString().ToLower())
                             {
                                 piezaAnimacion.LoadTexture(textura, Position, FrameWidth, FrameHeight, FrameTime, Color.White, true);
                             }
@@ -276,7 +277,7 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// <param name="tinte"> Color deseado </param>
                 public override void ColorAnimationChange(Color tinte)
                 {
-                    foreach (var animacion in Animations)
+                    foreach (Animacion animacion in this.animations)
                     {
                         animacion.ColorChange(tinte);
                     }
@@ -289,7 +290,7 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// <param name="pieza"> Pieza que queremos cambiar el color </param>
                 public override void ColorPieceChange(Color tinte, int pieza)
                 {
-                    Animations[pieza].ColorChange(tinte);
+                    this.animations[pieza].ColorChange(tinte);
                 }
 
                 /// <summary>
@@ -298,7 +299,7 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// <returns> Frame actual de la animacion </returns>
                 public override int GetCurrentFrame()
                 {
-                    return Animations[0].CurrentFrame;
+                    return this.animations[0].CurrentFrame;
                 }
 
                 /// <summary>
@@ -307,7 +308,7 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// <returns> Frames total de la animacion </returns>
                 public override int GetAnimationFrames()
                 {
-                    return Animations[0].FrameCount;
+                    return this.animations[0].FrameCount;
                 }
 
                 /// <summary>
@@ -315,9 +316,9 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// </summary>
                 public override void ActivatePlayer(bool active)
                 {
-                    foreach (var piece in Animations)
+                    foreach (Animacion piece in this.animations)
                     {
-                        piece.Active = active;
+                        piece.active = active;
                     }
                 }
 
@@ -328,12 +329,12 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// <summary>
                 /// Establece el tiempo de frame en ejecucion
                 /// </summary>
-                /// <param name="tiempo">El tiempo que va a durar el frame en pantalla de las distintas animaciones del personaje</param>
-                void FrameSpeed(int tiempo)
+                /// <param name="Tiempo">El tiempo que va a durar el frame en pantalla de las distintas animaciones del personaje</param>
+                void FrameSpeed(int Tiempo)
                 {
-                    foreach (var piezaAnimada in _piecesAnim)
+                    foreach (Animacion piezaAnimada in Pieces_Anim)
                     {
-                        piezaAnimada.FrameTime = tiempo;
+                        piezaAnimada.frameTime = Tiempo;
                     }
                 }
 
@@ -343,9 +344,9 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// <param name="desactivar">pone o quita la pausa segun este parametro</param>
                 void PauseAnimation(bool desactivar)
                 {
-                    foreach (var piezaAnimada in _piecesAnim)
+                    foreach (Animacion piezaAnimada in Pieces_Anim)
                     {
-                        piezaAnimada.Pause = desactivar;
+                        piezaAnimada.pause = desactivar;
                     }
                 }
 
@@ -355,48 +356,48 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 private void ActionLogic()
                 {
                     // Busca blanco ara golpear segun los criterios dados
-                    var target = GetTarget(TargetCond);
+                    Jugadores target = GetTarget(this.TargetCond);
 
-                    if (CurrentAction != Globales.Actions.Hit1 &&
-                        CurrentAction != Globales.Actions.Hit2 &&
-                        CurrentAction != Globales.Actions.Hit3)
+                    if (currentAction != Globales.Actions.HIT1 &&
+                        currentAction != Globales.Actions.HIT2 &&
+                        currentAction != Globales.Actions.HIT3)
                     {
 
                         #region MOVIMIENTO
 
                         // Si no esta en movimiento por default queda parado
-                        CurrentAction = Globales.Actions.Stand;
+                        currentAction = Globales.Actions.STAND;
 
                         // Dirigirse al blanco, dependiendo de donde esta ele eje del blanco vamos a sumarle la velocidad hacia el.
                         // Tambien se toma el lugar donde la IA va a detenerse y el punto que va a buscar para atacar a cierto personaja.
                         // Para obtener el lugar antes mencionado usamos la variable de HitRange asi se posiciona optimamente para su ataque.
                         // El HitRangeX tiene que ser mayor para que no hostigue tanto al blanco, sino se pega mucho a el
-                        if (target.GetPosition().X <= Position.X - Globales.HitRangeX * 4)
+                        if (target.GetPosition().X <= this.Position.X - Globales.HitRangeX * 4)
                         {
                             // Izquierda
                             Position.X -= PlayerSpeed;
-                            Direction = Globales.Mirada.Left;
-                            CurrentAction = Globales.Actions.Walk;
+                            direction = Globales.Mirada.LEFT;
+                            currentAction = Globales.Actions.WALK;
                         }
-                        else if (target.GetPosition().X >= Position.X + Globales.HitRangeX * 4)
+                        else if (target.GetPosition().X >= this.Position.X + Globales.HitRangeX * 4)
                         {
                             // Derecha
                             Position.X += PlayerSpeed;
-                            Direction = Globales.Mirada.Right;
-                            CurrentAction = Globales.Actions.Walk;
+                            direction = Globales.Mirada.RIGHT;
+                            currentAction = Globales.Actions.WALK;
                         }
 
-                        if (target.GetPosition().Y <= Position.Y - Globales.HitRangeY)
+                        if (target.GetPosition().Y <= this.Position.Y - Globales.HitRangeY)
                         {
                             // Arriba
                             Position.Y -= PlayerSpeed;
-                            CurrentAction = Globales.Actions.Walk;
+                            currentAction = Globales.Actions.WALK;
                         }
-                        else if (target.GetPosition().Y >= Position.Y + Globales.HitRangeY)
+                        else if (target.GetPosition().Y >= this.Position.Y + Globales.HitRangeY)
                         {
                             // Abajo
                             Position.Y += PlayerSpeed;
-                            CurrentAction = Globales.Actions.Walk;
+                            currentAction = Globales.Actions.WALK;
                         }
 
                         #endregion
@@ -404,14 +405,14 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                         #region GOLPEAR
 
                         // Obtengo las posiciones del blanco y nuestra
-                        var temp = _piecesAnim[0].GetPosition();
-                        var temp2 = target.Animations[0].GetPosition();
+                        Rectangle temp = this.Pieces_Anim[0].GetPosition();
+                        Rectangle temp2 = target.animations[0].GetPosition();
 
                         // Si el blanco esta dentro del rango de golpe se lo ataca
                         if (CollisionVerifier(ref temp, ref temp2))
                         {
                             // El rango depende de como estan almacenados en las variables globales, la primer variable es incluyente y la segunda excluyente.
-                            CurrentAction = (Globales.Actions)Globales.Randomly.Next(2, 5);
+                            currentAction = (Globales.Actions)Globales.randomly.Next(2, 5);
                         }
 
                         #endregion
@@ -419,12 +420,12 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                     else
                     {
                         // Si esta pegando tiene que terminar su animacion y despues desbloquear otra vez la gama de movimientos
-                        if (GetCurrentFrame() == _piecesAnim[0].FrameCount - 1)
+                        if (this.GetCurrentFrame() == this.Pieces_Anim[0].FrameCount - 1)
                         {
-                            CurrentAction = Globales.Actions.Stand;
+                            currentAction = Globales.Actions.STAND;
 
                             // Reseteo contador logico
-                            LogicCounter = 0;
+                            this.logic_counter = 0;
                         }
                     }
                 }
@@ -445,29 +446,29 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// </summary>
                 private void CollisionLogic()
                 {
-                    if ((CurrentAction == Globales.Actions.Hit1 || CurrentAction == Globales.Actions.Hit2 || CurrentAction == Globales.Actions.Hit3)
-                       && !GhostMode)
+                    if ((this.currentAction == Globales.Actions.HIT1 || this.currentAction == Globales.Actions.HIT2 || this.currentAction == Globales.Actions.HIT3)
+                       && !this.ghost_mode)
                     {
-                        foreach (var jugador in Globales.Players)
+                        foreach (Jugadores Jugador in Globales.players)
                         {
                             // 1) Ver summary
-                            if (jugador != this && GetCurrentFrame() == 5 && !jugador.Injured && !jugador.GhostMode && !jugador.Machine)
+                            if (Jugador != this && this.GetCurrentFrame() == 5 && !Jugador.injured && !Jugador.ghost_mode && !Jugador.machine)
                             {
-                                var temp = _piecesAnim[0].GetPosition();
-                                var temp2 = jugador.Animations[0].GetPosition();
+                                Rectangle temp = this.Pieces_Anim[0].GetPosition();
+                                Rectangle temp2 = Jugador.animations[0].GetPosition();
 
                                 // Si esta dentro del radio del golpe
                                 if (CollisionVerifier(ref temp, ref temp2))
                                 {
                                     // Ver summary punto (2)
-                                    if (LogicCounter == 0)
+                                    if (this.logic_counter == 0)
                                     {
                                         // Cuando la armadura esta detras del efecto de la espada no se puede ver bien el cambio de color
-                                        jugador.ColorAnimationChange(Color.Red);
+                                        Jugador.ColorAnimationChange(Color.Red);
 
-                                        jugador.Injured = true;
-                                        jugador.InjuredValue = 10;
-                                        LogicCounter++;
+                                        Jugador.injured = true;
+                                        Jugador.injured_value = 10;
+                                        this.logic_counter++;
                                     }
                                 }
                             }
@@ -481,39 +482,39 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 private void EffectLogic()
                 {
 
-                    if (Injured && !GhostMode)
+                    if (this.injured && !this.ghost_mode)
                     {
                         // Hago la resta necesaria a la health
-                        Health -= InjuredValue;
+                        this.health -= this.injured_value;
 
                         // Vuelvo el contador de daño a 0 y quito que este dañado
-                        InjuredValue = 0;
-                        Injured = false;
+                        this.injured_value = 0;
+                        this.injured = false;
 
                         // Si pierde toda su HP se vuelve fantasma
-                        if (Health <= 0)
+                        if (this.health <= 0)
                         {
-                            GhostMode = true;
+                            this.ghost_mode = true;
                         }
                     }
                     else
                     {
                         // Reestablezco su color natural despues de recibir daño
-                        ColorAnimationChange(Globales.ColorEnemy);
+                        this.ColorAnimationChange(Globales.ColorEnemy);
                     }
 
-                    if (GhostMode)
+                    if (this.ghost_mode)
                     {
                         // GAB retocar
-                        ColorAnimationChange(Globales.ColorGhost);
+                        this.ColorAnimationChange(Globales.ColorGhost);
 
-                        if (Health > 0)
+                        if (this.health > 0)
                         {
-                            GhostMode = false;
+                            ghost_mode = false;
                         }
                         else
                         {
-                            ActivatePlayer(false);
+                            this.ActivatePlayer(false);
                         }
                     }
                 }
@@ -530,13 +531,13 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                             temp.X <= temp2.X &&
                             temp.Y >= temp2.Y - Globales.HitRangeY &&
                             temp.Y <= temp2.Y + Globales.HitRangeY &&
-                            Direction == Globales.Mirada.Right)
+                            this.direction == Globales.Mirada.RIGHT)
                             ||
                            (temp.X <= temp2.Center.X + Globales.HitRangeX &&
                             temp.X + temp.Width >= temp2.X + temp2.Width &&
                             temp.Y >= temp2.Y - Globales.HitRangeY &&
                             temp.Y <= temp2.Y + Globales.HitRangeY &&
-                            Direction == Globales.Mirada.Left);
+                            this.direction == Globales.Mirada.LEFT);
                 }
 
                 /// <summary>
@@ -544,7 +545,7 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// </summary>
                 private void GetCondition()
                 {
-                    TargetCond = (Globales.TargetCondition)Globales.Randomly.Next(0, 4);
+                    TargetCond = (Globales.TargetCondition)Globales.randomly.Next(0, 4);
                 }
 
                 /// <summary>
@@ -552,55 +553,55 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// Se hace en cada vuelta logica ya que recalcula los parametros por si hay que cambiar de blanco bajo los mismos criterios.
                 /// </summary>
                 /// <returns></returns>
-                private Jugadores GetTarget(Globales.TargetCondition condition)
+                private Jugadores GetTarget(Globales.TargetCondition Condition)
                 {
-                    switch (condition)
+                    switch (Condition)
                     {
 
-                        case Globales.TargetCondition.Maxhealth:
+                        case Globales.TargetCondition.MAXHEALTH:
                             {
-                                var vida = 0;
+                                int vida = 0;
                                 // GAB - Tiene que buscar un target nuevo o quedarse quieto cuando mata al que era su target
                                 // Si le pongo -1 hace el efecto de querer cambiar de target pero si dejo -1 tira out of index
-                                var playerMaxHealth = 0;
+                                int playerMaxHealth = 0;
 
-                                for (var i = 0; i < Globales.PlayersQuant; i++)
+                                for (int i = 0; i < Globales.playersQuant; i++)
                                 {
-                                    if (Globales.Players[i].Health > vida && Globales.Players[i].Health > 0)
+                                    if (Globales.players[i].health > vida && Globales.players[i].health > 0)
                                     {
-                                        vida = Globales.Players[i].Health;
+                                        vida = Globales.players[i].health;
                                         playerMaxHealth = i;
                                     }
                                 }
 
-                                return Globales.Players[playerMaxHealth];
+                                return Globales.players[playerMaxHealth];
                             }
 
-                        case Globales.TargetCondition.Minhealth:
+                        case Globales.TargetCondition.MINHEALTH:
                             {
-                                var vida = 1000;
-                                var playerMinHealth = 0;
+                                int vida = 1000;
+                                int playerMinHealth = 0;
 
-                                for (var i = 0; i < Globales.PlayersQuant; i++)
+                                for (int i = 0; i < Globales.playersQuant; i++)
                                 {
-                                    if (Globales.Players[i].Health < vida && Globales.Players[i].Health > 0)
+                                    if (Globales.players[i].health < vida && Globales.players[i].health > 0)
                                     {
-                                        vida = Globales.Players[i].Health;
+                                        vida = Globales.players[i].health;
                                         playerMinHealth = i;
                                     }
                                 }
 
-                                return Globales.Players[playerMinHealth];
+                                return Globales.players[playerMinHealth];
                             }
 
-                        case Globales.TargetCondition.Maxmoney:
+                        case Globales.TargetCondition.MAXMONEY:
                             {
-                                return Globales.Players[2];
+                                return Globales.players[2];
                             }
 
-                        case Globales.TargetCondition.Minmoney:
+                        case Globales.TargetCondition.MINMONEY:
                             {
-                                return Globales.Players[3];
+                                return Globales.players[3];
                             }
 
                         default: break;
@@ -608,7 +609,7 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                     }
 
 
-                    return Globales.Players[0];
+                    return Globales.players[0];
                 }
 
             #endregion

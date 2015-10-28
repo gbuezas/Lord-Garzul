@@ -1,12 +1,16 @@
 using System;
-using System.IO;
-using Hunting_Lord_Garzul.Abstractos.Estados;
-using Hunting_Lord_Garzul.Abstractos.Heroes;
-using Hunting_Lord_Garzul.Generales;
-using Hunting_Lord_Garzul.Objetos;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
+using Hunting_Lord_Garzul.Objetos;
+using System.IO;
+using Hunting_Lord_Garzul.Abstractos.Heroes;
 
 namespace Hunting_Lord_Garzul
 {
@@ -18,13 +22,14 @@ namespace Hunting_Lord_Garzul
         #region VARIABLES
 
         // Variables necesarias para dibujar por default
-        SpriteBatch _spriteBatch;
+        SpriteBatch spriteBatch;
+        GraphicsDeviceManager graphics;
 
         // Donde se va a alojar el mensaje de chequeo de status
-        readonly Vector2 _chkStatVar = new Vector2(50, 550);
+        Vector2 ChkStatVar = new Vector2(50, 550);
 
         // Check de estado de juego
-        Globales.EstadosJuego _estadoCheck;
+        Globales.EstadosJuego Estado_Check;
 
         #endregion
 
@@ -32,18 +37,16 @@ namespace Hunting_Lord_Garzul
 
         public Game()
         {
-            var graphics = new GraphicsDeviceManager(this)
-            {
-                PreferredBackBufferWidth = 1280,
-                PreferredBackBufferHeight = 720,
-                PreferMultiSampling = true
-            };
+            graphics = new GraphicsDeviceManager(this);
 
             // Establezco la resolucion maxima adecuada para el dispositivo
             // Supuestamente con esta resolucion autoescala a menores
             // Hay que probarlo en algun lado
-
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
+            
             // No estoy seguro de si esto me da antialiasing o ya con lo que puse cuando dibujo alcanza
+            graphics.PreferMultiSampling = true;
             graphics.ApplyChanges();
 
             Content.RootDirectory = "Content";
@@ -58,23 +61,24 @@ namespace Hunting_Lord_Garzul
         protected override void Initialize()
         {
             // Agrego los personajes a la lista asi se pueden utilizar mas tarde
-            for (var i = 0; i < Globales.PlayersQuant; i++)
+            for (int i = 0; i < Globales.playersQuant; i++)
             {
-                Globales.Players.Add(new JugadorPaladin());
+                Globales.players.Add(new Jugador_Paladin());
             }
 
             // Agrego los enemigos a la lista
-            for (var i = 0; i < Globales.EnemiesQuant; i++)
+            for (int i = 0; i < Globales.enemiesQuant; i++)
             {
                 //Globales.players.Add(new IA_1((Globales.TargetCondition)azar.Next(0, 4)));
-                Globales.Players.Add(new Ia1());
+                Globales.players.Add(new IA_1());
             }
 
-            Globales.CurrentState = new EstadoAvance {EstadoEjecutandose = Globales.EstadosJuego.Titulo};
-
+            Globales.CurrentState = new Estado_Avance();
+            Globales.CurrentState.Estado_ejecutandose = Globales.EstadosJuego.TITULO;
+            
             // Ponemos este estado por defecto en un modo que no es nada, asi cuando va al case detecta incongruencia
             // y acomoda al que corresponde, que seria el que dice arriba en ejecutandose.
-            _estadoCheck = Globales.EstadosJuego.Gameover;
+            Estado_Check = Globales.EstadosJuego.GAMEOVER;
 
             Globales.CurrentState.Initialize();
 
@@ -91,7 +95,7 @@ namespace Hunting_Lord_Garzul
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Globales.ViewportWidth = GraphicsDevice.Viewport.Width;
             Globales.ViewportHeight = GraphicsDevice.Viewport.Height;
@@ -102,18 +106,18 @@ namespace Hunting_Lord_Garzul
             // Acordarse que los png tienen que estar en la carpeta DEBUG para el modo DEBUG, y asi con cada modo.
             // Si no hay nada va al catch asi que no pasa nada
             # region TEXTURA_HEROES
-            foreach (var heroe in Globales.Heroes)
+            foreach (String heroe in Globales.Heroes)
             {
                 try
                 {
                     // Hago la lista solamente de los archivos PNG (animaciones de las piezas de los heroes) que estan en el content 
                     // para crear las texturas de cada uno.
-                    var archivosPersonajes = Directory.GetFiles("Content/" + heroe, "*.png");
+                    String[] archivos_personajes = Directory.GetFiles("Content/" + heroe, "*.png");
                     
-                    foreach (var nombrePersonajes in archivosPersonajes)
+                    foreach (String nombre_personajes in archivos_personajes)
                     {
-                        var nombre = Path.GetFileNameWithoutExtension(nombrePersonajes);
-                        var textura = new Texturas(Content.Load<Texture2D>(heroe + "/" + nombre), nombre);
+                        String Nombre = Path.GetFileNameWithoutExtension(nombre_personajes);
+                        Texturas textura = new Texturas(Content.Load<Texture2D>(heroe + "/" + Nombre), Nombre);
 
                         switch (heroe)
                         {
@@ -126,7 +130,7 @@ namespace Hunting_Lord_Garzul
 
                             case "IA_1":
                                 {
-                                    Globales.Ia1Textures.Add(textura);
+                                    Globales.IA_1Textures.Add(textura);
                                     break;
                                 }
 
@@ -137,9 +141,9 @@ namespace Hunting_Lord_Garzul
 
                         }
  
-                        if (!Globales.Armors.Contains(nombre.Split('_')[0]))
+                        if (!Globales.Armors.Contains(Nombre.Split('_')[0]))
                         {
-                            Globales.Armors.Add(nombre.Split('_')[0]);
+                            Globales.Armors.Add(Nombre.Split('_')[0]);
                         }
                     }
                 }
@@ -156,16 +160,16 @@ namespace Hunting_Lord_Garzul
             // Cargo los niveles
             #region TEXTURA_NIVELES
 
-            foreach (var escenario in Globales.Scenes)
+            foreach (String escenario in Globales.Scenes)
             {
                 try
                 {
-                    var archivosNiveles = Directory.GetFiles("Content/" + escenario, "*.png");
+                    String[] archivos_niveles = Directory.GetFiles("Content/" + escenario, "*.png");
 
-                    foreach (var nombreNiveles in archivosNiveles)
+                    foreach (String nombre_niveles in archivos_niveles)
                     {
-                        var nombre = Path.GetFileNameWithoutExtension(nombreNiveles);
-                        var textura = new Texturas(Content.Load<Texture2D>(escenario + "/" + nombre), nombre);
+                        String Nombre = Path.GetFileNameWithoutExtension(nombre_niveles);
+                        Texturas textura = new Texturas(Content.Load<Texture2D>(escenario + "/" + Nombre), Nombre);
 
                         switch (escenario)
                         {
@@ -203,27 +207,27 @@ namespace Hunting_Lord_Garzul
             #endregion
 
             // Cargo punto blanco
-            Globales.PuntoBlanco = Content.Load<Texture2D>("Seleccion/puntoblanco");
+            Globales.Punto_Blanco = Content.Load<Texture2D>("Seleccion/puntoblanco");
 
             // Cargo titulos y pantallas de presentacion
-            Globales.PantallaTitulo = Content.Load<Texture2D>("Titulo/TitleScreen");
+            Globales.Pantalla_Titulo = Content.Load<Texture2D>("Titulo/TitleScreen");
             
             // Cargo pantalla de seleccion y selectores
-            Globales.PantallaSeleccion = Content.Load<Texture2D>("Seleccion/fondo");
+            Globales.Pantalla_Seleccion = Content.Load<Texture2D>("Seleccion/fondo");
             //Variables_Generales.Selector = Content.Load<Texture2D>("Seleccion/Selector");
             
             // Cargo fuentes
             Globales.CheckStatusVar = Content.Load<SpriteFont>("Fuente_Prueba");
-            Globales.CheckStatusVar2 = Content.Load<SpriteFont>("Fuente_Prueba_2");
+            Globales.CheckStatusVar_2 = Content.Load<SpriteFont>("Fuente_Prueba_2");
 
             // Asigno posiciones iniciales de los personajes, tanto jugadores como IA
-            var ejeX = 0;
-            var ejeY = 0;
-            foreach (var jugador in Globales.Players)
+            int ejeX = 0;
+            int ejeY = 0;
+            foreach (Jugadores Jugador in Globales.players)
             {
 
 
-                jugador.Initialize(new Vector2( GraphicsDevice.Viewport.TitleSafeArea.X + ejeX,
+                Jugador.Initialize(new Vector2( GraphicsDevice.Viewport.TitleSafeArea.X + ejeX,
                                                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2 + ejeY));
                 
                 ejeX = ejeX + 50;
@@ -259,12 +263,14 @@ namespace Hunting_Lord_Garzul
 
             base.Update(gameTime);
 
-            Globales.ElapsedTime += gameTime.ElapsedGameTime;
+            Globales.elapsedTime += gameTime.ElapsedGameTime;
 
-            if (Globales.ElapsedTime <= TimeSpan.FromSeconds(1)) return;
-            Globales.ElapsedTime -= TimeSpan.FromSeconds(1);
-            Globales.FrameRate = Globales.FrameCounter;
-            Globales.FrameCounter = 0;
+            if (Globales.elapsedTime > TimeSpan.FromSeconds(1))
+            {
+                Globales.elapsedTime -= TimeSpan.FromSeconds(1);
+                Globales.frameRate = Globales.frameCounter;
+                Globales.frameCounter = 0;
+            }
         }
 
         /// <summary>
@@ -273,26 +279,26 @@ namespace Hunting_Lord_Garzul
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            Globales.FrameCounter++;
+            Globales.frameCounter++;
 
             GraphicsDevice.Clear(Color.White);
 
             // Dibuja el estado actual
-            Globales.CurrentState.Draw(_spriteBatch);
+            Globales.CurrentState.Draw(spriteBatch);
 
             # region MENSAJES DE ERROR
-            _spriteBatch.Begin();
+            spriteBatch.Begin();
 
-            _spriteBatch.DrawString(Globales.CheckStatusVar,
-            "altoViewport = " + Globales.Mensaje1 + Environment.NewLine +
-            "anchoViewport = " + Globales.Mensaje2 + Environment.NewLine +
-            "limitePantallaX = " + Globales.Mensaje3 + Environment.NewLine +
-            "limitePantallaAncho = " + Globales.Mensaje4 + Environment.NewLine + 
-            "Zoom = " + Globales.Mensaje5 + Environment.NewLine + 
-            "FPS = " + Globales.FrameRate + Environment.NewLine,
-            _chkStatVar, Color.DarkRed);
+            spriteBatch.DrawString(Globales.CheckStatusVar,
+            "altoViewport = " + Globales.mensaje1.ToString() + System.Environment.NewLine +
+            "anchoViewport = " + Globales.mensaje2.ToString() + System.Environment.NewLine +
+            "limitePantallaX = " + Globales.mensaje3.ToString() + System.Environment.NewLine +
+            "limitePantallaAncho = " + Globales.mensaje4.ToString() + System.Environment.NewLine + 
+            "Zoom = " + Globales.mensaje5.ToString() + System.Environment.NewLine + 
+            "FPS = " + Globales.frameRate + System.Environment.NewLine,
+            ChkStatVar, Color.DarkRed);
 
-            _spriteBatch.End();
+            spriteBatch.End();
             #endregion
 
             base.Draw(gameTime);
@@ -306,9 +312,9 @@ namespace Hunting_Lord_Garzul
             // Da vida a los jugadores
             if (Keyboard.GetState().IsKeyDown(Keys.D1))
             {
-                foreach (var jugador in Globales.Players)
+                foreach (Jugadores jugador in Globales.players)
                 {
-                    jugador.Health += 1;
+                    jugador.health += 1;
                 }
             }
         }
@@ -320,7 +326,7 @@ namespace Hunting_Lord_Garzul
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+                this.Exit();
         }
 
         /// <summary>
@@ -328,14 +334,21 @@ namespace Hunting_Lord_Garzul
         /// </summary>
         private static void EnableColRec()
         {
-            Globales.PreviousKeyboardState = Globales.CurrentKeyboardState;
-            Globales.CurrentKeyboardState = Keyboard.GetState();
+            Globales.previousKeyboardState = Globales.currentKeyboardState;
+            Globales.currentKeyboardState = Keyboard.GetState();
 
             // Acciones que no se tienen que repetir al mantener la tecla
-            if (!Globales.PreviousKeyboardState.IsKeyDown(Keys.D2) || !Globales.CurrentKeyboardState.IsKeyUp(Keys.D2))
-                return;
-            
-            Globales.EnableRectangles = !Globales.EnableRectangles;
+            if (Globales.previousKeyboardState.IsKeyDown(Keys.D2) && Globales.currentKeyboardState.IsKeyUp(Keys.D2))
+            {
+                if (Globales.EnableRectangles)
+                {
+                    Globales.EnableRectangles = false;
+                }
+                else
+                {
+                    Globales.EnableRectangles = true;
+                }
+            }
         }
 
         /// <summary>
@@ -343,45 +356,36 @@ namespace Hunting_Lord_Garzul
         /// </summary>
         private void StateSwitch()
         {
-            if (_estadoCheck == Globales.CurrentState.EstadoEjecutandose) return;
-            switch (Globales.CurrentState.EstadoEjecutandose)
+            
+            if (Estado_Check != Globales.CurrentState.Estado_ejecutandose)
             {
-
-                case Globales.EstadosJuego.Titulo:
+                switch (Globales.CurrentState.Estado_ejecutandose)
                 {
-                    _estadoCheck = Globales.EstadosJuego.Titulo;
-                    Globales.CurrentState = new EstadoTitulos();
-                    break;
-                }
 
-                case Globales.EstadosJuego.Seleccion:
-                {
-                    _estadoCheck = Globales.EstadosJuego.Seleccion;
-                    Globales.CurrentState = new EstadoSeleccion();
-                    break;
-                }
+                    case Globales.EstadosJuego.TITULO:
+                        {
+                            Estado_Check = Globales.EstadosJuego.TITULO;
+                            Globales.CurrentState = new Estado_Titulos();
+                            break;
+                        }
 
-                case Globales.EstadosJuego.Avance:
-                {
-                    _estadoCheck = Globales.EstadosJuego.Avance;
-                    Globales.CurrentState = new EstadoAvance();
-                    break;
-                }
+                    case Globales.EstadosJuego.SELECCION:
+                        {
+                            Estado_Check = Globales.EstadosJuego.SELECCION;
+                            Globales.CurrentState = new Estado_Seleccion();
+                            break;
+                        }
 
-                case Globales.EstadosJuego.Intro:
-                    break;
-                case Globales.EstadosJuego.Mapa:
-                    break;
-                case Globales.EstadosJuego.Vs:
-                    break;
-                case Globales.EstadosJuego.Pausa:
-                    break;
-                case Globales.EstadosJuego.Gameover:
-                    break;
-                case Globales.EstadosJuego.Final:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                    case Globales.EstadosJuego.AVANCE:
+                        {
+                            Estado_Check = Globales.EstadosJuego.AVANCE;
+                            Globales.CurrentState = new Estado_Avance();
+                            break;
+                        }
+
+                    default: break;
+
+                }
             }
         }
 

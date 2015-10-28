@@ -1,3 +1,5 @@
+using System;
+
 namespace Hunting_Lord_Garzul
 {
 #if WINDOWS || XBOX
@@ -8,7 +10,7 @@ namespace Hunting_Lord_Garzul
         /// </summary>
         static void Main(string[] args)
         {
-            using (var game = new Game())
+            using (Game game = new Game())
             {
                 game.Run();
             }

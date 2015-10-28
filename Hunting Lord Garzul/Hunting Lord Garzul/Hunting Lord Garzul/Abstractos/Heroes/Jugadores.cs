@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
-using Hunting_Lord_Garzul.Generales;
-using Hunting_Lord_Garzul.Objetos;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using Hunting_Lord_Garzul.Objetos;
 
-namespace Hunting_Lord_Garzul.Abstractos.Heroes
+namespace Hunting_Lord_Garzul
 {
     public abstract class Jugadores
     {
@@ -14,21 +13,65 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
 
             #region CONTROLES
 
-        /// <summary>
+                /// <summary>
+                /// Esta bandera es para que no se vuelva a dibujar varias veces el mismo objeto, 
+                /// en caso de que el eje Y del mismo se repita con otro objeto
+                /// </summary>
+                private Boolean Drawn = false;
+        
+                /// <summary>
+                /// Si el personaje es manejado por la maquina o por un humano
+                /// </summary>
+                private Boolean Machine = false;
+        
+                /// <summary>
+                /// Para que lado esta mirando el personaje
+                /// </summary>
+                private Globales.Mirada Direction;
+        
+                /// <summary>
                 /// Controles del jugador
                 /// </summary>
-                private Keys[] _controls = new Keys[Enum.GetNames(typeof(Globales.Controls)).Length];
+                private Keys[] Controls = new Keys[Enum.GetNames(typeof(Globales.Controls)).Length];
+        
+                /// <summary>
+                /// Esta es una copia de las animaciones que va a usar el hijo de esta clase, en donde se decide que texturas va a utilizar.
+                /// En esta instancia la clase no sabe que texturas se van a utilizar. 
+                /// </summary>
+                private Animacion[] Animations = null;
 
-        #endregion
+                /// <summary>
+                /// Contador de vuelta lógica, para evitar que se repita la lógica de varias acciones en un mismo frame,
+                /// principalmente fue creado para evitar que se quite HP varias veces en el mismo frame cuando
+                /// se realiza un ataque.
+                /// </summary>
+                private int Logic_Counter = 0;
+
+            #endregion
 
             #region JUGABILIDAD
 
-        /// <summary>
+                /// <summary>
+                /// Si el personaje fue dañado 
+                /// </summary>
+                private Boolean Injured = false;
+        
+                /// <summary>
+                /// La cantidad de daño recibida 
+                /// </summary>
+                private int Injured_Value = 0;
+        
+                /// <summary>
                 /// La vitalidad del personaje
                 /// </summary>
-                private int _health = 100;
-
-        #endregion
+                private int Health = 100;
+        
+                /// <summary>
+                /// Si pierde toda su HP pasa a modo fantasma
+                /// </summary>
+                private Boolean Ghost_Mode = false;
+        
+            #endregion
 
         #endregion
 
@@ -38,39 +81,71 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
 
                 #region CONTROLES
 
-                    public bool Drawn { get; set; }
-
-        public bool Machine { get; set; }
-
-        public Globales.Mirada Direction { get; set; }
-
-        public Keys[] Controls
+                    public Boolean drawn
                     {
-                        get { return _controls; }
-                        set { _controls = value; }
+                        get { return Drawn; }
+                        set { Drawn = value; }
                     }
 
-                    internal Animacion[] Animations { get; set; }
+                    public Boolean machine
+                    {
+                        get { return Machine; }
+                        set { Machine = value; }
+                    }
 
-        public int LogicCounter { get; set; }
+                    public Globales.Mirada direction
+                    {
+                        get { return Direction; }
+                        set { Direction = value; }
+                    }
 
-        #endregion
+                    public Keys[] controls
+                    {
+                        get { return Controls; }
+                        set { Controls = value; }
+                    }
+
+                    internal Animacion[] animations
+                    {
+                        get { return Animations; }
+                        set { Animations = value; }
+                    }
+
+                    public int logic_counter
+                    {
+                        get { return Logic_Counter; }
+                        set { Logic_Counter = value; }
+                    }
+
+                #endregion
 
                 #region JUGABILIDAD
 
-                    public bool Injured { get; set; }
-
-        public int InjuredValue { get; set; }
-
-        public int Health
+                    public Boolean injured
                     {
-                        get { return _health; }
-                        set { _health = value; }
+                        get { return Injured; }
+                        set { Injured = value; }
                     }
 
-                    public bool GhostMode { get; set; }
+                    public int injured_value
+                    {
+                        get { return Injured_Value; }
+                        set { Injured_Value = value; }
+                    }
 
-        #endregion
+                    public int health
+                    {
+                        get { return Health; }
+                        set { Health = value; }
+                    }
+
+                    public Boolean ghost_mode
+                    {
+                        get { return Ghost_Mode; }
+                        set { Ghost_Mode = value; }
+                    }
+
+                #endregion
 
             #endregion
 
@@ -86,10 +161,10 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 public abstract void Draw(SpriteBatch spriteBatch);
 
                 // Actualizar cosas del jugador - GAB retocar
-                public abstract void UpdatePlayer(GameTime gameTime, Rectangle limitesJugador, int altoNivel, int anchoNivel);
+                public abstract void UpdatePlayer(GameTime gameTime, Rectangle LimitesJugador, int AltoNivel, int AnchoNivel);
 
                 // Carga los set de armadura que corresponden a cada pieza del cuerpo.
-                public abstract void UpdateArmor(List<PieceSet> setPieces);
+                public abstract void UpdateArmor(List<Piece_Set> set_pieces);
 
                 // Obtiene posicion del jugador en pantalla
                 public abstract Vector2 GetPosition();

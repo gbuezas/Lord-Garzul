@@ -1,39 +1,43 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Hunting_Lord_Garzul.Generales;
+using System.Text;
 
 namespace Hunting_Lord_Garzul.Objetos
 {
-    class PiecesSets
+    class Pieces_Sets
     {
-        public List<PieceSet> Pieces = new List<PieceSet>();
+        public List<Piece_Set> Pieces = new List<Piece_Set>();
 
         public void Initialize()
         {
-            foreach (var piece in Globales.PiecesPaladin)
+            foreach (string piece in Globales.PiecesPaladin)
             {
-                var newPiece = new PieceSet();
+                Piece_Set newPiece = new Piece_Set();
                 newPiece.Initialize(piece, "set1");
                 Pieces.Add(newPiece);
             }
         }
 
-        public void Set_Set(PieceSet pieceChanged)
+        public void Set_Set(Piece_Set pieceChanged)
         {
-            foreach (var piece in Pieces)
+            foreach (Piece_Set piece in Pieces)
             {
-                if (piece.Piece == pieceChanged.Piece)
+                if(piece.piece  == pieceChanged.piece)
                 {
-                    piece.Set = pieceChanged.Set;
+                    piece.set = pieceChanged.set;
                 }
             }
         }
 
         public string Get_Set(string pieceSearched)
         {
-            foreach (var piece in Pieces.Where(piece => pieceSearched == piece.Piece))
+            foreach (Piece_Set piece in Pieces)
             {
-                return piece.Set;
+                if (pieceSearched == piece.piece)
+                {
+                    return piece.set;
+                }
             }
             return string.Empty;
         }
