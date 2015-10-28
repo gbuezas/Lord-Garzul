@@ -6,3 +6,9 @@ X: -200 a 200 = 400
 no estoy seguro igual de esto de arriba
 
 Tendria que ser 240x240, ya que las planchas son de 3840x240, lo que nos da una fila de 16 sprites
+
+
+-200
+-250
+200
+50

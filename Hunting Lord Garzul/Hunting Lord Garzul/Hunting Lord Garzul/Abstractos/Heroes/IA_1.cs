@@ -126,6 +126,9 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                     FrameTime = 50;
                     health -= 70;
 
+                    // Establezco las banderas de dañados
+                    ResetInjured();
+
                     // Seteo IA
                     machine = true;
 
@@ -209,8 +212,6 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                     {
                         foreach (Texturas textura in Globales.IA_1Textures)
                         {
-                            string aver = pieces_armor.Get_Set(textura.piece);
-
                             if (textura.piece == piezaAnimacion.pieceName &&
                                 textura.set == pieces_armor.Get_Set(textura.piece) &&
                                 textura.action == currentAction.ToString().ToLower())
@@ -304,11 +305,12 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
 
                 /// <summary>
                 /// Obtiene cantidad total de frames de la animacion parandose en la primera pieza de la misma [0]
+                /// Devuelve el valor con -1 porque empieza a contar desde 0
                 /// </summary>
                 /// <returns> Frames total de la animacion </returns>
-                public override int GetAnimationFrames()
+                public override int GetTotalFrames()
                 {
-                    return this.animations[0].FrameCount;
+                    return this.animations[0].FrameCount - 1;
                 }
 
                 /// <summary>
@@ -319,6 +321,14 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                     foreach (Animacion piece in this.animations)
                     {
                         piece.active = active;
+                    }
+                }
+
+                public override void ResetInjured()
+                {
+                    for (int i = 0; i < injured.Length; i++)
+                    {
+                        this.injured[i] = false;
                     }
                 }
 
@@ -420,12 +430,13 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                     else
                     {
                         // Si esta pegando tiene que terminar su animacion y despues desbloquear otra vez la gama de movimientos
-                        if (this.GetCurrentFrame() == this.Pieces_Anim[0].FrameCount - 1)
+                        // Para esto comparamos el frame actual de la animacion con su frame
+                        if (this.GetCurrentFrame() == this.GetTotalFrames())
                         {
                             currentAction = Globales.Actions.STAND;
 
-                            // Reseteo contador logico
-                            this.logic_counter = 0;
+                            // Cuando termine la animacion de pegar puede generar daño de vuelta a alguien que ya haya atacado
+                            ResetInjured();
                         }
                     }
                 }
@@ -433,43 +444,36 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 /// <summary>
                 /// Logica de las colisiones de los golpes:
                 /// 
-                /// 1) Implementamos un chequeo jugador por jugador a la hora de golpear, que cumpla con las siguientes reglas:
-                ///     - Si le toca chequear con el mismo se saltea.
+                ///     Implementamos un chequeo jugador por jugador a la hora de golpear, que cumpla con las siguientes reglas:
                 ///     - Si el frame de la animacion no es justo cuando golpea con la espada se saltea.
                 ///     - Si fue golpeado anteriormente se saltea
                 ///     - Si es fantasma se saltea
                 ///     - Si es otra IA se saltea
-                ///     
-                /// 2) Contador de vueltas logicas, independiente de lo que se dibuja por segundo.
-                ///    Cuando este contador esta en 1, porque el mismo se resetea por animacion, puede entrar y hacer los calculos necesarios, sino no pasa.
-                ///    De esta manera cuando se cambia de animacion se vuelve a empezar de 0 con el contador lógico.
                 /// </summary>
                 private void CollisionLogic()
                 {
-                    if ((this.currentAction == Globales.Actions.HIT1 || this.currentAction == Globales.Actions.HIT2 || this.currentAction == Globales.Actions.HIT3)
-                       && !this.ghost_mode)
+                    if ((this.currentAction == Globales.Actions.HIT1 || this.currentAction == Globales.Actions.HIT2 || this.currentAction == Globales.Actions.HIT3) &&
+                            !this.ghost_mode)
                     {
-                        foreach (Jugadores Jugador in Globales.players)
+
+                        for (int i = 0; i < Globales.totalQuant; i++)
                         {
-                            // 1) Ver summary
-                            if (Jugador != this && this.GetCurrentFrame() == 5 && !Jugador.injured && !Jugador.ghost_mode && !Jugador.machine)
+                            // Ver sumamry
+                            if (!Globales.players[i].machine &&
+                                this.GetCurrentFrame() == 5 &&
+                                !this.injured[i] &&
+                                !Globales.players[i].ghost_mode)
                             {
                                 Rectangle temp = this.Pieces_Anim[0].GetPosition();
-                                Rectangle temp2 = Jugador.animations[0].GetPosition();
+                                Rectangle temp2 = Globales.players[i].animations[0].GetPosition();
 
                                 // Si esta dentro del radio del golpe
                                 if (CollisionVerifier(ref temp, ref temp2))
                                 {
-                                    // Ver summary punto (2)
-                                    if (this.logic_counter == 0)
-                                    {
-                                        // Cuando la armadura esta detras del efecto de la espada no se puede ver bien el cambio de color
-                                        Jugador.ColorAnimationChange(Color.Red);
-
-                                        Jugador.injured = true;
-                                        Jugador.injured_value = 10;
-                                        this.logic_counter++;
-                                    }
+                                    // Cuando la armadura esta detras del efecto de la espada no se puede ver bien el cambio de color
+                                    Globales.players[i].ColorAnimationChange(Color.Red);
+                                    Globales.players[i].injured_value = 10;
+                                    this.injured[i] = true;
                                 }
                             }
                         }
@@ -482,14 +486,16 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 private void EffectLogic()
                 {
 
-                    if (this.injured && !this.ghost_mode)
+                    if (!this.ghost_mode)
                     {
                         // Hago la resta necesaria a la health
                         this.health -= this.injured_value;
 
                         // Vuelvo el contador de daño a 0 y quito que este dañado
                         this.injured_value = 0;
-                        this.injured = false;
+                        
+                        // Reestablezco su color natural despues de recibir daño
+                        this.ColorAnimationChange(Color.White);
 
                         // Si pierde toda su HP se vuelve fantasma
                         if (this.health <= 0)
@@ -499,23 +505,7 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                     }
                     else
                     {
-                        // Reestablezco su color natural despues de recibir daño
-                        this.ColorAnimationChange(Globales.ColorEnemy);
-                    }
-
-                    if (this.ghost_mode)
-                    {
-                        // GAB retocar
-                        this.ColorAnimationChange(Globales.ColorGhost);
-
-                        if (this.health > 0)
-                        {
-                            ghost_mode = false;
-                        }
-                        else
-                        {
-                            this.ActivatePlayer(false);
-                        }
+                        this.ActivatePlayer(false);
                     }
                 }
 

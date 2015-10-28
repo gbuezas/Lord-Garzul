@@ -44,6 +44,7 @@ namespace Hunting_Lord_Garzul.Objetos
         public static List<Jugadores> players = new List<Jugadores>();
         public static int playersQuant = 4;
         public static int enemiesQuant = 8;
+        public static int totalQuant = playersQuant + enemiesQuant;
 
         // Para donde mira el personaje
         public enum Mirada { RIGHT, LEFT };

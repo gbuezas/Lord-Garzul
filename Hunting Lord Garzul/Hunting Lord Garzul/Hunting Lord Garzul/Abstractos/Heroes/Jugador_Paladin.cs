@@ -136,8 +136,11 @@ namespace Hunting_Lord_Garzul
                     currentAction = Globales.Actions.STAND;
                     oldAction = currentAction;
                     FrameTime = 50;
-                    health -= 10;
+                    health += 500;
 
+                    // Establezco las banderas de dañados
+                    ResetInjured();
+                    
                     // Inicializo partes de armadura actual
                     pieces_armor.Initialize();
 
@@ -259,8 +262,6 @@ namespace Hunting_Lord_Garzul
                 /// Actualizar cosas del jugador antes del update general. Aca va todo lo que es la logica del mismo, saltar pegar, etc.
                 /// </summary>
                 /// <param name="gameTime">El gametime del juego.</param>
-                /// <param name="currentKeyboardState">Para el teclado.</param>
-                /// <param name="currentGamePadState">Para los gamepad.</param>
                 /// <param name="LimitesPantalla">Los limites que puso la camara con respecto a la pantalla que vemos.</param>
                 /// <param name="AltoNivel">La altura total del escenario.</param>
                 /// <param name="AnchoNivel">El ancho total del escenario.</param>
@@ -296,8 +297,6 @@ namespace Hunting_Lord_Garzul
                     {
                         foreach (Texturas textura in Globales.PaladinTextures)
                         {
-                            string aver = pieces_armor.Get_Set(textura.piece);
-
                             if (textura.piece == piezaAnimacion.pieceName &&
                                 textura.set == pieces_armor.Get_Set(textura.piece) &&
                                 textura.action == currentAction.ToString().ToLower())
@@ -400,11 +399,13 @@ namespace Hunting_Lord_Garzul
 
                 /// <summary>
                 /// Obtiene cantidad total de frames de la animacion parandose en la primera pieza de la misma [0]
+                /// Se le resta 1 al valor ya que como es cantidad no cuenta desde 0, como lo hacen los indices,
+                /// de esta manera podemos comparar indices con cantidad.
                 /// </summary>
                 /// <returns> Frames total de la animacion </returns>
-                public override int GetAnimationFrames()
+                public override int GetTotalFrames()
                 {
-                    return this.animations[0].FrameCount;
+                    return this.animations[0].FrameCount - 1;
                 }
 
                 /// <summary>
@@ -415,6 +416,14 @@ namespace Hunting_Lord_Garzul
                     foreach( Animacion piece in this.animations )
                     {
                         piece.active = active;
+                    }
+                }
+
+                public override void ResetInjured()
+                {
+                    for (int i = 0; i < injured.Length; i++)
+                    {
+                        this.injured[i] = false;
                     }
                 }
 
@@ -504,12 +513,13 @@ namespace Hunting_Lord_Garzul
                     else
                     {
                         // Si esta pegando tiene que terminar su animacion y despues desbloquear otra vez la gama de movimientos
-                        if (this.Pieces_Anim[0].CurrentFrame == this.Pieces_Anim[0].FrameCount - 1)
+                        // Para esto comparamos el frame actual de la animacion con su frame total
+                        if (this.GetCurrentFrame() == this.GetTotalFrames())
                         {
                             currentAction = Globales.Actions.STAND;
-
-                            // Reseteo contador logico
-                            this.logic_counter = 0;
+                            
+                            // Cuando termine la animacion de pegar puede generar daño de vuelta a alguien que ya haya atacado
+                            ResetInjured();
                         }
                     }
                 }
@@ -517,47 +527,41 @@ namespace Hunting_Lord_Garzul
                 /// <summary>
                 /// Logica de las colisiones de los golpes:
                 /// 
-                /// 1) Implementamos un chequeo jugador por jugador a la hora de golpear, que cumpla con las siguientes reglas:
+                ///     Implementamos un chequeo jugador por jugador a la hora de golpear, que cumpla con las siguientes reglas:
                 ///     - Si le toca chequear con el mismo se saltea.
                 ///     - Si el frame de la animacion no es justo cuando golpea con la espada se saltea.
                 ///     - Si fue golpeado anteriormente se saltea
                 ///     - Si es fantasma se saltea
-                ///     
-                /// 2) Contador de vueltas logicas, independiente de lo que se dibuja por segundo.
-                ///    Cuando este contador esta en 1, porque el mismo se resetea por animacion, puede entrar y hacer los calculos necesarios, sino no pasa.
-                ///    De esta manera cuando se cambia de animacion se vuelve a empezar de 0 con el contador lógico.
                 /// </summary>
                 private void CollisionLogic()
                 {
-                    // GAB retocar
-                    if ((this.currentAction == Globales.Actions.HIT1 || this.currentAction == Globales.Actions.HIT2 || this.currentAction == Globales.Actions.HIT3)
-                       && !this.ghost_mode)
+                    // GAB retocar - Tambien si la animacion no esta activa que no entre (esto es para IA no para este)
+                    if ((   this.currentAction == Globales.Actions.HIT1 || this.currentAction == Globales.Actions.HIT2 || this.currentAction == Globales.Actions.HIT3) && 
+                            !this.ghost_mode)
                     {
-                        foreach (Jugadores player in Globales.players)
+                        
+                        for(int i=0; i < Globales.totalQuant; i++)
                         {
-                            // 1) Ver summary
-                            if (player != this && this.GetCurrentFrame() == 5 && !player.injured && !player.ghost_mode)
+                            // Ver summary
+                            if (Globales.players[i] != this && 
+                                this.GetCurrentFrame() == 5 && 
+                                !this.injured[i] &&
+                                !Globales.players[i].ghost_mode)
                             {
                                 Rectangle temp = this.Pieces_Anim[0].GetPosition();
-                                Rectangle temp2 = player.animations[0].GetPosition();
+                                Rectangle temp2 = Globales.players[i].animations[0].GetPosition();
 
                                 // Si esta dentro del radio del golpe
                                 if (CollisionVerifier(ref temp, ref temp2))
-                                {
-                                    // Ver summary punto (2)
-                                    if (this.logic_counter == 0)
                                     {
                                         // Cuando la armadura esta detras del efecto de la espada no se puede ver bien el cambio de color
-                                        player.ColorAnimationChange(Color.Red);
-
-                                        player.injured = true;
-                                        player.injured_value = 10;
-                                        this.logic_counter++;
+                                        Globales.players[i].ColorAnimationChange(Color.Red);
+                                        Globales.players[i].injured_value = 10;
+                                        this.injured[i] = true;
                                     }
                                 }
                             }
                         }
-                    }
                 }
 
                 /// <summary>
@@ -566,14 +570,17 @@ namespace Hunting_Lord_Garzul
                 private void EffectLogic()
                 {
 
-                    if (this.injured && !this.ghost_mode)
+                    if (!this.ghost_mode)
                     {
                         // Hago la resta necesaria a la health
                         this.health -= this.injured_value;
 
                         // Vuelvo el contador de daño a 0 y quito que este dañado
                         this.injured_value = 0;
-                        this.injured = false;
+                        //this.injured = false;
+
+                        // Reestablezco su color natural despues de recibir daño
+                        this.ColorAnimationChange(Color.White);
 
                         // Si pierde toda su HP se vuelve fantasma
                         if (this.health <= 0)
@@ -582,12 +589,6 @@ namespace Hunting_Lord_Garzul
                         }
                     }
                     else
-                    {
-                        // Reestablezco su color natural despues de recibir daño
-                        this.ColorAnimationChange(Color.White);
-                    }
-
-                    if (this.ghost_mode)
                     {
                         this.ColorAnimationChange(Globales.ColorGhost);
 
@@ -599,9 +600,8 @@ namespace Hunting_Lord_Garzul
 
                     // MENSAJES: Veo la health de los personajes
                     mensaje9 = this.health;
-                    //mensaje6 = Tiempo_Frame;
                 }
-
+                
                 /// <summary>
                 /// Chequea las colisiones
                 /// </summary>
