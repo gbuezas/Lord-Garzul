@@ -448,11 +448,13 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                 ///     - Si el frame de la animacion no es justo cuando golpea con la espada se saltea.
                 ///     - Si fue golpeado anteriormente se saltea
                 ///     - Si es fantasma se saltea
-                ///     - Si es otra IA se saltea
+                ///     - Si es IA se saltea
                 /// </summary>
                 private void CollisionLogic()
                 {
-                    if ((this.currentAction == Globales.Actions.HIT1 || this.currentAction == Globales.Actions.HIT2 || this.currentAction == Globales.Actions.HIT3) &&
+                    if ((   this.currentAction == Globales.Actions.HIT1 || 
+                            this.currentAction == Globales.Actions.HIT2 || 
+                            this.currentAction == Globales.Actions.HIT3) &&
                             !this.ghost_mode)
                     {
 
@@ -488,15 +490,17 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
 
                     if (!this.ghost_mode)
                     {
+                        // Reestablezco su color natural si no va a recibir daño, de esta manera no permito que vuelva a su color 
+                        // demasiado rapido como para que no se vea que fue dañado
+                        if (this.injured_value == 0)
+                            this.ColorAnimationChange(Color.White);
+                        
                         // Hago la resta necesaria a la health
                         this.health -= this.injured_value;
 
                         // Vuelvo el contador de daño a 0 y quito que este dañado
                         this.injured_value = 0;
-                        
-                        // Reestablezco su color natural despues de recibir daño
-                        this.ColorAnimationChange(Color.White);
-
+                                                
                         // Si pierde toda su HP se vuelve fantasma
                         if (this.health <= 0)
                         {
@@ -505,6 +509,9 @@ namespace Hunting_Lord_Garzul.Abstractos.Heroes
                     }
                     else
                     {
+                        // Lo manejo con el ghost a la IA tb asi no tengo que cambiar todo lo que esta hecho con los jugadores.
+                        // De esta manera es mas facil porque las corroboraciones del ghost_mode siguen corriendo, 
+                        // nada mas que no se dibujan las animaciones de la IA porque estan desactivadas
                         this.ActivatePlayer(false);
                     }
                 }

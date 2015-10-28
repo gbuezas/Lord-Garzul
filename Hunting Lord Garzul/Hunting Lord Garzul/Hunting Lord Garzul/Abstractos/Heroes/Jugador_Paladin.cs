@@ -535,8 +535,9 @@ namespace Hunting_Lord_Garzul
                 /// </summary>
                 private void CollisionLogic()
                 {
-                    // GAB retocar - Tambien si la animacion no esta activa que no entre (esto es para IA no para este)
-                    if ((   this.currentAction == Globales.Actions.HIT1 || this.currentAction == Globales.Actions.HIT2 || this.currentAction == Globales.Actions.HIT3) && 
+                    if ((   this.currentAction == Globales.Actions.HIT1 || 
+                            this.currentAction == Globales.Actions.HIT2 || 
+                            this.currentAction == Globales.Actions.HIT3) && 
                             !this.ghost_mode)
                     {
                         
@@ -553,15 +554,15 @@ namespace Hunting_Lord_Garzul
 
                                 // Si esta dentro del radio del golpe
                                 if (CollisionVerifier(ref temp, ref temp2))
-                                    {
-                                        // Cuando la armadura esta detras del efecto de la espada no se puede ver bien el cambio de color
-                                        Globales.players[i].ColorAnimationChange(Color.Red);
-                                        Globales.players[i].injured_value = 10;
-                                        this.injured[i] = true;
-                                    }
+                                {
+                                    // Cuando la armadura esta detras del efecto de la espada no se puede ver bien el cambio de color
+                                    Globales.players[i].ColorAnimationChange(Color.Red);
+                                    Globales.players[i].injured_value = 10;
+                                    this.injured[i] = true;
                                 }
                             }
                         }
+                    }
                 }
 
                 /// <summary>
@@ -572,16 +573,17 @@ namespace Hunting_Lord_Garzul
 
                     if (!this.ghost_mode)
                     {
+                        // Reestablezco su color natural si no va a recibir daño, de esta manera no permito que vuelva a su color 
+                        // demasiado rapido como para que no se vea que fue dañado
+                        if (this.injured_value == 0)
+                            this.ColorAnimationChange(Color.White);
+                        
                         // Hago la resta necesaria a la health
                         this.health -= this.injured_value;
 
                         // Vuelvo el contador de daño a 0 y quito que este dañado
                         this.injured_value = 0;
-                        //this.injured = false;
-
-                        // Reestablezco su color natural despues de recibir daño
-                        this.ColorAnimationChange(Color.White);
-
+                        
                         // Si pierde toda su HP se vuelve fantasma
                         if (this.health <= 0)
                         {

@@ -174,7 +174,8 @@ namespace Hunting_Lord_Garzul
 
                 // Activa o desactiva al jugador (si no esta activo no se dibuja)
                 public abstract void ActivatePlayer(bool active);
-
+                
+                // Limpio la lista interna de personajes que dañe, este metodo se usa al terminar una animacion que daña.
                 public abstract void ResetInjured();
 
             #endregion
